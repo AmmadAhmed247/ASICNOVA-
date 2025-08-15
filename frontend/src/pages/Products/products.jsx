@@ -1,5 +1,6 @@
 import React from "react";
 import Footer from "../../components/footer";
+import { Link } from "react-router-dom";
 const products = [
   { id: 1, name: "Bitcoin Miner H23 HYD", price: "17,400$", discount: "10% off" },
   { id: 2, name: "Bitcoin Miner S21 Pro", price: "17,400$", discount: "10% off" },
@@ -32,11 +33,13 @@ export default function ProductPage() {
               className="bg-blue-500 rounded-3xl p-6 text-white flex flex-col items-center shadow-lg hover:scale-105 transition-transform duration-300"
             >
               <div className="w-full h-80 mb-4">
+                <Link to="/products/:id" >
                 <img
                   src="/dummy.jpg"
                   alt={product.name}
                   className="rounded-2xl object-cover w-full h-full"
-                />
+                  />
+                  </Link>
               </div>
               <span className="text-sm bg-white text-zinc-800 font-semibold px-3 py-1 rounded-full mb-3">
                 {product.discount}
@@ -61,7 +64,9 @@ export default function ProductPage() {
           {products.map((product) => (
             <div key={product.id} className="bg-white rounded-2xl p-4 flex flex-col items-center shadow">
               <div className="w-fit h-fit mb-2">
+                <Link to="/products/:id" >
                 <img src="/dummy.jpg" alt={product.name} className="w-full h-full object-contain" />
+                </Link>
               </div>
               <h3 className="font-bold text-lg text-center">{product.name}</h3>
               <p className="text-sm opacity-60 mb-2">Details space here</p>

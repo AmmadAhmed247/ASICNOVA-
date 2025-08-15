@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Clock, DollarSign, ArrowDown, Shield, CheckCircle, TrendingUp, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import Footer from '../../components/footer';
-
+import { Link } from 'react-router-dom';
 
 const MiningWebsite = () => {
   const [animateCards, setAnimateCards] = useState(false);
@@ -153,9 +153,9 @@ const MiningWebsite = () => {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold transition-colors">
+          <Link to="/products" className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold transition-colors">
             View All
-          </button>
+          </Link>
         </div>
       </div>
       <div className="bg-white py-16">
@@ -260,9 +260,9 @@ const MiningWebsite = () => {
           </div>
 
           <div className="text-center mt-12">
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold transition-colors">
+            <Link to="/products" className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold transition-colors">
               View All
-            </button>
+            </Link>
           </div>
         </div>
       </div>
