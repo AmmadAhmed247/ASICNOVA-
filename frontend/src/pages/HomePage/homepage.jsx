@@ -266,8 +266,9 @@ const MiningWebsite = () => {
       </div>
 
 
-      <div className="bg-white flex flex-row items-center justify-center py-16 gap-80">
-        <div className="flex flex-col gap-10 font-semibold">
+      <div className="bg-white flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-0">
+
+        <div className="flex flex-col gap-6 font-semibold text-center md:text-left">
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Home</p>
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Contact Us</p>
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Terms & Conditions</p>
@@ -276,8 +277,8 @@ const MiningWebsite = () => {
         </div>
 
 
-        <div className="max-w-2xl">
-          <div className="text-center mb-8 text-white">
+        <div className="w-full md:max-w-2xl mt-10 md:mt-0">
+          <div className="text-center md:text-left mb-6 text-gray-800">
             <h3 className="text-2xl font-bold mb-2">For more inquiries, Contact us</h3>
             <p className="opacity-90">or simply fill the form</p>
           </div>
@@ -308,6 +309,7 @@ const MiningWebsite = () => {
           </div>
         </div>
       </div>
+
 
 
       <footer className="text-white py-12">
