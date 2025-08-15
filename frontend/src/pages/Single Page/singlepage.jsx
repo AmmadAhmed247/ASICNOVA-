@@ -15,7 +15,6 @@ export default function SinglePage() {
   const customerReviews = data?.customerReviews || [];
   const [activeTab, setActiveTab] = useState('performance');
   const [quantity, setQuantity] = useState(1);
-  console.log(data)
 
   const tabs = [
     { id: 'performance', label: 'Performance Curve' },

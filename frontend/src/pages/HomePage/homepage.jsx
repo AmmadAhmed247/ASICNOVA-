@@ -2,39 +2,43 @@ import React, { useState, useEffect, useContext } from 'react';
 import { ShoppingCart, Clock, DollarSign, ArrowDown, Shield, CheckCircle, TrendingUp, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import Footer from '../../components/footer';
 import { Link } from 'react-router-dom';
+import { useProducts } from '../../lib/hooks/useProduct';
 
 const MiningWebsite = () => {
   const [animateCards, setAnimateCards] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const {data, isLoading, isError} = useProducts()
+  const products = data?.products || [];
+  console.log(products)
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimateCards(true), 500);
     return () => clearTimeout(timer);
   }, []);
 
-  const products = [
-    {
-      id: 1,
-      name: "Anti Space HD 5",
-      hashrate: "1 Set | 1400kW | 500 Stick Space",
-      price: "Only 135,000$",
-      gradient: "from-blue-400 via-blue-500 to-blue-600",
-    },
-    {
-      id: 2,
-      name: "Anti Space HW5",
-      hashrate: "1 Set | 1500kW | 370 Stick Space",
-      price: "Only 84,000$",
-      gradient: "from-blue-400 via-blue-500 to-blue-600",
-    },
-    {
-      id: 3,
-      name: "Bitcoin Miner S19k Pro",
-      hashrate: "160 T | 2.6kw | 23 J/T",
-      price: "Only 305$",
-      gradient: "from-blue-400 via-blue-500 to-blue-600",
-    }
-  ];
+  // const products = [
+  //   {
+  //     id: 1,
+  //     name: "Anti Space HD 5",
+  //     hashrate: "1 Set | 1400kW | 500 Stick Space",
+  //     price: "Only 135,000$",
+  //     gradient: "from-blue-400 via-blue-500 to-blue-600",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Anti Space HW5",
+  //     hashrate: "1 Set | 1500kW | 370 Stick Space",
+  //     price: "Only 84,000$",
+  //     gradient: "from-blue-400 via-blue-500 to-blue-600",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Bitcoin Miner S19k Pro",
+  //     hashrate: "160 T | 2.6kw | 23 J/T",
+  //     price: "Only 305$",
+  //     gradient: "from-blue-400 via-blue-500 to-blue-600",
+  //   }
+  // ];
 
   const features = [
     {
@@ -120,9 +124,9 @@ const MiningWebsite = () => {
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className={`bg-gradient-to-br ${product.gradient} h-64 relative overflow-hidden flex items-center justify-center`}>
+              <div className={`bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 h-64 relative overflow-hidden flex items-center justify-center`}>
                 <img
-                  src="/dummy.jpg"
+                  src={product.images[0] || ""}
                   alt={product.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -138,14 +142,16 @@ const MiningWebsite = () => {
                 <div className="absolute inset-0 bg-black/10"></div>
               </div>
 
-              <div className={`bg-gradient-to-br ${product.gradient} text-white p-6`}>
-                <h3 className="text-xl font-bold mb-2">{product.name}</h3>
+              <div className={`bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white p-6`}>
+                <h3 className="text-xl font-bold mb-2">{product?.name}</h3>
                 <p className="text-sm opacity-90 mb-4">{product.hashrate}</p>
                 <div className="flex justify-between items-center">
                   <button type='button' className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors">
                     Shop Now
                   </button>
-                  <span className="font-bold text-lg">{product.price}</span>
+                  <span className="font-bold text-lg">
+                    ${product?.price?.perUnit ?? product.price}
+                  </span>
                 </div>
               </div>
             </div>

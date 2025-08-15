@@ -57,7 +57,7 @@ export default function ProductPage() {
               className="bg-white rounded-2xl p-4 flex flex-col items-center shadow"
             >
               <Link to={`/products/${product._id}`}><div className="w-fit h-fit mb-2">
-                <img src="/dummy.jpg" alt={product.name} className="w-full h-full object-contain" />
+                <img src={product.images[0] || ""} alt={product.name} className="w-full h-full object-contain" />
               </div></Link>
               <h3 className="font-bold text-lg text-center">{product.name}</h3>
               <p className="text-sm opacity-60 mb-2">Details space here</p>
