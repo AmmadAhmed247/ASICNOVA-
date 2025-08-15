@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ShoppingCart, Clock, DollarSign, ArrowDown, Shield, CheckCircle, TrendingUp, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import Footer from '../../components/footer';
 import { Link } from 'react-router-dom';
@@ -142,7 +142,7 @@ const MiningWebsite = () => {
                 <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                 <p className="text-sm opacity-90 mb-4">{product.hashrate}</p>
                 <div className="flex justify-between items-center">
-                  <button className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors">
+                  <button type='button' className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors">
                     Shop Now
                   </button>
                   <span className="font-bold text-lg">{product.price}</span>
@@ -196,6 +196,7 @@ const MiningWebsite = () => {
 
           <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl overflow-hidden shadow-xl max-w-6xl mx-auto">
             <button
+              type='button'
               onClick={prevSlide}
               className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
             >
@@ -203,6 +204,7 @@ const MiningWebsite = () => {
             </button>
 
             <button
+              type='button'
               onClick={nextSlide}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
             >
@@ -218,10 +220,10 @@ const MiningWebsite = () => {
                   <p className="text-2xl font-bold"><strong>Price:</strong> {popularProduct.price}</p>
                 </div>
                 <div className="flex gap-4 mt-8">
-                  <button className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                  <button type='button' className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
                     Shop Now
                   </button>
-                  <button className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                  <button type='button' className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-colors">
                     Add to Cart
                   </button>
                 </div>
@@ -250,6 +252,7 @@ const MiningWebsite = () => {
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
               {popularProducts.map((_, index) => (
                 <button
+                  type='button'
                   key={index}
                   onClick={() => setCurrentSlide(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/70'

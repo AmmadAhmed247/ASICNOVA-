@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router-dom'
 import router from './routes/route.jsx'
 import AuthContextProvider from './Context/AuthContext.jsx'
 import { Toaster } from 'react-hot-toast'
+import ContactContextProvider from './Context/ContactContext.jsx'
 
 
 const queryClient = new QueryClient()
@@ -15,9 +16,11 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
     <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
-        <RouterProvider router={router} />
-      </AuthContextProvider>
+      <ContactContextProvider>
+        <AuthContextProvider>
+          <RouterProvider router={router} />
+        </AuthContextProvider>
+      </ContactContextProvider>
     </QueryClientProvider>
   </StrictMode>
 )
