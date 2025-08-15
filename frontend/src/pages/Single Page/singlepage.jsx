@@ -271,7 +271,7 @@ export default function SinglePage() {
       </section>
 
       {/* Contact Form */}
-      <Footer />
+      <Footer className={'bg-white rounded-md  flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10'} />
      
     </div>
   );

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema } from '../lib/schemas/schema';
 
-const Footer = () => {
+const Footer = ({className}) => {
 
   const { submitInquiry } = useContext(ContactContext)
 
@@ -25,7 +25,7 @@ const Footer = () => {
 
   return (
     <div>
-      <div className="bg-white rounded-md  flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10">
+      <div className={className}>
 
         <div className="flex flex-col gap-6 font-semibold text-center md:text-left">
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Home</p>
