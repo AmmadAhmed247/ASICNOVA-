@@ -1,5 +1,6 @@
 const productModel = require('../models/product.model')
 
+
 const createProduct = async (req, res) => {
     try {
         const {
@@ -8,29 +9,12 @@ const createProduct = async (req, res) => {
             type,
             shippingDate,
             paymentMethod,
-            perUnit,
-            perGram,
             images,
-            modelName,
-            Algorithm,
-            typicalHashRate,
-            PowerOnWall,
-            PowerEfficiency,
-            inputVoltage,
-            inputFrequency,
-            maxCurrent,
-            NetworkConnectionMode,
-            ServerSizeWithoutPackage,
-            ServerSizeWithPackage,
-            NetWeight,
-            GrossWeight,
-            Noise,
-            OperationTemperature,
-            StorageTemperature,
-            OperationHumidity,
-            OperationAltitude,
-            purchasingGuideLines
-        } = req.body
+            price,
+            specifications,
+            purchasingGuideLines,
+            notes
+        } = req.body;
 
         const newProduct = await productModel.create({
             name,
@@ -38,48 +22,27 @@ const createProduct = async (req, res) => {
             type,
             shippingDate,
             paymentMethod,
-            price: {
-                perUnit,
-                perGram
-            },
             images,
-            specifications: {
-                ProductGlance: {
-                    modelName,
-                    Algorithm,
-                    typicalHashRate,
-                    PowerOnWall,
-                    PowerEfficiency
-                },
-                DetailedCharacteristics: {
-                    inputVoltage,
-                    inputFrequency,
-                    maxCurrent,
-                    NetworkConnectionMode,
-                    ServerSizeWithoutPackage,
-                    ServerSizeWithPackage,
-                    NetWeight,
-                    GrossWeight,
-                    Noise,
-                    OperationTemperature,
-                    StorageTemperature,
-                    OperationHumidity,
-                    OperationAltitude
-                }
-            },
-            purchasingGuideLines
-        })
+            price,
+            specifications,
+            purchasingGuideLines,
+            notes
+        });
 
         return res.status(200).json({
             message: "Product Created!",
             newProduct
-        })
-
+        });
     } catch (error) {
-        console.log("An Error Occured!", error)
-        res.status(500).json({ error: "Internal Server Error!" })
+        console.log("An Error Occurred!", error);
+        res.status(500).json({ error: "Internal Server Error!" });
     }
-}
+};
+
+module.exports = {
+    createProduct
+};
+
 
 const createReview = async (req, res) => {
     try {
@@ -113,11 +76,11 @@ const createReview = async (req, res) => {
     }
 }
 
-const getProducts = async (req,res)=>{
+const getProducts = async (req, res) => {
     try {
         const products = await productModel.find()
 
-        if(!products){
+        if (!products) {
             return res.status(400).json({
                 error: "No Products Found!"
             })
@@ -129,18 +92,36 @@ const getProducts = async (req,res)=>{
         })
     } catch (error) {
         console.log("An Error Occured!", error)
-        res.status(500).json({error: "Internal Server Error!"})
+        res.status(500).json({ error: "Internal Server Error!" })
     }
 }
 
-const getProductById = async (req,res)=>{
-    const id = req.params.id
-    
+const getProductById = async (req, res) => {
+    try {
+        const id = req.params.id
+
+        const product = await productModel.findById(id)
+
+        if (!product) {
+            return res.status(400).json({
+                error: "No Product Found!"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Product Is",
+            product
+        })
+    } catch (error) {
+        console.log("An Error Occured!", error)
+        res.status(500).json({ error: "Internal Server Error!" })
+    }
 }
 
 
 module.exports = {
     createProduct,
     createReview,
-    getProducts
+    getProducts,
+    getProductById
 }

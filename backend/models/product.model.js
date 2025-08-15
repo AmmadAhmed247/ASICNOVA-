@@ -10,28 +10,35 @@ const productGlanceSchema = new mongoose.Schema({
     Algorithm: String,
     typicalHashRate: Number,
     PowerOnWall: Number,
-    PowerEfficiency: Number
+    PowerEfficiency: Number,
+    PowerSupply: {
+        Phase: Number,
+        inputVoltage: String,
+        inputFrequency: String,
+        maxCurrent: String
+    }
 }, { _id: false });
 
-const detailedCharacteristicsSchema = new mongoose.Schema({
-    inputVoltage: String,
-    inputFrequency: String,
-    maxCurrent: Number,
+const hardwareConfigurationSchema = new mongoose.Schema({
     NetworkConnectionMode: String,
     ServerSizeWithoutPackage: String,
     ServerSizeWithPackage: String,
     NetWeight: Number,
-    GrossWeight: Number,
-    Noise: Number,
-    OperationTemperature: String,
-    StorageTemperature: String,
-    OperationHumidity: String,
-    OperationAltitude: String
+    GrossWeight: Number
+}, { _id: false });
+
+const environmentRequirementsSchema = new mongoose.Schema({
+    SiteCoolantTemperature: String,
+    CoolantFlow: String,
+    CoolantPressure: String,
+    WorkingCoolant: String,
+    DiameterOfCoolantPipeConnector: String
 }, { _id: false });
 
 const specificationsSchema = new mongoose.Schema({
     ProductGlance: productGlanceSchema,
-    DetailedCharacteristics: detailedCharacteristicsSchema
+    HardwareConfiguration: hardwareConfigurationSchema,
+    EnvironmentRequirements: environmentRequirementsSchema
 }, { _id: false });
 
 const customerReviewSchema = new mongoose.Schema({
@@ -56,9 +63,11 @@ const productSchema = new mongoose.Schema({
     images: [String],
     specifications: specificationsSchema,
     customerReviews: [customerReviewSchema],
-    purchasingGuideLines: [String]
+    purchasingGuideLines: [String],
+    notes: [String]
 });
 
 const productModel = mongoose.model('Products', productSchema);
 
 module.exports = productModel;
+
