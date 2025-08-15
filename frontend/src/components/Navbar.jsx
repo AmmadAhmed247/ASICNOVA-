@@ -15,7 +15,6 @@ export default function Navbar() {
     console.log("Search query:", query);
   };
 
-  // Close profile dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -29,23 +28,22 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
-        {/* Logo */}
+       
         <Link to="/" className="flex items-center">
           <img src="/logo.jpeg" alt="ASICNOVA" className="h-10 mr-2 cursor-pointer" />
         </Link>
 
-        {/* Desktop menu */}
         <div className="hidden md:flex space-x-6 font-medium">
           <Link to="/" className="hover:text-blue-600">Home</Link>
-          <Link to="/shop" className="hover:text-blue-600">Shop</Link>
+          <Link to="/products" className="hover:text-blue-600">Shop</Link>
           <Link to="/about" className="hover:text-blue-600">About Us</Link>
           <Link to="/contact" className="hover:text-blue-600">Contact Us</Link>
           <Link to="/cart" className="hover:text-blue-600">Cart</Link>
         </div>
 
-        {/* Desktop right icons */}
+     
         <div className="hidden md:flex items-center space-x-4">
-          {/* Search */}
+         
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className="flex items-center p-2 text-blue-500 rounded hover:bg-gray-100"
@@ -53,7 +51,7 @@ export default function Navbar() {
             <FaSearch className="h-6 w-6" />
           </button>
 
-          {/* Profile */}
+          
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileOpen(!profileOpen)}
