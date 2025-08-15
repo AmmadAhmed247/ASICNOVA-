@@ -7,7 +7,7 @@ import { signupSchema } from '../../lib/schemas/schema';
 import { AuthContext } from '../../Context/AuthContext';
 
 const SignUp = () => {
-  const [Step, setStep] = useState(1);
+  const [Step, setStep] = useState(2);
   const [ShowModal, setShowModal] = useState(false);
   const {sendOTP, verifyOTPAndPassword} = useContext(AuthContext)
   const navigate = useNavigate()
@@ -44,7 +44,7 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center lg:p-0 p-5 justify-center h-full mt-16">
-      <div className="h-[450px] w-[400px] border-1 border-gray-200 flex flex-col justify-between">
+      <div className="h-[470px] w-[400px] border-1 border-gray-200 flex flex-col justify-between">
         <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-5">
           {Step === 1 && (
             <div className="flex flex-col items-center mt-5 gap-5">
@@ -81,7 +81,7 @@ const SignUp = () => {
               <p className="text-xs font-light">By Agreeing, You're Accepting Our Terms & Conditions</p>
               <div className="p-2 flex flex-col gap-5 items-center mt-5">
                 <div className="w-[350px] p-4 text-sm border-1 border-gray-200">{formData.email}</div>
-                <div className={`w-[350px] flex flex-col gap-1 p-4 border-1 ${errors.otp ? 'border-red-600' : 'border-gray-200'}`}>
+                <div className={`w-[350px] flex flex-col gap-1 p-2 border-1 ${errors.otp ? 'border-red-600' : 'border-gray-200'}`}>
                   <div className="flex items-center">
                     <input
                       {...register('otp')}
@@ -105,9 +105,9 @@ const SignUp = () => {
                       </ul>
                     </div>
                   )}
-                  {errors.otp && <p className="text-xs p-2 text-red-600">{errors.otp.message}</p>}
+                  {errors.otp && <p className="text-xs  text-red-600">{errors.otp.message}</p>}
                 </div>
-                <div className={`w-[350px] p-4 border-1 border-gray-200 ${errors.password ? 'border-red-600' : 'border-gray-200'}`}>
+                <div className={`w-[350px]  border-1 p-2 border-gray-200 ${errors.password ? 'border-red-600' : 'border-gray-200'}`}>
                   <input
                     {...register('password')}
                     type="password"
@@ -123,7 +123,7 @@ const SignUp = () => {
             </div>
           )}
         </form>
-        <div className="mt-5 flex items-center justify-center bg-blue-100 w-full h-[100px]">
+        <div className="mt-5 flex items-center justify-center bg-blue-100 w-full h-[120px]">
           <p className="font-semibold">
             Existing Account? <Link to="/login" className="text-blue-500">Log In</Link>
           </p>
