@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Footer from '../../components/footer';
 import { useProductById } from '../../lib/hooks/useProduct';
 import { useParams } from 'react-router-dom';
+import { User } from 'lucide-react';
 
 export default function SinglePage() {
   const { id } = useParams();
@@ -11,9 +12,10 @@ export default function SinglePage() {
   const ProductGlance = specifications?.ProductGlance || {};
   const hardware = specifications?.HardwareConfiguration || {};
   const environment = specifications?.EnvironmentRequirements || {};
-  console.log(ProductGlance)
+  const customerReviews = data?.customerReviews || [];
   const [activeTab, setActiveTab] = useState('performance');
   const [quantity, setQuantity] = useState(1);
+  console.log(data)
 
   const tabs = [
     { id: 'performance', label: 'Performance Curve' },
@@ -136,9 +138,28 @@ export default function SinglePage() {
 
       case 'reviews':
         return (
-          <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <h3 className="text-lg font-semibold mb-4">Customer Reviews</h3>
-            <p className="text-gray-500">No reviews available yet.</p>
+          <div className='bg-white p-6 rounded-lg shadow-sm '>
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-4">Customer Reviews</h3>
+            </div>
+
+            {customerReviews.map((review, id) => (
+              <div>
+                <ul className=''>
+                  <li className='flex flex-col mb-10 justify-center  gap-2'>
+                    <div className='flex items-center gap-2'>
+                      <User size={16} />
+                      <span className='font-bold'>{review.name}</span>
+
+                    </div>
+                    <div className='font-semibold'>
+                      <span>{review.review}</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            ))}
+
           </div>
         );
 
@@ -158,7 +179,8 @@ export default function SinglePage() {
   }
 
   function formatKey(key) {
-    return key.replace(/([a-z])([A-Z])/g, '$1 $2');
+    const withSpaces = key.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
   }
 
   if (isLoading) return <p className="text-center mt-10">Loading...</p>;
@@ -187,8 +209,8 @@ export default function SinglePage() {
                   {typeof ProductGlance?.inputVoltage === 'object'
                     ? `${ProductGlance.inputVoltage.min}-${ProductGlance.inputVoltage.max} V`
                     : ProductGlance?.inputVoltage}
-                {" | "}
-                {typeof ProductGlance?.inputFrequency === 'object'
+                  {" | "}
+                  {typeof ProductGlance?.inputFrequency === 'object'
                     ? `${ProductGlance.inputFrequency.min}-${ProductGlance.inputFrequency.max} Hz`
                     : ProductGlance?.inputFrequency}
                 </span>
@@ -212,11 +234,10 @@ export default function SinglePage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === tab.id
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 {tab.label}
               </button>

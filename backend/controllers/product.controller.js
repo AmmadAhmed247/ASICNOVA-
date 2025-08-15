@@ -39,9 +39,6 @@ const createProduct = async (req, res) => {
     }
 };
 
-module.exports = {
-    createProduct
-};
 
 
 const createReview = async (req, res) => {
