@@ -7,7 +7,7 @@ import { signupSchema } from '../../lib/schemas/schema';
 import { AuthContext } from '../../Context/AuthContext';
 
 const SignUp = () => {
-  const [Step, setStep] = useState(2);
+  const [Step, setStep] = useState(1);
   const [ShowModal, setShowModal] = useState(false);
   const {sendOTP, verifyOTPAndPassword} = useContext(AuthContext)
   const navigate = useNavigate()

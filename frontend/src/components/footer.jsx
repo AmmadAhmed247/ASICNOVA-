@@ -1,10 +1,31 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { ShoppingCart, Clock, DollarSign, ArrowDown, Shield, CheckCircle, TrendingUp, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ContactContext } from '../Context/ContactContext';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { contactSchema } from '../lib/schemas/schema';
 
 const Footer = () => {
+
+  const { submitInquiry } = useContext(ContactContext)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({
+    resolver: zodResolver(contactSchema)
+  })
+
+  const onFormSubmit = (data)=>{
+    submitInquiry(data)
+    reset()
+  }
+
   return (
     <div>
-        <div className="bg-white rounded-md  flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10">
+      <div className="bg-white rounded-md  flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10">
 
         <div className="flex flex-col gap-6 font-semibold text-center md:text-left">
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Home</p>
@@ -21,30 +42,47 @@ const Footer = () => {
             <p className="opacity-90">or simply fill the form</p>
           </div>
 
-          <div className="p-4 flex flex-col gap-5 bg-blue-500 rounded-2xl">
-            <input
-              type="text"
-              placeholder="Your Full Name"
-              className="w-full px-6 bg-white py-4 rounded-full border-0 outline-none text-gray-700"
-            />
-            <input
-              type="email"
-              placeholder="Your Email Address"
-              className="w-full px-6 py-4 bg-white rounded-full border-0 outline-none text-gray-700"
-            />
-            <textarea
-              placeholder="Type your inquiry"
-              rows="6"
-              className="w-full px-6 py-4 bg-white rounded-2xl border-0 outline-none resize-none text-gray-700"
-            ></textarea>
-            <button
-              type="button"
-              className="w-full bg-white text-blue-600 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors text-lg"
-              onClick={() => alert('Form submitted! (This is a demo)')}
-            >
-              Submit
-            </button>
-          </div>
+          <form onSubmit={handleSubmit(onFormSubmit)}>
+            <div className="p-4 flex flex-col gap-5 bg-blue-500 rounded-2xl">
+              <div className='w-full flex flex-col px-6 bg-white py-4 rounded-full border-0'>
+                <input
+                  {...register('fullName')}
+                  type="text"
+                  placeholder="Your Full Name"
+                  className="outline-none w-full text-gray-700"
+                />
+                {errors.fullName && (<p className='text-xs text-red-600'>{errors.fullName.message}</p>)}
+              </div>
+
+
+              <div className='w-full px-6 py-4 bg-white rounded-full border-0 flex flex-col'>
+              <input
+                {...register('email')}
+                type="email"
+                placeholder="Your Email Address"
+                className="w-full outline-none text-gray-700"
+              />
+              {errors.email && (<p className='text-xs text-red-600'>{errors.email.message}</p>)}
+              </div>
+
+              <div className='w-full px-6 py-4 bg-white rounded-2xl border-0 flex flex-col'>
+              <textarea
+                {...register('inquiry')}
+                placeholder="Type your inquiry"
+                rows="6"
+                className="w-full outline-none resize-none text-gray-700"
+              ></textarea>
+              {errors.inquiry && (<p className='text-xs text-red-600'>{errors.inquiry.message}</p>)}
+
+              </div>
+              <button
+                type="submit"
+                className="w-full cursor-pointer bg-white text-blue-600 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors text-lg"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
