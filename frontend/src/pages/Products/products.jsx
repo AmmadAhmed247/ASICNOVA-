@@ -1,6 +1,7 @@
 import React from "react";
 import Footer from "../../components/footer";
-
+import {useProducts} from '../../lib/hooks/useProduct'
+import {Link} from 'react-router-dom'
 
 export default function ProductPage() {
   const { data, isLoading, isError } = useProducts();
