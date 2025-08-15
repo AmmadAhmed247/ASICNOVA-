@@ -21,7 +21,7 @@ export default function ProductPage() {
               className="bg-blue-500 rounded-3xl p-6 text-white flex flex-col items-center shadow-lg hover:scale-105 transition-transform duration-300"
             >
               <div className="w-full h-80 mb-4">
-                <Link to="/products/:id" >
+                <Link to={`/products/${product._id}`} >
                 <img
                   src={product.images[0] || '/dummy.jpg'}
                   alt={product.name}
@@ -38,9 +38,9 @@ export default function ProductPage() {
               <p className="text-sm opacity-90 text-center mb-4">
                 Details space here
               </p>
-              <button className="bg-white text-blue-500 px-6 py-2 rounded-full mb-2 font-semibold hover:bg-gray-100 transition-colors">
+              <Link to={`/products/${product._id}`}><button className="bg-white text-blue-500 px-6 py-2 rounded-full mb-2 font-semibold hover:bg-gray-100 transition-colors">
                 Buy Now
-              </button>
+              </button></Link>
               <p className="font-semibold text-lg">${product.price.perUnit}</p>
             </div>
           ))}
@@ -56,14 +56,14 @@ export default function ProductPage() {
               key={product.id}
               className="bg-white rounded-2xl p-4 flex flex-col items-center shadow"
             >
-              <div className="w-fit h-fit mb-2">
+              <Link to={`/products/${product._id}`}><div className="w-fit h-fit mb-2">
                 <img src="/dummy.jpg" alt={product.name} className="w-full h-full object-contain" />
-              </div>
+              </div></Link>
               <h3 className="font-bold text-lg text-center">{product.name}</h3>
               <p className="text-sm opacity-60 mb-2">Details space here</p>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-full mb-1">
+              <Link to={`/products/${product._id}`}><button className="bg-blue-500 text-white px-4 py-2 rounded-full mb-1">
                 Buy Now
-              </button>
+              </button></Link>
               <p className="font-semibold">${product.price.perUnit}</p>
             </div>
           ))}
