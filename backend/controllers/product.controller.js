@@ -133,6 +133,11 @@ const getProducts = async (req,res)=>{
     }
 }
 
+const getProductById = async (req,res)=>{
+    const id = req.params.id
+    
+}
+
 
 module.exports = {
     createProduct,
