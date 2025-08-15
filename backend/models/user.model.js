@@ -9,7 +9,7 @@ const userSchema = mongoose.Schema({
         required: true
     },
     otp: {
-        type: Number
+        type: String
     },
     otpExpiry: {
         type: Date
