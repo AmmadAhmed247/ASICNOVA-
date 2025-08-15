@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const ConnectToDB = require('./config/db')
 const AuthRouter = require('./routes/auth.route')
 const ContactRouter = require('./routes/contact.route')
+const ProductRouter = require('./routes/product.route')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 dotenv.config()
@@ -19,6 +20,7 @@ app.use(express.urlencoded({extended: true}))
 
 app.use('/auth', AuthRouter)
 app.use('/contact', ContactRouter)
+app.use('/product', ProductRouter)
 
 
 
