@@ -22,12 +22,20 @@ const Login = () => {
     resolver: zodResolver(loginSchema)
   })
 
-  const onFormSubmit = (data)=>{
-    loginUser(data)
-    navigate('/')
-    console.log("Submitted Data: ", data)
-  }
+ const onFormSubmit = async (data) => {
+  try {
+    const result = await loginUser(data); 
 
+    if (result && !result.error) {
+      navigate('/');
+      window.location.reload()
+    }
+
+    console.log("Submitted Data:", data);
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
+};
   return (
     <div>
       <div className='flex items-center lg:p-0 p-5 justify-center h-full mt-16'>

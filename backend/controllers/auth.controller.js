@@ -90,9 +90,9 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) return res.status(400).json({ error: "Invalid Credentials!" })
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
 
-        res.cookie("accessToken", token, { httpOnly: true })
+        res.cookie("accessToken", token)
         return res.status(200).json({ message: "Login Successful!", token })
 
     } catch (error) {

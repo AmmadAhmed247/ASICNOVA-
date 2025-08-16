@@ -1,19 +1,30 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaUserCircle, FaGlobe, FaTimes } from "react-icons/fa";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+  const { User, logout } = useContext(AuthContext)
   const profileRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Search query:", query);
   };
+
+  const onLogout = ()=>{
+    logout()
+
+    if(!logout()){
+      toast.error("Logout Failed!")
+    }
+    Navigate('/')
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -28,7 +39,7 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
-       
+
         <Link to="/" className="flex items-center">
           <img src="/logo.jpeg" alt="ASICNOVA" className="h-10 mr-2 cursor-pointer" />
         </Link>
@@ -41,9 +52,9 @@ export default function Navbar() {
           <Link to="/cart" className="hover:text-blue-600">Cart</Link>
         </div>
 
-     
+
         <div className="hidden md:flex items-center space-x-4">
-         
+
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className="flex items-center p-2 text-blue-500 rounded hover:bg-gray-100"
@@ -51,32 +62,39 @@ export default function Navbar() {
             <FaSearch className="h-6 w-6" />
           </button>
 
-          
+
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center p-2 text-blue-500 rounded hover:bg-gray-100"
+              className="flex items-center p-2 text-blue-500 rounded gap-2 hover:bg-gray-100"
             >
               <FaUserCircle className="h-6 w-6 text-blue-500" />
+              <div>{User?.fullName}</div>
             </button>
 
 
             {profileOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
-                <Link
-                  to="/login"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/signup"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  Sign Up
-                </Link>
+                {!User ? (
+                  <>
+                    <Link
+                      to="/login"
+                      className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                ) : <button type="button" className="block px-4 py-2 hover:bg-gray-100 w-full cursor-pointer" onClick={() => {setProfileOpen(false); onLogout()}}>
+                    Logout
+                </button>}
               </div>
             )}
           </div>
@@ -91,7 +109,7 @@ export default function Navbar() {
         </button>
       </div>
 
-    
+
       {isSearchOpen && (
         <div className="w-full bg-white border-t-2 border-zinc-100 py-5">
           <form onSubmit={handleSubmit} className="flex items-center justify-center w-full">
@@ -121,7 +139,7 @@ export default function Navbar() {
           <Link to="/about" className="block px-4 py-2 hover:bg-gray-50">About Us</Link>
           <Link to="/contact" className="block px-4 py-2 hover:bg-gray-50">Contact Us</Link>
           <Link to="/cart" className="block px-4 py-2 hover:bg-gray-50">Cart</Link>
-          <Link to="/signin" className="block px-4 py-2 hover:bg-gray-50">Sign In</Link>
+          <Link to="/login" className="block px-4 py-2 hover:bg-gray-50">Sign In</Link>
           <Link to="/signup" className="block px-4 py-2 hover:bg-gray-50">Sign Up</Link>
         </div>
       )}
