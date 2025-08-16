@@ -8,8 +8,8 @@ export const signupSchema = z.object({
 });
 
 export const loginSchema = z.object({
-    email: z.email(),
-    password: z.string().min(1, "Password is Required!")
+  email: z.email(),
+  password: z.string().min(1, "Password is Required!")
 })
 
 export const contactSchema = z.object({
@@ -21,3 +21,14 @@ export const contactSchema = z.object({
 export const reviewSchema = z.object({
   review: z.string().min(1, "Review Required!")
 })
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email(),
+  otp: z.string().min(6, "OTP Must Be 6 Digits").optional(),
+  password: z.string().min(5, "Atleast 5 Characters Are Required!").optional(),
+  confirmPassword: z.string().optional(),
+})
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })

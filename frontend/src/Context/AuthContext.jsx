@@ -88,9 +88,40 @@ const logout = async () => {
     }
 };
 
+const forgotPassword = async (data)=>{
+    try {
+        const response = await api.post('/auth/forgot-password', data)
+        const responseData = response.data
+
+        if(responseData.error){
+            toast.error(responseData.error)
+        } else {
+            toast.success("OTP Sent!")
+            return responseData
+        }
+    } catch (error) {
+        console.log("An Error Occured!", error)
+    }
+}
+
+const resetPassword = async (data)=>{
+    try {
+        const response = await api.post('/auth/reset-password', data)
+        const responseData = response.data
+
+        if(responseData.error){
+            toast.error(responseData.error)
+        } else {
+            toast.success("Password Reset Successful!")
+        }
+    } catch (error) {
+        console.log("An Error Occured!", error)
+    }
+}
+
 
     return (
-        <AuthContext.Provider value={{ sendOTP, verifyOTPAndPassword, loginUser, User, logout }}>
+        <AuthContext.Provider value={{ sendOTP, verifyOTPAndPassword, loginUser, User, logout, resetPassword, forgotPassword }}>
             {children}
         </AuthContext.Provider>
     )

@@ -112,9 +112,64 @@ const getProfile = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) return res.status(400).json({ error: "Email is required!" })
+
+        const user = await userModel.findOne({ email })
+        if (!user) return res.status(400).json({ error: "User not found!" })
+
+        const otp = generateOTP()
+        const otpExpiry = Date.now() + 5 * 60 * 1000
+
+        user.otp = otp
+        user.otpExpiry = otpExpiry
+        await user.save()
+
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Password Reset OTP",
+            text: `Your OTP to reset password is ${otp}`
+        })
+
+        return res.status(200).json({ message: "OTP sent to your email!" })
+    } catch (error) {
+        console.log("An Error Occurred!", error)
+        res.status(500).json({ error: "Internal Server Error!" })
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { email, otp, password } = req.body
+        if (!email || !otp || !password) return res.status(400).json({ error: "Email, OTP, and new password are required!" })
+
+        const user = await userModel.findOne({ email })
+        if (!user) return res.status(400).json({ error: "User not found!" })
+        if (user.otp !== otp) return res.status(400).json({ error: "Invalid OTP!" })
+        if (Date.now() > user.otpExpiry) return res.status(400).json({ error: "OTP Expired!" })
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+        user.password = hashedPassword
+        user.otp = undefined
+        user.otpExpiry = undefined
+        await user.save()
+
+        return res.status(200).json({ message: "Password reset successful!" })
+    } catch (error) {
+        console.log("An Error Occurred!", error)
+        res.status(500).json({ error: "Internal Server Error!" })
+    }
+}
+
+
 module.exports = {
     userRegister,
     verifyOTPAndPassword,
     loginUser,
-    getProfile
+    getProfile,
+    forgotPassword,
+    resetPassword
 }

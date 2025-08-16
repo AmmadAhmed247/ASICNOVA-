@@ -62,6 +62,7 @@ const Login = () => {
                 </div>
                 {errors.password && (<p className='text-xs text-red-600'>{errors.password.message}</p>)}
               </div>
+              <div className='flex items-center justify-end w-full mr-10'><Link to='/resetpassword' className='font-semibold text-blue-500'>Reset Password</Link></div>
               <Button type='submit' className="p-5 w-[350px] bg-blue-500 hover:bg-blue-500 cursor-pointer hover:opacity-90">Log In</Button>
             </div>
             <div className='mt-10 flex items-center justify-center bg-blue-100 w-full h-[100px]'>

@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
     otpExpiry: {
         type: Date
     },
-    password:{
+    password: {
         type: String
     },
     verified: {
@@ -23,8 +23,21 @@ const userSchema = mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
-        default: false   
-    }
+        default: false
+    },
+    cart: [
+        {
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Products',
+            },
+            quantity: {
+                type: Number,
+                default: 1,
+            },
+        }
+    ]
+
 })
 
 const User = mongoose.model('User', userSchema)
