@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Footer from '../../components/footer';
 import { useProductById } from '../../lib/hooks/useProduct';
 import { useParams } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { User, Plus, Minus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { reviewSchema } from '../../lib/schemas/schema';
@@ -50,6 +50,13 @@ export default function SinglePage() {
     reset();
   };
 
+  const increaseQuantity = () => {
+    setQuantity(prev => prev + 1);
+  };
+
+  const decreaseQuantity = () => {
+    setQuantity(prev => prev > 1 ? prev - 1 : 1);
+  };
 
   const tabs = [
     { id: 'performance', label: 'Performance Curve' },
@@ -278,7 +285,34 @@ export default function SinglePage() {
               <p className="text-xl opacity-90">
                 Payment Methods: <span className="font-semibold">{data?.paymentMethod?.join(' | ')}</span>
               </p>
-              <button className=' bg-orange-500 hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl' >Buy Now</button>
+              <div className="flex flex-col">
+                <button className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'>
+                  Buy Now
+                </button>
+                
+
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg font-medium">Quantity:</span>
+                  <div className="flex items-center bg-white rounded-lg overflow-hidden">
+                    <button
+                      onClick={decreaseQuantity}
+                      className="px-3 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+                      disabled={quantity <= 1}
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <span className="px-4 py-2 text-gray-900 font-medium min-w-[50px] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={increaseQuantity}
+                      className="px-3 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
