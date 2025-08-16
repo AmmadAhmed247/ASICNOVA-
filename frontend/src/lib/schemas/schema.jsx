@@ -17,3 +17,7 @@ export const contactSchema = z.object({
   email: z.string().email(),
   inquiry: z.string().min(1, "Inquiry is Required!")
 })
+
+export const reviewSchema = z.object({
+  review: z.string().min(1, "Review Required!")
+})

@@ -1,12 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../../components/footer';
 import { useProductById } from '../../lib/hooks/useProduct';
 import { useParams } from 'react-router-dom';
 import { User } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { reviewSchema } from '../../lib/schemas/schema';
+import { useContext } from 'react';
+import { AuthContext } from '../../Context/AuthContext'
+import { usePostReview } from '../../lib/hooks/useReview';
 
 export default function SinglePage() {
   const { id } = useParams();
   const { data, isLoading, isError } = useProductById(id);
+  const { User: currentUser } = useContext(AuthContext)
+  const postReviewMutation = usePostReview()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({
+    resolver: zodResolver(reviewSchema)
+  })
 
   const specifications = data?.specifications || {};
   const ProductGlance = specifications?.ProductGlance || {};
@@ -16,18 +33,22 @@ export default function SinglePage() {
   const [activeTab, setActiveTab] = useState('performance');
   const [quantity, setQuantity] = useState(1);
   const [newReview, setNewReview] = useState('');
-  const [customerReviewsState, setCustomerReviewsState] = useState(customerReviews || []);
+  const [customerReviewsState, setCustomerReviewsState] = useState(customerReviews);
 
+  useEffect(() => {
+    setCustomerReviewsState(customerReviews);
+  }, [customerReviews]);
 
-const handlePostReview = () => {
-  if (!newReview.trim()) return;
-  const reviewObj = {
-    name: 'Ammad',
-    review: newReview,
+  const handlePostReview = (formData) => {
+    if (!currentUser?.fullName?.trim() || !formData.review?.trim()) return;
+    const reviewObj = {
+      name: currentUser.fullName,
+      review: formData.review,
+    };
+    setCustomerReviewsState(prev => [reviewObj, ...prev])
+    postReviewMutation.mutate({id, review: reviewObj})
+    reset();
   };
-  setCustomerReviewsState([reviewObj, ...customerReviewsState]);
-  setNewReview('');
-};
 
 
   const tabs = [
@@ -169,21 +190,32 @@ const handlePostReview = () => {
                 </ul>
               </div>
             ))}
-            
-            <div className="mt-4">
-        <textarea
-          className="w-full border rounded p-2 mb-2"
-          placeholder="Write your review..."
-          value={newReview}
-          onChange={(e) => setNewReview(e.target.value)}
-        />
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={handlePostReview}
-        >
-          Post Review
-        </button>
-      </div>
+
+            {currentUser ? (
+              <>
+                <div className="mt-4">
+                  <form onSubmit={handleSubmit(handlePostReview)}>
+                    <textarea
+                      className="w-full border rounded p-2 "
+                      placeholder="Write your review..."
+                      {...register('review')}
+                    />
+                    {errors.review && (<p className='text-xs text-red-600'>{errors.review.message}</p>)}
+                    <div>
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                      onClick={handlePostReview}
+                      type='submit'
+                    >
+                      Post Review
+                    </button>
+
+                    </div>
+                  </form>
+                </div>
+
+              </>
+            ) : null}
 
           </div>
         );
