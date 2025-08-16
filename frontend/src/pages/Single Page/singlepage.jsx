@@ -45,7 +45,6 @@ export default function SinglePage() {
       case 'specifications':
         return (
           <div className="space-y-6">
-            {/* Product Glance */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="bg-gray-50 px-4 py-3 border-b">
                 <h3 className="font-semibold">Product Glance</h3>
@@ -62,7 +61,6 @@ export default function SinglePage() {
               </div>
             </div>
 
-            {/* Hardware Configuration */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="bg-gray-50 px-4 py-3 border-b">
                 <h3 className="font-semibold">Hardware Configuration</h3>
@@ -77,7 +75,6 @@ export default function SinglePage() {
               </div>
             </div>
 
-            {/* Environment Requirements */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="bg-gray-50 px-4 py-3 border-b">
                 <h3 className="font-semibold">Environment Requirements</h3>
@@ -92,7 +89,7 @@ export default function SinglePage() {
               </div>
             </div>
 
-            {/* Power Supply */}
+
             {ProductGlance.PowerSupply && Object.keys(ProductGlance.PowerSupply).length > 0 && (
               <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div className="bg-gray-50 px-4 py-3 border-b">
@@ -220,6 +217,7 @@ export default function SinglePage() {
               <p className="text-xl opacity-90">
                 Payment Methods: <span className="font-semibold">{data?.paymentMethod?.join(' | ')}</span>
               </p>
+              <button className=' bg-orange-500 hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl' >Buy Now</button>
             </div>
           </div>
         </div>

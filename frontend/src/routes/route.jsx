@@ -7,7 +7,7 @@ import Login from "../pages/Auth/Login.jsx";
 import SignUp from "../pages/Auth/SignUp.jsx";
 import AboutUs from "../pages/AboutUs/AboutUs.jsx";
 import ContactSalesPage from "../pages/Contact/Contact.jsx";
-
+import Admin from "../pages/Admin/Admin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +20,7 @@ const router = createBrowserRouter([
       { path: '/signup', element: <SignUp /> },
       { path: '/about', element: <AboutUs /> },
       { path: '/contact', element: <ContactSalesPage /> },
+      { path: '/admin', element: <Admin /> },
       { path: '/products/:id', element: <Singlepage /> },
     ]
   }
