@@ -15,6 +15,20 @@ export default function SinglePage() {
   const customerReviews = data?.customerReviews || [];
   const [activeTab, setActiveTab] = useState('performance');
   const [quantity, setQuantity] = useState(1);
+  const [newReview, setNewReview] = useState('');
+  const [customerReviewsState, setCustomerReviewsState] = useState(customerReviews || []);
+
+
+const handlePostReview = () => {
+  if (!newReview.trim()) return;
+  const reviewObj = {
+    name: 'Ammad',
+    review: newReview,
+  };
+  setCustomerReviewsState([reviewObj, ...customerReviewsState]);
+  setNewReview('');
+};
+
 
   const tabs = [
     { id: 'performance', label: 'Performance Curve' },
@@ -139,7 +153,7 @@ export default function SinglePage() {
               <h3 className="text-lg font-semibold mb-4">Customer Reviews</h3>
             </div>
 
-            {customerReviews.map((review, id) => (
+            {customerReviewsState.map((review, id) => (
               <div>
                 <ul className=''>
                   <li className='flex flex-col mb-10 justify-center  gap-2'>
@@ -155,6 +169,21 @@ export default function SinglePage() {
                 </ul>
               </div>
             ))}
+            
+            <div className="mt-4">
+        <textarea
+          className="w-full border rounded p-2 mb-2"
+          placeholder="Write your review..."
+          value={newReview}
+          onChange={(e) => setNewReview(e.target.value)}
+        />
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          onClick={handlePostReview}
+        >
+          Post Review
+        </button>
+      </div>
 
           </div>
         );
