@@ -9,7 +9,6 @@ export const AuthContext = createContext({})
 export default function AuthContextProvider({ children }) {
 
     const [User, setUser] = useState(undefined)
-    console.log(User)
 
     const sendOTP = async (data) => {
         try {
@@ -104,7 +103,7 @@ const forgotPassword = async (data)=>{
     }
 }
 
-const resetPassword = async (data)=>{
+const resetPassword = async (data, navigate)=>{
     try {
         const response = await api.post('/auth/reset-password', data)
         const responseData = response.data
@@ -113,6 +112,7 @@ const resetPassword = async (data)=>{
             toast.error(responseData.error)
         } else {
             toast.success("Password Reset Successful!")
+            navigate('/login')
         }
     } catch (error) {
         console.log("An Error Occured!", error)

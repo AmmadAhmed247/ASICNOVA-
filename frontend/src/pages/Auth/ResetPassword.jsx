@@ -27,6 +27,7 @@ const ResetPassword = () => {
 const onFormSubmit = async (data) => {
   if (!isOtpSent && !isResetMode) {
     await forgotPassword({ email: data.email })
+    
     setIsOtpSent(true)
   } else if (isOtpSent && !isResetMode) {
     setIsResetMode(true)
@@ -39,8 +40,7 @@ const onFormSubmit = async (data) => {
       email: data.email,
       otp: data.otp,
       password: data.password
-    })
-    navigate('/login')
+    }, navigate)
   }
 }
 
