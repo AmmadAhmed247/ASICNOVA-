@@ -12,6 +12,7 @@ import Unauthorized from "../pages/Error Pages/Unauthorized.jsx";
 import NotFound from "../pages/Error Pages/NotFound.jsx";
 import ProtectedRoute from "./protected-route.jsx";
 import ResetPassword from "../pages/Auth/ResetPassword.jsx";
+import Checkout from "../pages/CheckoutPage/Checkout.jsx";
 const router = createBrowserRouter([
   {
     path: '/',
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <SignUp /> },
       { path: '/resetpassword', element: <ResetPassword /> },
+      { path: '/checkout', element: <Checkout /> },
       { path: '/about', element: <AboutUs /> },
       { path: '/contact', element: <ContactSalesPage /> },
       {

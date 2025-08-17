@@ -113,7 +113,7 @@ const Footer = ({className}) => {
           </div>
           <div className="text-center pt-8">
             <div className="flex items-center justify-center space-x-2 text-blue-400 font-bold text-xl mb-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                 <Zap className="w-4 h-4 text-white" />
               </div>
               <span>ASICNOVA</span>

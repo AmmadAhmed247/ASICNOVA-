@@ -24,6 +24,10 @@ app.use('/contact', ContactRouter)
 app.use('/product', ProductRouter)
 app.use('/cart', CartRouter)
 
+app.get("/",()=>{
+    console.log("server is running on ngrok");
+    
+})
 
 
 app.listen(3000, (req,res)=>{

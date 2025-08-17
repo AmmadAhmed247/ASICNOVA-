@@ -7,7 +7,7 @@ import { useProducts } from '../../lib/hooks/useProduct';
 const MiningWebsite = () => {
   const [animateCards, setAnimateCards] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const {data, isLoading, isError} = useProducts()
+  const { data, isLoading, isError } = useProducts()
   const products = data?.products || [];
   console.log(products)
 
@@ -100,15 +100,15 @@ const MiningWebsite = () => {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      <div className="bg-gradient-to-b from-gray-100 to-gray-200 py-16">
+      <div className="bg-gradient-to-b from-gray-100 to-white py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800">
-            Mine Smarter. <span className="text-blue-500">Earn Faster.</span>
+            Mine Smarter. <span className="text-blue-500 bg-gradient-to-b ">Earn Faster.</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-4 max-w-3xl mx-auto">
+          <p className="text-xl text-zinc-600 mb-4 max-w-3xl mx-auto">
             Unlock the power of high-performance Bitcoin mining with secure, scalable, and energy-efficient solutions.
           </p>
-          <p className="text-gray-500 mb-8">
+          <p className="text-zinc-500 mb-8">
             Start mining today with our advanced products — no technical skills required.
           </p>
         </div>
@@ -125,15 +125,17 @@ const MiningWebsite = () => {
             >
 
               <div className={`bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 h-64 relative overflow-hidden flex items-center justify-center`}>
-                <img
-                  src={product.images[0] || ""}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
-                  }}
-                />
+               
+<div className="bg-white  w-full max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl p-4 sm:p-6 md:p-8 lg:p-12 xl:p-20 mx-auto">
+  <img
+    src={product.images[0] || "/dummy.jpg"}
+    alt={product.name}
+    className="w-full h-auto aspect-square rounded-2xl object-cover"
+    onError={(e) => {
+      e.target.src = "/dummy.jpg";
+    }}
+  />
+</div>
                 <div className="w-32 h-32 bg-white/20 rounded-xl mx-auto mb-4 items-center justify-center" style={{ display: 'none' }}>
                   <div className="w-20 h-20 bg-white/30 rounded-lg flex items-center justify-center">
                     <Zap className="w-10 h-10 text-white" />
@@ -200,7 +202,7 @@ const MiningWebsite = () => {
             </p>
           </div>
 
-          <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl overflow-hidden shadow-xl max-w-6xl mx-auto">
+          <div className="relative bg-gradient-to-r from-blue-400 to-blue-500 rounded-3xl overflow-hidden shadow-xl max-w-6xl mx-auto">
             <button
               type='button'
               onClick={prevSlide}
@@ -237,10 +239,11 @@ const MiningWebsite = () => {
 
               <div className="h-80 md:h-96 relative flex items-center justify-center p-8">
                 <img
+                
                   key={currentSlide}
                   src={popularProduct.image}
                   alt={popularProduct.name}
-                  className="w-full h-full object-cover rounded-2xl shadow-lg transition-all duration-500 transform hover:scale-105"
+                  className="w-fit h-fit object-cover rounded-2xl shadow-lg transition-all duration-500 transform hover:scale-105"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextSibling.style.display = 'flex';

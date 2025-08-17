@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { reviewSchema } from '../../lib/schemas/schema';
 import { useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContext'
+import { Link } from 'react-router-dom';
 import { usePostReview } from '../../lib/hooks/useReview';
 
 export default function SinglePage() {
@@ -256,11 +257,11 @@ export default function SinglePage() {
       <section className="bg-gradient-to-br from-blue-500 to-blue-400 mx-4 my-8 rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-8 py-15">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
+            <div className="bg-white rounded-2xl flex items-center justify-center p-8 shadow-lg">
               <img
-                src="/dummy.jpg"
+                src={data.images}
                 alt={data?.name}
-                className="w-full h-64 object-cover rounded-lg"
+                className="w-80  object-cover  rounded-lg"
               />
             </div>
             <div className="text-white space-y-6">
@@ -286,9 +287,9 @@ export default function SinglePage() {
                 Payment Methods: <span className="font-semibold">{data?.paymentMethod?.join(' | ')}</span>
               </p>
               <div className="flex flex-col">
-                <button className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'>
+                <Link to="/checkout" className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'>
                   Buy Now
-                </button>
+                </Link>
                 
 
                 <div className="flex items-center space-x-4">

@@ -20,7 +20,7 @@ export default function ProductPage() {
               key={product.id}
               className="bg-blue-500 rounded-3xl p-6 text-white flex flex-col items-center shadow-lg hover:scale-105 transition-transform duration-300"
             >
-              <div className="w-full h-80 mb-4">
+              <div className="w-full p-10 bg-white rounded-2xl h-fit mb-4">
                 <Link to={`/products/${product._id}`} >
                 <img
                   src={product.images[0] || '/dummy.jpg'}
@@ -41,7 +41,7 @@ export default function ProductPage() {
               <Link to={`/products/${product._id}`}><button className="bg-white text-blue-500 px-6 py-2 rounded-full mb-2 font-semibold hover:bg-gray-100 transition-colors">
                 Buy Now
               </button></Link>
-              <p className="font-semibold text-lg">${product.price.perUnit}</p>
+              <p className="font-semibold text-lg">${product.price?.perUnit ?? 'N/A' }</p>
             </div>
           ))}
         </div>
@@ -64,7 +64,7 @@ export default function ProductPage() {
               <Link to={`/products/${product._id}`}><button className="bg-blue-500 text-white px-4 py-2 rounded-full mb-1">
                 Buy Now
               </button></Link>
-              <p className="font-semibold">${product.price.perUnit}</p>
+              <p className="font-semibold">${product.price?.perUnit ?? "N/A"}</p>
             </div>
           ))}
         </div>
