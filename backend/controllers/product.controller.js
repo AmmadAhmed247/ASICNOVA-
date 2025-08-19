@@ -1,14 +1,14 @@
 const productModel = require('../models/product.model')
 const multer = require('multer')
 
-const storage = multer.diskStorage({ 
-    destination: function (req, file, cb) { 
-        cb(null, 'uploads/') 
-    }, 
-    filename: function (req, file, cb) { 
-        cb(null, Date.now() + '-' + file.originalname) 
-    } 
-}) 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+})
 
 const upload = multer({ storage })
 
@@ -27,10 +27,12 @@ const createProduct = async (req, res) => {
             price,
             specifications,
             purchasingGuideLines,
+            cryptoAddresses,
+            expectedAmounts
         } = req.body;
 
         if (typeof paymentMethod === 'string') {
-            paymentMethod = paymentMethod.split(','); 
+            paymentMethod = paymentMethod.split(',');
         }
 
         if (typeof price === 'string') {
@@ -39,6 +41,17 @@ const createProduct = async (req, res) => {
 
         if (typeof specifications === 'string') {
             specifications = JSON.parse(specifications);
+        }
+
+        if (typeof cryptoAddresses === 'string') {
+            cryptoAddresses = JSON.parse(cryptoAddresses);
+        }
+
+        if (typeof expectedAmounts === 'string') {
+            const parsedAmounts = JSON.parse(expectedAmounts);
+            expectedAmounts = {
+                BTC: Number(parsedAmounts.BTC) || 0
+            };
         }
 
         const files = req.files;
@@ -54,6 +67,8 @@ const createProduct = async (req, res) => {
             price,
             specifications,
             purchasingGuideLines,
+            cryptoAddresses,
+            expectedAmounts
         });
 
         return res.status(200).json({

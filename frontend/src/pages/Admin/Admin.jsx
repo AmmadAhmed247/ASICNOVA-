@@ -187,6 +187,20 @@ export default function Admin() {
         name: "purchasingGuidelines"
     });
 
+    useEffect(() => {
+        if (selectedProduct) {
+            reset({
+                name: selectedProduct.name || '',
+                functionType: selectedProduct.functionType || '',
+                cryptoAddresses: selectedProduct.cryptoAddresses || { BTC: '' },
+                expectedAmounts: selectedProduct.expectedAmounts || { BTC: 0 },
+                paymentMethod: selectedProduct.paymentMethod || 'BTC'
+            });
+        }
+    }, [selectedProduct, reset]);
+
+    console.log("Values: ", getValues())
+
     const ProductModal = () => {
 
 
@@ -202,14 +216,20 @@ export default function Admin() {
             formData.append('specifications', JSON.stringify(data.specifications));
             formData.append('purchasingGuidelines', JSON.stringify(data.purchasingGuidelines));
 
-            formData.append(
-                'cryptoAddresses',
-                JSON.stringify({ BTC: data.cryptoAddresses.BTC || "12345" })
-            );
-            formData.append(
-                'expectedAmounts',
-                JSON.stringify({ BTC: data.expectedAmounts.BTC || 0 })
-            );
+            const cryptoAddresses = {
+                BTC: data.cryptoAddresses?.BTC || data.cryptoAddresses?.BTC === '' ? data.cryptoAddresses.BTC : "default-address"
+            };
+
+          const expectedAmounts = {
+        BTC: Number(data.expectedAmounts?.BTC) || 0  
+    };5
+
+
+            console.log("Crypto addresses to send:", cryptoAddresses);
+            console.log("Expected amounts to send:", expectedAmounts);
+
+            formData.append('cryptoAddresses', JSON.stringify(cryptoAddresses));
+            formData.append('expectedAmounts', JSON.stringify(expectedAmounts));
 
             data.images?.forEach((file) => {
                 formData.append('images', file);
@@ -550,7 +570,13 @@ export default function Admin() {
                                                 type="number"
                                                 placeholder="Expected Amount"
                                                 className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
-                                                {...register('expectedAmounts.BTC')}
+                                                {...register('expectedAmounts.BTC', {
+                                                    valueAsNumber: true,
+                                                    setValueAs: (value)=>{
+                                                        const num = parseFloat(value)
+                                                        return isNaN(num) ? 0 : num
+                                                    }
+                                                })}
                                             />
                                             {errors.expectedAmounts?.BTC && <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>}
                                         </div>

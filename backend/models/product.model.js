@@ -62,11 +62,11 @@ const productSchema = new mongoose.Schema({
         enum: ['Active', 'Inactive', 'Out Of Stock']
     },
     cryptoAddresses: {
-        BTC: { type: String },
+        BTC: { type: String, required: true },
 
     },
     expectedAmounts: {
-        BTC: { type: Number },
+        BTC: { type: Number, required: true },
 
     }
 });
