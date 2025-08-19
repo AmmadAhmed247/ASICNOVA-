@@ -60,19 +60,18 @@ const productSchema = new mongoose.Schema({
     stock: { type: Number },
     status: {
         type: String,
-        enum: ['Active', 'Inactive', 'Out Of Stock'],
-        default: 'Inactive'
+        enum: ['Active', 'Inactive', 'Out Of Stock']
     },
-    cryptoAddresses: {
-        BTC: { type: String, required: true },
-        ETH: { type: String, required: true },
+    // cryptoAddresses: {
+    //     BTC: { type: String, required: true },
+    //     ETH: { type: String, required: true },
 
-    },
-    expectedAmounts: {
-        BTC: { type: Number, required: true },
-        ETH: { type: Number, required: true },
+    // },
+    // expectedAmounts: {
+    //     BTC: { type: Number, required: true },
+    //     ETH: { type: Number, required: true },
 
-    }
+    // }
 });
 
 const productModel = mongoose.model('Products', productSchema);
