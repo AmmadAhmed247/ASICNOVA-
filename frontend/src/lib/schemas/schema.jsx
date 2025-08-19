@@ -57,7 +57,7 @@ export const ProductSchema = z.object({
   stock: z.coerce.number().min(0),
   status: z.enum(["Active", "Inactive", "Out Of Stock"]),
 
-   paymentMethod: z
+  paymentMethod: z
     .union([
       z.string().transform((val) =>
         val
@@ -100,5 +100,11 @@ export const ProductSchema = z.object({
   }),
 
   purchasingGuidelines: z.array(z.string().min(1, "Cannot be empty")).optional(),
-  images: z.array(z.string()).optional(),
+  images: z.array(z.instanceof(File)).optional(),
+  cryptoAddresses: z.object({
+    BTC: z.string().min(1, "BTC address is required"),
+  }),
+  expectedAmounts: z.object({
+    BTC: z.coerce.number().min(0, "BTC expected amount is required"),
+  }),
 });

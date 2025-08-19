@@ -1,9 +1,23 @@
 const productModel = require('../models/product.model')
+const multer = require('multer')
+
+const storage = multer.diskStorage({ 
+    destination: function (req, file, cb) { 
+        cb(null, 'uploads/') 
+    }, 
+    filename: function (req, file, cb) { 
+        cb(null, Date.now() + '-' + file.originalname) 
+    } 
+}) 
+
+const upload = multer({ storage })
+
+
 
 
 const createProduct = async (req, res) => {
     try {
-        const {
+        let {
             name,
             functionType,
             type,
@@ -13,8 +27,22 @@ const createProduct = async (req, res) => {
             price,
             specifications,
             purchasingGuideLines,
-            notes
         } = req.body;
+
+        if (typeof paymentMethod === 'string') {
+            paymentMethod = paymentMethod.split(','); 
+        }
+
+        if (typeof price === 'string') {
+            price = JSON.parse(price);
+        }
+
+        if (typeof specifications === 'string') {
+            specifications = JSON.parse(specifications);
+        }
+
+        const files = req.files;
+        const imagesPath = files.map(file => file.path);
 
         const newProduct = await productModel.create({
             name,
@@ -22,11 +50,10 @@ const createProduct = async (req, res) => {
             type,
             shippingDate,
             paymentMethod,
-            images,
+            images: imagesPath,
             price,
             specifications,
             purchasingGuideLines,
-            notes
         });
 
         return res.status(200).json({
@@ -166,5 +193,6 @@ module.exports = {
     getProducts,
     getProductById,
     editProduct,
-    deleteProduct
+    deleteProduct,
+    upload
 }

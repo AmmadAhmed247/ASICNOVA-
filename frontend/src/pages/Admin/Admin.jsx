@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Plus,
     Edit3,
@@ -79,6 +79,7 @@ export default function Admin() {
     const products = data?.products
     const editProductMutation = useEditProduct()
     const deleteProductMutation = useDeleteProduct()
+    const [SelectedFile, setSelectedFile] = useState([])
 
     const {
         register,
@@ -96,10 +97,16 @@ export default function Admin() {
         defaultValues: {
             name: '',
             functionType: '',
-            price: { perUnit: 0, perGram: 0 },
             stock: 0,
             status: 'Inactive',
-            paymentMethod: '',
+            price: { perUnit: 0, perGram: 0 },
+            cryptoAddresses: {
+                BTC: '',
+            },
+            expectedAmounts: {
+                BTC: 0,
+            },
+            paymentMethod: [],
             specifications: {
                 ProductGlance: {
                     modelName: '',
@@ -109,21 +116,21 @@ export default function Admin() {
                     phase: '',
                     maxCurrent: '',
                     inputVoltage: '',
-                    inputFrequency: ''
+                    inputFrequency: '',
                 },
                 HardwareConfiguration: {
                     networkConnectionMode: '',
                     serverSizeWithoutPackage: '',
                     serverSizeWithPackage: '',
                     netWeight: '',
-                    grossWeight: ''
+                    grossWeight: '',
                 },
                 EnvironmentRequirements: {
                     siteCoolantTemperature: '',
                     coolantFlow: '',
                     coolantPressure: '',
                     workingCoolant: '',
-                    diameterOfCoolantPipeConnector: ''
+                    diameterOfCoolantPipeConnector: '',
                 }
             },
             purchasingGuidelines: [],
@@ -134,6 +141,20 @@ export default function Admin() {
     console.log("Values: ", getValues())
 
     console.log("Form Validation errors: ", errors)
+
+    const fileInputRef = useRef(null)
+
+    const handleFile = () => {
+        if (fileInputRef.current) {
+            fileInputRef?.current?.click()
+        }
+    }
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files)
+        setValue('images', files)
+        setSelectedFile(files)
+    }
 
     const tabs = [
         { id: 'dashboard', label: 'Dashboard', icon: Settings },
@@ -171,21 +192,42 @@ export default function Admin() {
 
 
         const onFormSubmit = async (data) => {
-            console.log("Submitted Data: ", data);
+            const formData = new FormData();
+
+            formData.append('name', data.name);
+            formData.append('functionType', data.functionType);
+            formData.append('paymentMethod', JSON.stringify(data.paymentMethod));
+            formData.append('status', data.status || 'Inactive');
+            formData.append('stock', data.stock || 0);
+            formData.append('price', JSON.stringify(data.price));
+            formData.append('specifications', JSON.stringify(data.specifications));
+            formData.append('purchasingGuidelines', JSON.stringify(data.purchasingGuidelines));
+
+            formData.append(
+                'cryptoAddresses',
+                JSON.stringify({ BTC: data.cryptoAddresses.BTC })
+            );
+            formData.append(
+                'expectedAmounts',
+                JSON.stringify({ BTC: data.expectedAmounts.BTC })
+            );
+
+            data.images?.forEach((file) => {
+                formData.append('images', file);
+            });
 
             if (!selectedProduct) {
-                const result = await addProductMutation.mutateAsync(data);
-                console.log("Product Created:", result);
-                toast.success("Product Created!")
+                await addProductMutation.mutateAsync(formData);
+                toast.success("Product Created!");
             } else {
-                await editProductMutation.mutateAsync({ id: selectedProduct._id, data })
-                toast.success("Product Edited!")
+                await editProductMutation.mutateAsync({ id: selectedProduct._id, data: formData });
+                toast.success("Product Edited!");
             }
+
             setShowProductModal(false);
             setSelectedProduct(null);
             reset();
         };
-
 
         if (isLoading) return <p>Loading...</p>
         if (isError) return <p>Error</p>
@@ -488,76 +530,110 @@ export default function Admin() {
                                     </div>
                                 </div>
 
-                                {/* Purchasing Guidelines */}
+                                {/* Crypto Wallet Address */}
                                 <div className="bg-gray-50 p-4 rounded-lg">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <h4 className="font-medium">Purchasing Guidelines</h4>
-                                        <button
-                                            type="button"
-                                            onClick={() => append("")}
-                                            className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1"
-                                        >
-                                            <Plus size={16} />
-                                            Add Guideline
-                                        </button>
+                                    <h4 className="font-medium mb-3">Crypto Wallet Address</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Bitcoin Wallet Address"
+                                                className={`w-full p-2 border rounded ${errors.cryptoAddresses?.BTC ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('cryptoAddresses.BTC')}
+                                            />
+                                            {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Expected Amount"
+                                                className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('expectedAmounts.BTC')}
+                                            />
+                                            {errors.expectedAmounts?.BTC && <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>}
+                                        </div>
+
+                                        <div>
+
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        {fields.map((field, index) => (
-                                            <div key={field.id} className="flex gap-2">
-                                                <textarea
-                                                    {...register(`purchasingGuidelines.${index}`)}
-                                                    defaultValue={field.value ?? ""}
-                                                    placeholder={`Purchasing Guideline ${index + 1}`}
-                                                    className="flex-1 p-2 border rounded resize-none"
-                                                    rows="2"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => remove(index)}
-                                                    className="text-red-600 hover:text-red-700 p-2"
-                                                >
-                                                    <X size={16} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    {/* Purchasing Guidelines */}
+                                    <div className="bg-gray-50 p-4 rounded-lg">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <h4 className="font-medium">Purchasing Guidelines</h4>
+                                            <button
+                                                type="button"
+                                                onClick={() => append("")}
+                                                className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1"
+                                            >
+                                                <Plus size={16} />
+                                                Add Guideline
+                                            </button>
+                                        </div>
 
-                                    {errors.purchasingGuidelines && (
-                                        <p className="text-red-500 text-sm mt-1">
-                                            {errors.purchasingGuidelines.message}
-                                        </p>
-                                    )}
+                                        <div className="space-y-3">
+                                            {fields.map((field, index) => (
+                                                <div key={field.id} className="flex gap-2">
+                                                    <textarea
+                                                        {...register(`purchasingGuidelines.${index}`)}
+                                                        defaultValue={field.value ?? ""}
+                                                        placeholder={`Purchasing Guideline ${index + 1}`}
+                                                        className="flex-1 p-2 border rounded resize-none"
+                                                        rows="2"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => remove(index)}
+                                                        className="text-red-600 hover:text-red-700 p-2"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {errors.purchasingGuidelines && (
+                                            <p className="text-red-500 text-sm mt-1">
+                                                {errors.purchasingGuidelines.message}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Image Upload */}
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Product Image</label>
+                                    <div className="border-dashed border-2 border-gray-300 p-6 rounded-lg text-center">
+                                        <Upload onClick={handleFile} className="mx-auto mb-2" size={48} />
+                                        <p className="text-gray-500">Click to upload or drag and drop</p>
+                                        <input ref={fileInputRef} onChange={handleFileChange} type="file" className="hidden" accept="image/*" />
+                                    </div>
+                                    {SelectedFile.map((file)=> (
+                                        <div className='p-2 w-[100px] mt-5 bg-gray-200 rounded-3xl'>{file.name}</div>
+                                    ))}
                                 </div>
                             </div>
 
-                            {/* Image Upload */}
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Product Image</label>
-                                <div className="border-dashed border-2 border-gray-300 p-6 rounded-lg text-center">
-                                    <Upload className="mx-auto mb-2" size={48} />
-                                    <p className="text-gray-500">Click to upload or drag and drop</p>
-                                    <input type="file" className="hidden" accept="image/*" />
-                                </div>
+                            <div className="p-6 border-t flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowProductModal(false)}
+                                    className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                                >
+                                    <Save size={16} />
+                                    Save Product
+                                </button>
                             </div>
                         </div>
 
-                        <div className="p-6 border-t flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={() => setShowProductModal(false)}
-                                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-                            >
-                                <Save size={16} />
-                                Save Product
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -873,7 +949,7 @@ export default function Admin() {
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {filteredProducts.map((product) => (
-                                
+
                                 <tr key={product.id} className="hover:bg-gray-50">
                                     {console.log(product)}
                                     <td className="px-6 py-4 whitespace-nowrap">
