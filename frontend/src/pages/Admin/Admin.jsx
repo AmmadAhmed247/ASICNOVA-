@@ -182,7 +182,6 @@ export default function Admin() {
 
 
 
-
     const { fields, append, remove } = useFieldArray({
         control,
         name: "purchasingGuidelines"
@@ -548,7 +547,7 @@ export default function Admin() {
 
                                         <div>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 placeholder="Expected Amount"
                                                 className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
                                                 {...register('expectedAmounts.BTC')}

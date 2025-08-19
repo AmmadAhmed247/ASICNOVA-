@@ -49,8 +49,6 @@ const productSchema = new mongoose.Schema({
     shippingDate: Date,
     paymentMethod: [{
         type: String,
-        enum: ['BTC'],
-        default: ['BTC']
     }],
     price: priceSchema,
     images: [String],
@@ -64,11 +62,11 @@ const productSchema = new mongoose.Schema({
         enum: ['Active', 'Inactive', 'Out Of Stock']
     },
     cryptoAddresses: {
-        BTC: { type: String, required: true },
+        BTC: { type: String },
 
     },
     expectedAmounts: {
-        BTC: { type: Number, required: true },
+        BTC: { type: Number },
 
     }
 });
