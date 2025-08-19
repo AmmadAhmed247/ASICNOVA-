@@ -205,11 +205,11 @@ export default function Admin() {
 
             formData.append(
                 'cryptoAddresses',
-                JSON.stringify({ BTC: data.cryptoAddresses.BTC })
+                JSON.stringify({ BTC: data.cryptoAddresses.BTC || "12345" })
             );
             formData.append(
                 'expectedAmounts',
-                JSON.stringify({ BTC: data.expectedAmounts.BTC })
+                JSON.stringify({ BTC: data.expectedAmounts.BTC || 0 })
             );
 
             data.images?.forEach((file) => {
@@ -318,14 +318,16 @@ export default function Admin() {
 
                             {/* Payment Methods */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Payment Methods</label>
-                                <input
-                                    type="text"
-                                    placeholder="Comma separated (e.g., USD, LTC, BTC, ETC)"
+                                <label className="block text-sm font-medium mb-2">Payment Method</label>
+                                <select
                                     className={`w-full p-3 border rounded-lg ${errors.paymentMethod ? 'border-red-500' : 'border-gray-300'}`}
                                     {...register('paymentMethod')}
-                                />
-                                {errors.paymentMethod && <p className="text-red-500 text-sm mt-1">{errors.paymentMethod.message}</p>}
+                                >
+                                    <option value="BTC">BTC</option>
+                                </select>
+                                {errors.paymentMethod && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.paymentMethod.message}</p>
+                                )}
                             </div>
 
                             {/* Specifications */}
@@ -610,7 +612,7 @@ export default function Admin() {
                                         <p className="text-gray-500">Click to upload or drag and drop</p>
                                         <input ref={fileInputRef} onChange={handleFileChange} type="file" className="hidden" accept="image/*" />
                                     </div>
-                                    {SelectedFile.map((file)=> (
+                                    {SelectedFile.map((file) => (
                                         <div className='p-2 w-[100px] mt-5 bg-gray-200 rounded-3xl'>{file.name}</div>
                                     ))}
                                 </div>

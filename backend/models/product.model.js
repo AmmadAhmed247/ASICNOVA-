@@ -49,7 +49,8 @@ const productSchema = new mongoose.Schema({
     shippingDate: Date,
     paymentMethod: [{
         type: String,
-        enum: ['USD', 'LTC', 'BTC', 'ETH']
+        enum: ['BTC'],
+        default: ['BTC']
     }],
     price: priceSchema,
     images: [String],
@@ -64,12 +65,10 @@ const productSchema = new mongoose.Schema({
     },
     cryptoAddresses: {
         BTC: { type: String, required: true },
-        ETH: { type: String, required: true },
 
     },
     expectedAmounts: {
         BTC: { type: Number, required: true },
-        ETH: { type: Number, required: true },
 
     }
 });
