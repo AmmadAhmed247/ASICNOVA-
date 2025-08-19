@@ -162,6 +162,10 @@ const editProduct = async (req, res) => {
         const id = req.params.id;
         const updates = req.body;
 
+        if (req.files && req.files.length > 0) {
+            updates.images = req.files.map(file => file.path);
+        }
+
         const updatedProduct = await productModel.findByIdAndUpdate(id, updates, { new: true });
 
         if (!updatedProduct) {

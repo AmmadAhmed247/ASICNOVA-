@@ -2,30 +2,58 @@ const userModel = require('../models//user.model')
 const productModel = require('../models/product.model')
 
 const addToCart = async (req, res) => {
-    try {
-        const userId = req.user.id
-        const { productId, quantity } = req.body
+  try {
+        const userId = req.user.id;
+        const { productId, quantity } = req.body;
 
-        const user = await userModel.findById(userId)
+        console.log("Add to cart request:", { userId, productId, quantity });
 
-        if (!user) return res.status(404).json({ error: "User Not Found!" })
+        if (!productId || !quantity) {
+            return res.status(400).json({ error: "Product ID and quantity are required!" });
+        }
 
-        const itemIndex = user.cart.findIndex(item => item.product.toString() === productId)
+        const productExists = await productModel.findById(productId);
+        if (!productExists) {
+            return res.status(404).json({ error: "Product not found!" });
+        }
+
+        console.log("Product exists:", productExists.name);
+
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        const itemIndex = user.cart.findIndex(item => 
+            item.product && item.product.toString() === productId
+        );
 
         if (itemIndex > -1) {
             user.cart[itemIndex].quantity += quantity;
         } else {
-            user.cart.push({ product: productId, quantity })
+            user.cart.push({ 
+                product: productId, 
+                quantity: parseInt(quantity) 
+            });
         }
 
-        await user.save()
-        await user.populate('cart.product')
+        await user.save();
+        
+        await user.populate('cart.product');
 
-        res.status(200).json(user.cart)
+        console.log("Cart after population:", user.cart);
+
+        res.status(200).json({
+            message: "Product added to cart successfully",
+            cart: user.cart
+        });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error adding to cart' });
+        console.error("Add to cart error:", error);
+        res.status(500).json({ 
+            message: 'Error adding to cart',
+            error: error.message 
+        });
     }
 };
 
