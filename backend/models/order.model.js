@@ -1,15 +1,11 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 const OrderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
-  items: [{
-    productId: String,
-    name: String,
-    qty: Number,
-    priceUSD: Number
-  }],
+  items: [{ productId: String, name: String, qty: Number, priceUSD: Number }],
   totalUSD: { type: Number, required: true },
 
-  selectedCoin: { type: String, enum: ["BTC","ETH","USDT"], required: true },
+  selectedCoin: { type: String, enum: ["BTC","ETH"], required: true },
   cryptoAmountLocked: { type: String }, 
   rateAtQuote: { type: Number },       
   quoteExpiresAt: { type: Date },
@@ -30,4 +26,4 @@ OrderSchema.pre("save", function(next){
   next();
 });
 
-export default mongoose.model("Order", OrderSchema);
+module.exports = mongoose.model("Order", OrderSchema);
