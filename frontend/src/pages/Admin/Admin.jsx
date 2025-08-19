@@ -19,47 +19,15 @@ import {
     Mail,
     Settings
 } from 'lucide-react';
+import { AuthContext } from '../../Context/AuthContext';
+import { useContext } from 'react';
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ProductSchema } from '../../lib/schemas/schema';
+import { useFieldArray } from "react-hook-form";
+import { addProduct } from '../../lib/hooks/useProduct';
+import { useProducts } from '../../lib/hooks/useProduct';
 
-const mockProducts = [
-    {
-        id: 1,
-        name: "Bitcoin Miner S19 Pro",
-        functionType: "Bitcoin Mining",
-        price: { perGram: 299, perUnit: 2999 },
-        paymentMethod: ["Bitcoin", "USDT", "Bank Transfer"],
-        specifications: {
-            ProductGlance: {
-                inputVoltage: { min: 220, max: 240 },
-                inputFrequency: { min: 50, max: 60 },
-                hashRate: "110 TH/s",
-                powerConsumption: "3250W"
-            },
-            HardwareConfiguration: {
-                chipType: "BM1398",
-                numberOfChips: 189
-            },
-            EnvironmentRequirements: {
-                operatingTemperature: { min: 5, max: 40 },
-                humidity: { min: 5, max: 95 }
-            }
-        },
-        customerReviews: [
-            { name: "John Doe", review: "Excellent performance and reliability!" },
-            { name: "Jane Smith", review: "Great value for money" }
-        ],
-        stock: 25,
-        status: "active"
-    },
-    {
-        id: 2,
-        name: "Ethereum Miner E9 Pro",
-        functionType: "Ethereum Mining",
-        price: { perGram: 399, perUnit: 3999 },
-        paymentMethod: ["Ethereum", "USDT"],
-        stock: 12,
-        status: "active"
-    }
-];
 
 const mockOrders = [
     {
@@ -97,7 +65,6 @@ const mockOrders = [
 
 export default function Admin() {
     const [activeTab, setActiveTab] = useState('dashboard');
-    const [products, setProducts] = useState(mockProducts);
     const [orders, setOrders] = useState(mockOrders);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -105,6 +72,67 @@ export default function Admin() {
     const [showOrderModal, setShowOrderModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
+    const { User: admin } = useContext(AuthContext)
+    const addProductMutation = addProduct()
+    const { data = [], isLoading } = useProducts()
+    const products = data?.products
+    console.log(products)
+
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+        control,
+        setValue,
+        watch,
+        getValues
+    } = useForm({
+        resolver: zodResolver(ProductSchema),
+        mode: 'onSubmit',
+        reValidateMode: 'onBlur',
+        defaultValues: {
+            name: '',
+            functionType: '',
+            price: { perUnit: 0, perGram: 0 },
+            stock: 0,
+            status: 'Inactive',
+            paymentMethod: '',
+            specifications: {
+                ProductGlance: {
+                    modelName: '',
+                    hashRate: '',
+                    powerConsumption: '',
+                    algorithm: '',
+                    phase: '',
+                    maxCurrent: '',
+                    inputVoltage: '',
+                    inputFrequency: ''
+                },
+                HardwareConfiguration: {
+                    networkConnectionMode: '',
+                    serverSizeWithoutPackage: '',
+                    serverSizeWithPackage: '',
+                    netWeight: '',
+                    grossWeight: ''
+                },
+                EnvironmentRequirements: {
+                    siteCoolantTemperature: '',
+                    coolantFlow: '',
+                    coolantPressure: '',
+                    workingCoolant: '',
+                    diameterOfCoolantPipeConnector: ''
+                }
+            },
+            purchasingGuidelines: [],
+            images: []
+        }
+    })
+
+    console.log("Values: ", getValues())
+
+    console.log("Form Validation errors: ", errors)
 
     const tabs = [
         { id: 'dashboard', label: 'Dashboard', icon: Settings },
@@ -112,10 +140,17 @@ export default function Admin() {
         { id: 'orders', label: 'Orders', icon: ShoppingCart },
     ];
 
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (filterStatus === 'all' || product.status === filterStatus)
-    );
+    const filteredProducts = (products ?? []).filter(product => {
+        const matchesSearch =
+            !searchTerm ||
+            product.name?.toLowerCase().includes(searchTerm.toLowerCase())
+
+        const matchesStatus =
+            filterStatus === 'all' ||
+            product.status?.toLowerCase() === filterStatus.toLowerCase()
+
+        return matchesSearch && matchesStatus
+    })
 
     const filteredOrders = orders.filter(order =>
         (order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -123,44 +158,33 @@ export default function Admin() {
         (filterStatus === 'all' || order.status === filterStatus)
     );
 
-    const ProductModal = () => {
-        const [formData, setFormData] = useState(selectedProduct || {
-            name: '',
-            functionType: '',
-            price: { perGram: 0, perUnit: 0 },
-            paymentMethod: [],
-            specifications: {
-                ProductGlance: {},
-                HardwareConfiguration: {},
-                EnvironmentRequirements: {}
-            },
-            customerReviews: [],
-            stock: 0,
-            status: 'active'
-        });
 
-        const handleSave = () => {
+
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "purchasingGuidelines"
+    });
+
+    const ProductModal = () => {
+
+
+        const onFormSubmit = async (data) => {
+            console.log("Submitted Data: ", data);
+            await addProductMutation.mutateAsync(data)
+
             if (selectedProduct) {
-                setProducts(products.map(p => p.id === selectedProduct.id ? { ...formData, id: selectedProduct.id } : p));
+                setProducts(products.map(p => p.id === selectedProduct.id ? { ...data, id: selectedProduct.id } : p));
             } else {
-                setProducts([...products, { ...formData, id: Date.now() }]);
+                setProducts([...products, { ...data, id: Date.now() }]);
             }
             setShowProductModal(false);
             setSelectedProduct(null);
+            reset();
         };
 
-        const handleSpecificationChange = (category, key, value) => {
-            setFormData(prev => ({
-                ...prev,
-                specifications: {
-                    ...prev.specifications,
-                    [category]: {
-                        ...prev.specifications[category],
-                        [key]: value
-                    }
-                }
-            }));
-        };
+        if (isLoading) return <p>Loading...</p>
+        if (isError) return <p>Error</p>
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -169,191 +193,368 @@ export default function Admin() {
                         <h2 className="text-xl font-semibold">
                             {selectedProduct ? 'Edit Product' : 'Add New Product'}
                         </h2>
-                        <button onClick={() => setShowProductModal(false)}>
+                        <button
+                            type="button"
+                            onClick={() => setShowProductModal(false)}
+                        >
                             <X size={24} />
                         </button>
                     </div>
 
-                    <div className="p-6 space-y-6">
-             
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Product Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-3 border rounded-lg"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Function Type</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-3 border rounded-lg"
-                                    value={formData.functionType}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, functionType: e.target.value }))}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Price per Gram ($)</label>
-                                <input
-                                    type="number"
-                                    className="w-full p-3 border rounded-lg"
-                                    value={formData.price?.perGram || 0}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        price: { ...prev.price, perGram: parseFloat(e.target.value) }
-                                    }))}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Price per Unit ($)</label>
-                                <input
-                                    type="number"
-                                    className="w-full p-3 border rounded-lg"
-                                    value={formData.price?.perUnit || 0}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        price: { ...prev.price, perUnit: parseFloat(e.target.value) }
-                                    }))}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Stock</label>
-                                <input
-                                    type="number"
-                                    className="w-full p-3 border rounded-lg"
-                                    value={formData.stock}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, stock: parseInt(e.target.value) }))}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Status</label>
-                                <select
-                                    className="w-full p-3 border rounded-lg"
-                                    value={formData.status}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-                                >
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="out-of-stock">Out of Stock</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Payment Methods */}
-                        <div>
-                            <label className="block text-sm font-medium mb-2">Payment Methods</label>
-                            <input
-                                type="text"
-                                placeholder="Comma separated (e.g., Bitcoin, USDT, Bank Transfer)"
-                                className="w-full p-3 border rounded-lg"
-                                value={formData.paymentMethod?.join(', ') || ''}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    paymentMethod: e.target.value.split(',').map(s => s.trim()).filter(s => s)
-                                }))}
-                            />
-                        </div>
-
-                        {/* Specifications */}
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold">Product Specifications</h3>
-
-                            {/* Product Glance */}
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <h4 className="font-medium mb-3">Product Glance</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <form onSubmit={handleSubmit(onFormSubmit)}>
+                        <div className="p-6 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Product Name</label>
                                     <input
                                         type="text"
-                                        placeholder="Hash Rate"
-                                        className="p-2 border rounded"
-                                        value={formData.specifications?.ProductGlance?.hashRate || ''}
-                                        onChange={(e) => handleSpecificationChange('ProductGlance', 'hashRate', e.target.value)}
+                                        className={`w-full p-3 border rounded-lg ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                                        {...register('name')}
                                     />
-                                    <input
-                                        type="text"
-                                        placeholder="Power Consumption"
-                                        className="p-2 border rounded"
-                                        value={formData.specifications?.ProductGlance?.powerConsumption || ''}
-                                        onChange={(e) => handleSpecificationChange('ProductGlance', 'powerConsumption', e.target.value)}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Input Voltage (e.g., 220-240)"
-                                        className="p-2 border rounded"
-                                        value={formData.specifications?.ProductGlance?.inputVoltage?.min && formData.specifications?.ProductGlance?.inputVoltage?.max
-                                            ? `${formData.specifications.ProductGlance.inputVoltage.min}-${formData.specifications.ProductGlance.inputVoltage.max}`
-                                            : ''}
-                                        onChange={(e) => {
-                                            const [min, max] = e.target.value.split('-').map(v => parseInt(v.trim()));
-                                            handleSpecificationChange('ProductGlance', 'inputVoltage', min && max ? { min, max } : e.target.value);
-                                        }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Input Frequency (e.g., 50-60)"
-                                        className="p-2 border rounded"
-                                        value={formData.specifications?.ProductGlance?.inputFrequency?.min && formData.specifications?.ProductGlance?.inputFrequency?.max
-                                            ? `${formData.specifications.ProductGlance.inputFrequency.min}-${formData.specifications.ProductGlance.inputFrequency.max}`
-                                            : ''}
-                                        onChange={(e) => {
-                                            const [min, max] = e.target.value.split('-').map(v => parseInt(v.trim()));
-                                            handleSpecificationChange('ProductGlance', 'inputFrequency', min && max ? { min, max } : e.target.value);
-                                        }}
-                                    />
+                                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
                                 </div>
-                            </div>
 
-                            {/* Hardware Configuration */}
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <h4 className="font-medium mb-3">Hardware Configuration</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Function Type</label>
                                     <input
                                         type="text"
-                                        placeholder="Chip Type"
-                                        className="p-2 border rounded"
-                                        value={formData.specifications?.HardwareConfiguration?.chipType || ''}
-                                        onChange={(e) => handleSpecificationChange('HardwareConfiguration', 'chipType', e.target.value)}
+                                        className={`w-full p-3 border rounded-lg ${errors.functionType ? 'border-red-500' : 'border-gray-300'}`}
+                                        {...register('functionType')}
                                     />
+                                    {errors.functionType && <p className="text-red-500 text-sm mt-1">{errors.functionType.message}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Price per Gram ($)</label>
                                     <input
                                         type="number"
-                                        placeholder="Number of Chips"
-                                        className="p-2 border rounded"
-                                        value={formData.specifications?.HardwareConfiguration?.numberOfChips || ''}
-                                        onChange={(e) => handleSpecificationChange('HardwareConfiguration', 'numberOfChips', parseInt(e.target.value))}
+                                        step="0.01"
+                                        className={`w-full p-3 border rounded-lg ${errors.price?.perGram ? 'border-red-500' : 'border-gray-300'}`}
+                                        {...register('price.perGram', { valueAsNumber: true })}
                                     />
+                                    {errors.price?.perGram && <p className="text-red-500 text-sm mt-1">{errors.price.perGram.message}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Price per Unit ($)</label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        className={`w-full p-3 border rounded-lg ${errors.price?.perUnit ? 'border-red-500' : 'border-gray-300'}`}
+                                        {...register('price.perUnit', { valueAsNumber: true })}
+                                    />
+                                    {errors.price?.perUnit && <p className="text-red-500 text-sm mt-1">{errors.price.perUnit.message}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Stock</label>
+                                    <input
+                                        type="number"
+                                        className={`w-full p-3 border rounded-lg ${errors.stock ? 'border-red-500' : 'border-gray-300'}`}
+                                        {...register('stock', { valueAsNumber: true })}
+                                    />
+                                    {errors.stock && <p className="text-red-500 text-sm mt-1">{errors.stock.message}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">Status</label>
+                                    <select
+                                        className={`w-full p-3 border rounded-lg ${errors.status ? 'border-red-500' : 'border-gray-300'}`}
+                                        {...register('status')}
+                                    >
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Out Of Stock">Out of Stock</option>
+                                    </select>
+                                    {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
+                                </div>
+                            </div>
+
+                            {/* Payment Methods */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Payment Methods</label>
+                                <input
+                                    type="text"
+                                    placeholder="Comma separated (e.g., USD, LTC, BTC, ETC)"
+                                    className={`w-full p-3 border rounded-lg ${errors.paymentMethod ? 'border-red-500' : 'border-gray-300'}`}
+                                    {...register('paymentMethod')}
+                                />
+                                {errors.paymentMethod && <p className="text-red-500 text-sm mt-1">{errors.paymentMethod.message}</p>}
+                            </div>
+
+                            {/* Specifications */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold">Product Specifications</h3>
+
+                                {/* Product Glance */}
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <h4 className="font-medium mb-3">Product Glance</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Model Name"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.modelName ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.modelName')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.modelName && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.modelName.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Hash Rate"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.hashRate ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.hashRate')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.hashRate && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.hashRate.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Power Consumption"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.powerConsumption ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.powerConsumption')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.powerConsumption && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.powerConsumption.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Algorithm"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.algorithm ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.algorithm')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.algorithm && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.algorithm.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Phase"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.phase ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.phase')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.phase && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.phase.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Max Current"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.maxCurrent ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.maxCurrent')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.maxCurrent && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.maxCurrent.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Input Voltage"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.inputVoltage ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.inputVoltage')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.inputVoltage && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.inputVoltage.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Input Frequency"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.ProductGlance?.inputFrequency ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.ProductGlance.inputFrequency')}
+                                            />
+                                            {errors.specifications?.ProductGlance?.inputFrequency && <p className="text-red-500 text-xs mt-1">{errors.specifications.ProductGlance.inputFrequency.message}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Hardware Configuration */}
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <h4 className="font-medium mb-3">Hardware Configuration</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Network Connection Mode"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.HardwareConfiguration?.networkConnectionMode ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.HardwareConfiguration.networkConnectionMode')}
+                                            />
+                                            {errors.specifications?.HardwareConfiguration?.networkConnectionMode && <p className="text-red-500 text-xs mt-1">{errors.specifications.HardwareConfiguration.networkConnectionMode.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Server Size Without Package"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.HardwareConfiguration?.serverSizeWithoutPackage ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.HardwareConfiguration.serverSizeWithoutPackage')}
+                                            />
+                                            {errors.specifications?.HardwareConfiguration?.serverSizeWithoutPackage && <p className="text-red-500 text-xs mt-1">{errors.specifications.HardwareConfiguration.serverSizeWithoutPackage.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Server Size With Package"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.HardwareConfiguration?.serverSizeWithPackage ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.HardwareConfiguration.serverSizeWithPackage')}
+                                            />
+                                            {errors.specifications?.HardwareConfiguration?.serverSizeWithPackage && <p className="text-red-500 text-xs mt-1">{errors.specifications.HardwareConfiguration.serverSizeWithPackage.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Net Weight"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.HardwareConfiguration?.netWeight ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.HardwareConfiguration.netWeight')}
+                                            />
+                                            {errors.specifications?.HardwareConfiguration?.netWeight && <p className="text-red-500 text-xs mt-1">{errors.specifications.HardwareConfiguration.netWeight.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Gross Weight"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.HardwareConfiguration?.grossWeight ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.HardwareConfiguration.grossWeight')}
+                                            />
+                                            {errors.specifications?.HardwareConfiguration?.grossWeight && <p className="text-red-500 text-xs mt-1">{errors.specifications.HardwareConfiguration.grossWeight.message}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Environmental Requirements */}
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <h4 className="font-medium mb-3">Environmental Requirements</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Site Coolant Temperature"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.EnvironmentRequirements?.siteCoolantTemperature ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.EnvironmentRequirements.siteCoolantTemperature')}
+                                            />
+                                            {errors.specifications?.EnvironmentRequirements?.siteCoolantTemperature && <p className="text-red-500 text-xs mt-1">{errors.specifications.EnvironmentRequirements.siteCoolantTemperature.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Coolant Flow"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.EnvironmentRequirements?.coolantFlow ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.EnvironmentRequirements.coolantFlow')}
+                                            />
+                                            {errors.specifications?.EnvironmentRequirements?.coolantFlow && <p className="text-red-500 text-xs mt-1">{errors.specifications.EnvironmentRequirements.coolantFlow.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Coolant Pressure"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.EnvironmentRequirements?.coolantPressure ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.EnvironmentRequirements.coolantPressure')}
+                                            />
+                                            {errors.specifications?.EnvironmentRequirements?.coolantPressure && <p className="text-red-500 text-xs mt-1">{errors.specifications.EnvironmentRequirements.coolantPressure.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Working Coolant"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.EnvironmentRequirements?.workingCoolant ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.EnvironmentRequirements.workingCoolant')}
+                                            />
+                                            {errors.specifications?.EnvironmentRequirements?.workingCoolant && <p className="text-red-500 text-xs mt-1">{errors.specifications.EnvironmentRequirements.workingCoolant.message}</p>}
+                                        </div>
+
+                                        <div className="md:col-span-2">
+                                            <input
+                                                type="text"
+                                                placeholder="Diameter of Coolant Pipe Connector"
+                                                className={`w-full p-2 border rounded ${errors.specifications?.EnvironmentRequirements?.diameterOfCoolantPipeConnector ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('specifications.EnvironmentRequirements.diameterOfCoolantPipeConnector')}
+                                            />
+                                            {errors.specifications?.EnvironmentRequirements?.diameterOfCoolantPipeConnector && <p className="text-red-500 text-xs mt-1">{errors.specifications.EnvironmentRequirements.diameterOfCoolantPipeConnector.message}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Purchasing Guidelines */}
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h4 className="font-medium">Purchasing Guidelines</h4>
+                                        <button
+                                            type="button"
+                                            onClick={() => append("")}
+                                            className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1"
+                                        >
+                                            <Plus size={16} />
+                                            Add Guideline
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {fields.map((field, index) => (
+                                            <div key={field.id} className="flex gap-2">
+                                                <textarea
+                                                    {...register(`purchasingGuidelines.${index}`)}
+                                                    defaultValue={field.value ?? ""}
+                                                    placeholder={`Purchasing Guideline ${index + 1}`}
+                                                    className="flex-1 p-2 border rounded resize-none"
+                                                    rows="2"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => remove(index)}
+                                                    className="text-red-600 hover:text-red-700 p-2"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {errors.purchasingGuidelines && (
+                                        <p className="text-red-500 text-sm mt-1">
+                                            {errors.purchasingGuidelines.message}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Image Upload */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Product Image</label>
+                                <div className="border-dashed border-2 border-gray-300 p-6 rounded-lg text-center">
+                                    <Upload className="mx-auto mb-2" size={48} />
+                                    <p className="text-gray-500">Click to upload or drag and drop</p>
+                                    <input type="file" className="hidden" accept="image/*" />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Image Upload */}
-                        <div>
-                            <label className="block text-sm font-medium mb-2">Product Image</label>
-                            <div className="border-dashed border-2 border-gray-300 p-6 rounded-lg text-center">
-                                <Upload className="mx-auto mb-2" size={48} />
-                                <p className="text-gray-500">Click to upload or drag and drop</p>
-                                <input type="file" className="hidden" accept="image/*" />
-                            </div>
+                        <div className="p-6 border-t flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowProductModal(false)}
+                                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                            >
+                                <Save size={16} />
+                                Save Product
+                            </button>
                         </div>
-                    </div>
-
-                    <div className="p-6 border-t flex justify-end gap-3">
-                        <button
-                            onClick={() => setShowProductModal(false)}
-                            className="px-4 py-2 border rounded-lg hover:bg-gray-50"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-                        >
-                            <Save size={16} />
-                            Save Product
-                        </button>
-                    </div>
+                    </form>
                 </div>
             </div>
         );
@@ -373,7 +574,10 @@ export default function Admin() {
                 <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
                     <div className="p-6 border-b flex justify-between items-center">
                         <h2 className="text-xl font-semibold">Order Details - {orderData?.id}</h2>
-                        <button onClick={() => setShowOrderModal(false)}>
+                        <button
+                            type="button"
+                            onClick={() => setShowOrderModal(false)}
+                        >
                             <X size={24} />
                         </button>
                     </div>
@@ -494,6 +698,7 @@ export default function Admin() {
 
                     <div className="p-6 border-t flex justify-end">
                         <button
+                            type="button"
                             onClick={() => setShowOrderModal(false)}
                             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
                         >
@@ -512,7 +717,7 @@ export default function Admin() {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-gray-600">Total Products</p>
-                            <p className="text-2xl font-semibold">{products.length}</p>
+                            <p className="text-2xl font-semibold">{products?.length}</p>
                         </div>
                         <Package className="text-blue-500" size={32} />
                     </div>
@@ -580,9 +785,9 @@ export default function Admin() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 text-xs rounded-full ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                                                    order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                                        'bg-gray-100 text-gray-800'
+                                            order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                                order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                                    'bg-gray-100 text-gray-800'
                                             }`}>
                                             {order.status}
                                         </span>
@@ -605,6 +810,7 @@ export default function Admin() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-semibold">Products Management</h1>
                 <button
+                    type="button"
                     onClick={() => {
                         setSelectedProduct(null);
                         setShowProductModal(true);
@@ -684,8 +890,8 @@ export default function Admin() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 text-xs rounded-full ${product.status === 'active' ? 'bg-green-100 text-green-800' :
-                                                product.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                                                    'bg-red-100 text-red-800'
+                                            product.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                                                'bg-red-100 text-red-800'
                                             }`}>
                                             {product.status}
                                         </span>
@@ -693,6 +899,7 @@ export default function Admin() {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex items-center space-x-3">
                                             <button
+                                                type="button"
                                                 onClick={() => {
                                                     setSelectedProduct(product);
                                                     setShowProductModal(true);
@@ -702,6 +909,7 @@ export default function Admin() {
                                                 <Edit3 size={16} />
                                             </button>
                                             <button
+                                                type="button"
                                                 onClick={() => {
                                                     if (confirm('Are you sure you want to delete this product?')) {
                                                         setProducts(products.filter(p => p.id !== product.id));
@@ -808,11 +1016,11 @@ export default function Admin() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 text-xs rounded-full ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                                                    order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
-                                                        order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                                            order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                                'bg-gray-100 text-gray-800'
+                                            order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                                                order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                                                    order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                            'bg-gray-100 text-gray-800'
                                             }`}>
                                             {order.status}
                                         </span>
@@ -820,6 +1028,7 @@ export default function Admin() {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="flex items-center space-x-3">
                                             <button
+                                                type="button"
                                                 onClick={() => {
                                                     setSelectedOrder(order);
                                                     setShowOrderModal(true);
@@ -830,6 +1039,7 @@ export default function Admin() {
                                                 <Eye size={16} />
                                             </button>
                                             <button
+                                                type="button"
                                                 onClick={() => {
                                                     if (confirm('Are you sure you want to delete this order?')) {
                                                         setOrders(orders.filter(o => o.id !== order.id));
@@ -876,7 +1086,7 @@ export default function Admin() {
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
                                 <User className="text-gray-400" size={20} />
-                                <span className="text-gray-700">Admin User</span>
+                                <span className="text-gray-700">{admin?.fullName}</span>
                             </div>
                         </div>
                     </div>
@@ -893,10 +1103,11 @@ export default function Admin() {
                                 return (
                                     <button
                                         key={tab.id}
+                                        type="button"
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`w-full flex items-center px-3 py-2 text-left rounded-lg transition-colors ${activeTab === tab.id
-                                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                                                : 'text-gray-700 hover:bg-gray-50'
+                                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                            : 'text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
                                         <Icon size={20} className="mr-3" />

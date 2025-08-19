@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query"
-import { fetchProducts, fetchProductById } from '../api/product'
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
+import { fetchProducts, fetchProductById, createProduct } from '../api/product'
 
 export const useProducts = () => {
   return useQuery({
-    queryKey: ['fetch-products'],
+    queryKey: ['products'],
     queryFn: fetchProducts
   })
 }
@@ -15,4 +15,14 @@ export const useProductById = (id)=> {
     enabled: !!id
   })
 
+}
+
+export const addProduct = (data)=>{
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['products'])
+    }
+  })
 }

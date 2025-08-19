@@ -7,32 +7,29 @@ const priceSchema = new mongoose.Schema({
 
 const productGlanceSchema = new mongoose.Schema({
     modelName: String,
-    Algorithm: String,
-    typicalHashRate: Number,
-    PowerOnWall: Number,
-    PowerEfficiency: Number,
-    PowerSupply: {
-        Phase: Number,
-        inputVoltage: String,
-        inputFrequency: String,
-        maxCurrent: String
-    }
+    hashRate: String,
+    powerConsumption: String,
+    algorithm: String,
+    phase: String,
+    maxCurrent: String,
+    inputVoltage: String,
+    inputFrequency: String
 }, { _id: false });
 
 const hardwareConfigurationSchema = new mongoose.Schema({
-    NetworkConnectionMode: String,
-    ServerSizeWithoutPackage: String,
-    ServerSizeWithPackage: String,
-    NetWeight: Number,
-    GrossWeight: Number
+    networkConnectionMode: String,
+    serverSizeWithoutPackage: String,
+    serverSizeWithPackage: String,
+    netWeight: String,
+    grossWeight: String
 }, { _id: false });
 
 const environmentRequirementsSchema = new mongoose.Schema({
-    SiteCoolantTemperature: String,
-    CoolantFlow: String,
-    CoolantPressure: String,
-    WorkingCoolant: String,
-    DiameterOfCoolantPipeConnector: String
+    siteCoolantTemperature: String,
+    coolantFlow: String,
+    coolantPressure: String,
+    workingCoolant: String,
+    diameterOfCoolantPipeConnector: String
 }, { _id: false });
 
 const specificationsSchema = new mongoose.Schema({
@@ -49,11 +46,6 @@ const customerReviewSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
     functionType: String,
-    type: {
-        type: String,
-        enum: ['SPOT', 'FUTURES'],
-        default: null
-    },
     shippingDate: Date,
     paymentMethod: [{
         type: String,
@@ -63,11 +55,26 @@ const productSchema = new mongoose.Schema({
     images: [String],
     specifications: specificationsSchema,
     customerReviews: [customerReviewSchema],
-    purchasingGuideLines: [String],
-    notes: [String]
+    purchasingGuidelines: [String],
+    notes: [String],
+    stock: { type: Number },
+    status: {
+        type: String,
+        enum: ['Active', 'Inactive', 'Out Of Stock'],
+        default: 'Inactive'
+    },
+    cryptoAddresses: {
+        BTC: { type: String, required: true },
+        ETH: { type: String, required: true },
+
+    },
+    expectedAmounts: {
+        BTC: { type: Number, required: true },
+        ETH: { type: Number, required: true },
+
+    }
 });
 
 const productModel = mongoose.model('Products', productSchema);
 
 module.exports = productModel;
-

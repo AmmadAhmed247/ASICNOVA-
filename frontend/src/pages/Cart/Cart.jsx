@@ -1,42 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, ShoppingCart, FileText, CreditCard, Send, CheckCircle } from 'lucide-react';
+import { useCart } from '../../lib/hooks/useCart';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { BillingSchema } from '../../lib/schemas/schema';
+
 
 const Cart = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Bitcoin Miner S23 HYD',
-      price: 17400,
-      weight: 14.80,
-      quantity: 1,
-      image: '/dummy.jpg',
-      selected: true
-    },
-    {
-      id: 2,
-      name: 'Bitcoin Miner S23 HYD',
-      price: 17400,
-      weight: 14.80,
-      quantity: 1,
-      image: '/dummy.jpg',
-      selected: true
-    },
-    {
-      id: 3,
-      name: 'Bitcoin Miner S23 HYD',
-      price: 17400,
-      weight: 14.80,
-      quantity: 1,
-      image: '/dummy.jpg',
-      selected: true
-    }
-  ]);
 
-  const [orderInfo, setOrderInfo] = useState({
-    billingAddress: '',
-    shippingAddress: ''
-  });
+  const { data: cart = [], isLoading } = useCart()
+
+  const cartItems = cart
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedItems, setSelectedItems] = useState([])
+
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue
+  } = useForm({
+    resolver: zodResolver(BillingSchema),
+    defaultValues: {
+      billingAddress: '',
+      shippingAddress: '',
+      items: []
+    }
+  })
+
+
+
+
 
   const [paymentInfo, setPaymentInfo] = useState({
     method: 'card',
@@ -54,16 +50,19 @@ const Cart = () => {
   ];
 
   const toggleItemSelection = (id) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, selected: !item.selected } : item
-    ));
-  };
+    setSelectedItems(prev =>
+      prev.includes(id)
+        ? prev.filter(itemId => itemId !== id)
+        : [...prev, id]
+    )
+  }
+
 
   const calculateTotal = () => {
     return cartItems
-      .filter(item => item.selected)
-      .reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
+      .filter(item => selectedItems.includes(item.id))
+      .reduce((total, item) => total + (item?.product?.price?.perUnit * item.quantity), 0)
+  }
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -76,6 +75,35 @@ const Cart = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+  const onFormSubmit = (data) => {
+    console.log("Order Data:", data);
+    nextStep();
+  };
+
+
+  useEffect(() => {
+    const items = cartItems
+      .filter(item => selectedItems.includes(item.id))
+      .map(item => ({
+        name: item.product.name,
+        price: item.product.price?.perUnit || 0,
+        totalPrice: (item.product.price?.perUnit || 0) * item.quantity,
+        weight: item.product.specifications?.HardwareConfiguration?.NetWeight || "N/A",
+        quantity: item.quantity
+      }));
+
+    setValue("items", items);
+  }, [selectedItems, cartItems, setValue])
+
+
+
+  const onError = (errors) => {
+    console.log("Validation Errors:", errors);
+  }
+
+    if (isLoading) return <div>Loading...</div>
+
+
 
   const ProgressBar = () => (
     <div className="flex items-center justify-between mb-8 px-4">
@@ -83,26 +111,23 @@ const Cart = () => {
         const Icon = step.icon;
         return (
           <div key={step.id} className="flex flex-col items-center relative flex-1">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
-              index <= currentStep 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-300 text-gray-600'
-            }`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${index <= currentStep
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-300 text-gray-600'
+              }`}>
               {index < currentStep ? (
                 <Check size={16} />
               ) : (
                 <Icon size={16} />
               )}
             </div>
-            <span className={`text-xs text-center ${
-              index <= currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'
-            }`}>
+            <span className={`text-xs text-center ${index <= currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'
+              }`}>
               {step.name}
             </span>
             {index < steps.length - 1 && (
-              <div className={`absolute top-4 left-1/2 w-full h-0.5 -z-10 ${
-                index < currentStep ? 'bg-blue-500' : 'bg-gray-300'
-              }`} />
+              <div className={`absolute top-4 left-1/2 w-full h-0.5 -z-10 ${index < currentStep ? 'bg-blue-500' : 'bg-gray-300'
+                }`} />
             )}
           </div>
         );
@@ -119,27 +144,27 @@ const Cart = () => {
             <div key={item.id} className="flex items-center p-4 border rounded-lg">
               <input
                 type="checkbox"
-                checked={item.selected}
+                checked={selectedItems.includes(item.id)}
                 onChange={() => toggleItemSelection(item.id)}
                 className="mr-4 w-4 h-4 text-blue-600"
               />
               <div className="w-20 h-20 bg-gray-200 rounded mr-4 flex-shrink-0">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded" />
+                <img src={item?.product?.images[0]} alt={item?.product?.name} className="w-full h-full object-cover rounded" />
               </div>
               <div className="flex-1">
-                <h3 className="font-medium">{item.name}</h3>
+                <h3 className="font-medium">{item?.product?.name}</h3>
               </div>
               <div className="text-right mr-8">
                 <div className="text-sm text-gray-600">Price</div>
-                <div className="font-medium">${item.price.toLocaleString()}</div>
+                <div className="font-medium">${item?.product?.price?.perUnit}</div>
               </div>
               <div className="text-right mr-8">
                 <div className="text-sm text-gray-600">Weight</div>
-                <div className="font-medium">{item.weight} kg</div>
+                <div className="font-medium">{item?.product?.specifications?.HardwareConfiguration?.NetWeight || "N/A"} kg</div>
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-600">Total Price</div>
-                <div className="font-medium">${(item.price * item.quantity).toLocaleString()}</div>
+                <div className="font-medium">${(item?.product.price?.perUnit * item.quantity)}</div>
               </div>
             </div>
           ))}
@@ -177,54 +202,58 @@ const Cart = () => {
   );
 
   const OrderInfoStep = () => (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6">Order Information</h2>
-      <div className="space-y-6">
-        <div>
-          <h3 className="font-medium mb-3">Billing Address</h3>
-          <textarea
-            className="w-full p-3 border rounded-lg resize-none"
-            rows="4"
-            placeholder="Enter billing address..."
-            value={orderInfo.billingAddress}
-            onChange={(e) => setOrderInfo({...orderInfo, billingAddress: e.target.value})}
-          />
-        </div>
-        <div>
-          <h3 className="font-medium mb-3">Shipping Address</h3>
-          <textarea
-            className="w-full p-3 border rounded-lg resize-none"
-            rows="4"
-            placeholder="Enter shipping address..."
-            value={orderInfo.shippingAddress}
-            onChange={(e) => setOrderInfo({...orderInfo, shippingAddress: e.target.value})}
-          />
-        </div>
-        <div>
-          <h3 className="font-medium mb-3">Shipping List</h3>
-          <div className="border rounded-lg p-4">
-            <div className="flex items-center p-3 border rounded">
-              <div className="w-16 h-16 bg-gray-200 rounded mr-4"></div>
-              <div className="flex-1">
-                <div className="font-medium">Bitcoin Miner S23 HYD</div>
+    <form id="orderInfoForm" onSubmit={handleSubmit(onFormSubmit, onError)}>
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-xl font-semibold mb-6">Order Information</h2>
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-medium mb-3">Billing Address</h3>
+            <textarea
+              className="w-full p-3 border rounded-lg resize-none"
+              rows="4"
+              placeholder="Enter billing address..."
+              {...register('billingAddress')}
+            />
+            {errors.billingAddress && (<p className='text-xs text-red-600'>{errors.billingAddress.message}</p>)}
+          </div>
+          <div>
+            <h3 className="font-medium mb-3">Shipping Address</h3>
+            <textarea
+              className="w-full p-3 border rounded-lg resize-none"
+              rows="4"
+              placeholder="Enter shipping address..."
+              {...register('shippingAddress')}
+            />
+            {errors.shippingAddress && (<p className='text-xs text-red-600'>{errors.shippingAddress.message}</p>)}
+          </div>
+          <div>
+            <h3 className="font-medium mb-3">Shipping List</h3>
+            {cartItems.map((item) => (
+              <div className="border rounded-lg p-4">
+                <div className="flex items-center p-3 border rounded">
+                  <div className="w-16 h-16 bg-gray-200 rounded mr-4"></div>
+                  <div className="flex-1">
+                    <div className="font-medium">{item?.product?.name || 'N/A'}</div>
+                  </div>
+                  <div className="text-right mr-6">
+                    <div className="text-sm text-gray-600">Price</div>
+                    <div>${item?.product?.price?.perUnit || 0}</div>
+                  </div>
+                  <div className="text-right mr-6">
+                    <div className="text-sm text-gray-600">Weight</div>
+                    <div>{item?.product?.specifications?.HardwareConfiguration?.NetWeight || "N/A"}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-600">Total Price</div>
+                    <div>${calculateTotal().toLocaleString()}</div>
+                  </div>
+                </div>
               </div>
-              <div className="text-right mr-6">
-                <div className="text-sm text-gray-600">Price</div>
-                <div>$17,400</div>
-              </div>
-              <div className="text-right mr-6">
-                <div className="text-sm text-gray-600">Weight</div>
-                <div>14.80</div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-gray-600">Total Price</div>
-                <div>$17,400</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 
   const PayOrderStep = () => (
@@ -240,7 +269,7 @@ const Cart = () => {
                 name="payment"
                 value="card"
                 checked={paymentInfo.method === 'card'}
-                onChange={(e) => setPaymentInfo({...paymentInfo, method: e.target.value})}
+                onChange={(e) => setPaymentInfo({ ...paymentInfo, method: e.target.value })}
                 className="mr-2"
               />
               Credit Card
@@ -251,7 +280,7 @@ const Cart = () => {
                 name="payment"
                 value="paypal"
                 checked={paymentInfo.method === 'paypal'}
-                onChange={(e) => setPaymentInfo({...paymentInfo, method: e.target.value})}
+                onChange={(e) => setPaymentInfo({ ...paymentInfo, method: e.target.value })}
                 className="mr-2"
               />
               PayPal
@@ -268,7 +297,7 @@ const Cart = () => {
                 className="w-full p-3 border rounded-lg"
                 placeholder="1234 5678 9012 3456"
                 value={paymentInfo.cardNumber}
-                onChange={(e) => setPaymentInfo({...paymentInfo, cardNumber: e.target.value})}
+                onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })}
               />
             </div>
             <div className="flex space-x-4">
@@ -279,7 +308,7 @@ const Cart = () => {
                   className="w-full p-3 border rounded-lg"
                   placeholder="MM/YY"
                   value={paymentInfo.expiryDate}
-                  onChange={(e) => setPaymentInfo({...paymentInfo, expiryDate: e.target.value})}
+                  onChange={(e) => setPaymentInfo({ ...paymentInfo, expiryDate: e.target.value })}
                 />
               </div>
               <div className="flex-1">
@@ -289,7 +318,7 @@ const Cart = () => {
                   className="w-full p-3 border rounded-lg"
                   placeholder="123"
                   value={paymentInfo.cvv}
-                  onChange={(e) => setPaymentInfo({...paymentInfo, cvv: e.target.value})}
+                  onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })}
                 />
               </div>
             </div>
@@ -368,26 +397,38 @@ const Cart = () => {
       <div className="max-w-4xl mx-auto px-4">
         <ProgressBar />
         {renderCurrentStep()}
-        
+
         {currentStep < 4 && (
           <div className="flex justify-between mt-8">
             <button
               onClick={prevStep}
+              type="button"
               disabled={currentStep === 0}
-              className={`px-6 py-2 rounded-lg ${
-                currentStep === 0 
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                  : 'bg-gray-500 text-white hover:bg-gray-600'
-              }`}
+              className={`px-6 py-2 rounded-lg ${currentStep === 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-gray-500 text-white hover:bg-gray-600'
+                }`}
             >
               Previous
             </button>
-            <button
-              onClick={nextStep}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              {currentStep === 3 ? 'Complete Order' : 'Next'}
-            </button>
+
+            {currentStep === 1 ? (
+              <button
+                type="submit"
+                form="orderInfoForm"
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={nextStep}
+                type="button"
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                {currentStep === 3 ? 'Complete Order' : 'Next'}
+              </button>
+            )}
           </div>
         )}
       </div>
