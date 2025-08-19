@@ -5,8 +5,8 @@ export const fetchCart = async ()=>{
     return response.data
 }
 
-export const addToCart = async (data)=>{
-    const response = await api.post('/cart/add', data)
+export const addToCart = async ({productId, quantity})=>{
+    const response = await api.post('/cart/add', {productId, quantity})
     return response.data
 }
 

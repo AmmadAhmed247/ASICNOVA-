@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../../components/footer';
 import { useProductById } from '../../lib/hooks/useProduct';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { User, Plus, Minus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,12 +10,15 @@ import { useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContext'
 import { Link } from 'react-router-dom';
 import { usePostReview } from '../../lib/hooks/useReview';
+import { useAddToCart } from '../../lib/hooks/useCart';
 
 export default function SinglePage() {
   const { id } = useParams();
   const { data, isLoading, isError } = useProductById(id);
   const { User: currentUser } = useContext(AuthContext)
   const postReviewMutation = usePostReview()
+
+  const useAddToCartMutation = useAddToCart()
 
   const {
     register,
@@ -25,6 +28,8 @@ export default function SinglePage() {
   } = useForm({
     resolver: zodResolver(reviewSchema)
   })
+
+  const navigate = useNavigate()
 
   const specifications = data?.specifications || {};
   const ProductGlance = specifications?.ProductGlance || {};
@@ -47,7 +52,7 @@ export default function SinglePage() {
       review: formData.review,
     };
     setCustomerReviewsState(prev => [reviewObj, ...prev])
-    postReviewMutation.mutate({id, review: reviewObj})
+    postReviewMutation.mutate({ id, review: reviewObj })
     reset();
   };
 
@@ -156,8 +161,8 @@ export default function SinglePage() {
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Purchasing Guidelines</h3>
             <div className="space-y-3 text-sm text-gray-600">
-              {data?.purchasingGuidelines.map((item)=>(<div>{item ?? ""}</div>))}
-             
+              {data?.purchasingGuidelines.map((item) => (<div>{item ?? ""}</div>))}
+
             </div>
           </div>
         );
@@ -209,13 +214,13 @@ export default function SinglePage() {
                     />
                     {errors.review && (<p className='text-xs text-red-600'>{errors.review.message}</p>)}
                     <div>
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                      onClick={handlePostReview}
-                      type='submit'
-                    >
-                      Post Review
-                    </button>
+                      <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        onClick={handlePostReview}
+                        type='submit'
+                      >
+                        Post Review
+                      </button>
 
                     </div>
                   </form>
@@ -286,10 +291,19 @@ export default function SinglePage() {
                 Payment Methods: <span className="font-semibold">{data?.paymentMethod?.join(' | ')}</span>
               </p>
               <div className="flex flex-col">
-                <Link to="/checkout" className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'>
+                <button
+                  onClick={async () => {
+                    await useAddToCartMutation.mutateAsync({
+                      productId: id,              
+                      quantity
+                    })
+                    navigate('/cart')
+                  }}
+                  className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
+                >
                   Buy Now
-                </Link>
-                
+                </button>
+
 
                 <div className="flex items-center space-x-4">
                   <span className="text-lg font-medium">Quantity:</span>
