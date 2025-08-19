@@ -14,3 +14,13 @@ export const createProduct = async (data)=>{
   const response = await api.post('/product/create-product', data)
   return response.data
 }
+
+export const editProduct = async (id, data) => {
+  const response = await api.put(`/product/edit-product/${id}`, data)
+  return response.data
+}
+
+export const deleteProduct = async (id) => {
+  const response = await api.delete(`/product/delete-product/${id}`)
+  return response.data
+}

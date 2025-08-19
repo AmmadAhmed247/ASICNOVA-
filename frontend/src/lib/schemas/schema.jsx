@@ -55,7 +55,7 @@ export const ProductSchema = z.object({
     perGram: z.coerce.number().min(1, "Price Per Gram is Required!"),
   }),
   stock: z.coerce.number().min(0),
-  status: z.enum(["Active", "Inactive", "Out Of Stock"]).default("Inactive"),
+  status: z.enum(["Active", "Inactive", "Out Of Stock"]),
 
    paymentMethod: z
     .union([

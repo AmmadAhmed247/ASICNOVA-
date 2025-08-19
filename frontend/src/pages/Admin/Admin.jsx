@@ -25,8 +25,9 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProductSchema } from '../../lib/schemas/schema';
 import { useFieldArray } from "react-hook-form";
-import { addProduct } from '../../lib/hooks/useProduct';
+import { addProduct, useDeleteProduct, useEditProduct } from '../../lib/hooks/useProduct';
 import { useProducts } from '../../lib/hooks/useProduct';
+import toast from 'react-hot-toast';
 
 
 const mockOrders = [
@@ -76,8 +77,8 @@ export default function Admin() {
     const addProductMutation = addProduct()
     const { data = [], isLoading, isError } = useProducts()
     const products = data?.products
-    console.log(products)
-
+    const editProductMutation = useEditProduct()
+    const deleteProductMutation = useDeleteProduct()
 
     const {
         register,
@@ -171,17 +172,20 @@ export default function Admin() {
 
         const onFormSubmit = async (data) => {
             console.log("Submitted Data: ", data);
-            await addProductMutation.mutateAsync(data)
 
-            if (selectedProduct) {
-                setProducts(products.map(p => p.id === selectedProduct.id ? { ...data, id: selectedProduct.id } : p));
+            if (!selectedProduct) {
+                const result = await addProductMutation.mutateAsync(data);
+                console.log("Product Created:", result);
+                toast.success("Product Created!")
             } else {
-                setProducts([...products, { ...data, id: Date.now() }]);
+                await editProductMutation.mutateAsync({ id: selectedProduct._id, data })
+                toast.success("Product Edited!")
             }
             setShowProductModal(false);
             setSelectedProduct(null);
             reset();
         };
+
 
         if (isLoading) return <p>Loading...</p>
         if (isError) return <p>Error</p>
@@ -251,7 +255,7 @@ export default function Admin() {
                                     <input
                                         type="number"
                                         className={`w-full p-3 border rounded-lg ${errors.stock ? 'border-red-500' : 'border-gray-300'}`}
-                                        {...register('stock', { valueAsNumber: true })}
+                                        {...register('stock')}
                                     />
                                     {errors.stock && <p className="text-red-500 text-sm mt-1">{errors.stock.message}</p>}
                                 </div>
@@ -869,7 +873,9 @@ export default function Admin() {
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {filteredProducts.map((product) => (
+                                
                                 <tr key={product.id} className="hover:bg-gray-50">
+                                    {console.log(product)}
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <div className="w-10 h-10 bg-gray-200 rounded-lg mr-3"></div>
@@ -886,14 +892,14 @@ export default function Admin() {
                                         ${product.price?.perGram}/G | ${product.price?.perUnit}/U
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {product.stock}
+                                        {product?.stock || 0}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 text-xs rounded-full ${product.status === 'active' ? 'bg-green-100 text-green-800' :
                                             product.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
                                                 'bg-red-100 text-red-800'
                                             }`}>
-                                            {product.status}
+                                            {product?.status}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -910,9 +916,9 @@ export default function Admin() {
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => {
+                                                onClick={async () => {
                                                     if (confirm('Are you sure you want to delete this product?')) {
-                                                        setProducts(products.filter(p => p.id !== product.id));
+                                                        await deleteProductMutation.mutateAsync(product._id)
                                                     }
                                                 }}
                                                 className="text-red-600 hover:text-red-900"

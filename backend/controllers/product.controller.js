@@ -115,10 +115,56 @@ const getProductById = async (req, res) => {
     }
 }
 
+const editProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updatedProduct = await productModel.findByIdAndUpdate(id, updates, { new: true });
+
+        if (!updatedProduct) {
+            return res.status(400).json({
+                error: "Product Not Found!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Product Updated Successfully!",
+            product: updatedProduct
+        });
+    } catch (error) {
+        console.log("An Error Occured!", error);
+        res.status(500).json({ error: "Internal Server Error!" });
+    }
+};
+
+const deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const deletedProduct = await productModel.findByIdAndDelete(id);
+
+        if (!deletedProduct) {
+            return res.status(400).json({
+                error: "Product Not Found!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Product Deleted Successfully!",
+            product: deletedProduct
+        });
+    } catch (error) {
+        console.log("An Error Occured!", error);
+        res.status(500).json({ error: "Internal Server Error!" });
+    }
+};
 
 module.exports = {
     createProduct,
     createReview,
     getProducts,
-    getProductById
+    getProductById,
+    editProduct,
+    deleteProduct
 }

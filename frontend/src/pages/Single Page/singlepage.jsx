@@ -156,9 +156,8 @@ export default function SinglePage() {
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Purchasing Guidelines</h3>
             <div className="space-y-3 text-sm text-gray-600">
-              <div>1. Shipping costs, customs charges, and import duty are not included.</div>
-              <div>2. Orders must be cancelled within 2 hours; no changes allowed after submission.</div>
-              <div>3. Pictures are reference only; final shipped version prevails.</div>
+              {data?.purchasingGuidelines.map((item)=>(<div>{item ?? ""}</div>))}
+             
             </div>
           </div>
         );
