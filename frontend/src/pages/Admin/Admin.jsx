@@ -74,7 +74,7 @@ export default function Admin() {
     const [filterStatus, setFilterStatus] = useState('all');
     const { User: admin } = useContext(AuthContext)
     const addProductMutation = addProduct()
-    const { data = [], isLoading } = useProducts()
+    const { data = [], isLoading, isError } = useProducts()
     const products = data?.products
     console.log(products)
 
