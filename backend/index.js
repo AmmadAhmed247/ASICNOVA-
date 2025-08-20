@@ -9,6 +9,8 @@ const CartRouter = require('./routes/cart.route')
 const paymentRoutes = require('./routes/payment.route');
 const orderRoute=require('./routes/order.route')
 
+const path = require('path');
+
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 dotenv.config()
@@ -21,6 +23,9 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({extended: true}))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 app.use('/auth', AuthRouter)
 app.use('/contact', ContactRouter)

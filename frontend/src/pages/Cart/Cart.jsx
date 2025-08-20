@@ -170,8 +170,10 @@ const Cart = () => {
         if (!item.product) return <div key={item._id} className="text-gray-500">Product not available</div>;
         return (
           <div key={item._id} className="flex items-center border p-4 rounded mb-3 hover:bg-gray-50 transition">
-            <input type="checkbox" checked={selectedItems[item._id] || false} onChange={() => handleItemSelection(item._id)} className="mr-4"/>
-            <img src={item.product.images?.[0] || '/dummy.jpg'} alt={item.product.name} className="w-20 h-20 object-cover rounded mr-4"/>
+            <input type="checkbox" checked={selectedItems[item._id] || false} onChange={() => handleItemSelection(item._id)} className="mr-4" />
+            <img src={item.product?.images && item.product.images.length > 0
+              ? `http://localhost:3000/${item.product.images[0].replace(/\\/g, '/')}`
+              : '/dummy.jpg'} alt={item.product.name} className="w-20 h-20 object-cover rounded mr-4" />
             <div className="flex-1">
               <h3 className="font-medium">{item.product.name}</h3>
               <p className="text-gray-500 text-sm">Quantity: {item.quantity}</p>
@@ -192,23 +194,23 @@ const Cart = () => {
       <div className="bg-white p-6 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <h3 className="font-semibold mb-2">Billing Details</h3>
-          <input placeholder="Full Name" {...register('fullName', { required: true })} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Email" {...register('email', { required: true })} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Phone" {...register('phone')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Address" {...register('billingAddress', { required: true })} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="City" {...register('city')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Country" {...register('country')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Postal Code" {...register('postalCode')} className="w-full p-2 border rounded mb-1"/>
+          <input placeholder="Full Name" {...register('fullName', { required: true })} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Email" {...register('email', { required: true })} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Phone" {...register('phone')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Address" {...register('billingAddress', { required: true })} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="City" {...register('city')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Country" {...register('country')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Postal Code" {...register('postalCode')} className="w-full p-2 border rounded mb-1" />
         </div>
         <div>
           <h3 className="font-semibold mb-2">Shipping Details (Optional)</h3>
-          <input placeholder="Full Name" {...register('shippingFullName')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Email" {...register('shippingEmail')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Phone" {...register('shippingPhone')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Address" {...register('shippingAddress')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="City" {...register('shippingCity')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Country" {...register('shippingCountry')} className="w-full p-2 border rounded mb-1"/>
-          <input placeholder="Postal Code" {...register('shippingPostalCode')} className="w-full p-2 border rounded mb-1"/>
+          <input placeholder="Full Name" {...register('shippingFullName')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Email" {...register('shippingEmail')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Phone" {...register('shippingPhone')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Address" {...register('shippingAddress')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="City" {...register('shippingCity')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Country" {...register('shippingCountry')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Postal Code" {...register('shippingPostalCode')} className="w-full p-2 border rounded mb-1" />
         </div>
       </div>
     </form>
@@ -231,15 +233,15 @@ const Cart = () => {
         <p className="text-sm mt-2">To address:</p>
         <div className="flex items-center bg-white p-2 rounded border">
           <code className="flex-1 break-all">{receiveAddress}</code>
-          <button onClick={copyAddress} className="ml-2 p-1 bg-gray-200 rounded hover:bg-gray-300">{copied ? 'Copied!' : <Copy size={16}/>}</button>
+          <button onClick={copyAddress} className="ml-2 p-1 bg-gray-200 rounded hover:bg-gray-300">{copied ? 'Copied!' : <Copy size={16} />}</button>
         </div>
       </div>
       <div className="text-center mb-4">
-        <QRCodeCanvas value={receiveAddress} size={180}/>
+        <QRCodeCanvas value={receiveAddress} size={180} />
         <p className="text-sm text-gray-500 mt-2">Scan to pay with {selectedCoin}</p>
       </div>
       <Countdown expiryTime={quoteExpiresAt} onExpire={() => setPaymentExpired(true)} />
-      <input type="text" placeholder={`Enter ${selectedCoin} TXID`} value={txId} onChange={e => setTxId(e.target.value)} className="w-full p-2 border rounded mb-2" disabled={paymentExpired}/>
+      <input type="text" placeholder={`Enter ${selectedCoin} TXID`} value={txId} onChange={e => setTxId(e.target.value)} className="w-full p-2 border rounded mb-2" disabled={paymentExpired} />
       <button onClick={verifyPaymentHandler} disabled={loading || paymentExpired || !txId.trim() || !orderId} className={`w-full py-2 rounded mb-2 ${paymentExpired ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
         {loading ? 'Verifying...' : 'Verify Payment'}
       </button>
@@ -258,7 +260,7 @@ const Cart = () => {
   const CompleteStep = () => (
     <div className="bg-white p-6 rounded-lg shadow mb-6 text-center">
       <div className="mx-auto w-16 h-16 bg-green-100 flex items-center justify-center rounded-full mb-4">
-        <CheckCircle className="w-8 h-8 text-green-600"/>
+        <CheckCircle className="w-8 h-8 text-green-600" />
       </div>
       <h2 className="text-2xl font-semibold text-green-600 mb-2">Order Completed!</h2>
       <p className="text-gray-500 mb-2">Your order has been successfully placed.</p>
@@ -297,7 +299,7 @@ const Cart = () => {
             return (
               <div key={step.id} className="flex flex-col items-center relative flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${idx <= currentStep ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
-                  {idx < currentStep ? <Check size={16}/> : <Icon size={16}/> }
+                  {idx < currentStep ? <Check size={16} /> : <Icon size={16} />}
                 </div>
                 <span className={`text-xs ${idx <= currentStep ? 'text-blue-600' : 'text-gray-500'}`}>{step.name}</span>
                 {idx < steps.length - 1 && <div className={`absolute top-3 left-1/2 w-full h-1 ${idx < currentStep ? 'bg-blue-500' : 'bg-gray-300'}`} style={{ zIndex: -1 }}></div>}

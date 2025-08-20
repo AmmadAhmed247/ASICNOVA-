@@ -116,7 +116,7 @@ const MiningWebsite = () => {
 
       <div className="container mx-auto px-6 py-16">
         <div className="grid md:grid-cols-3 gap-8">
-          {products.map((product, index) => (
+          {products.slice(0, 3).map((product, index) => (
             <div
               key={product.id}
               className={`bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-700 hover:scale-105 hover:shadow-xl ${animateCards ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
@@ -124,25 +124,29 @@ const MiningWebsite = () => {
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className={`bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 h-64 relative overflow-hidden flex items-center justify-center`}>
-
-                <div className="bg-white  w-full max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl p-4 sm:p-6 md:p-8 lg:p-12 xl:p-20 mx-auto">
+              <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 h-64 relative flex items-center justify-center p-4">
+                {/* White border wrapper */}
+                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2  shadow-lg">
+                  <Link to={`/products/${product._id}`} >
+                  
                   <img
-                    src={product.images[0] || "/dummy.jpg"}
+                    src={product.images[0] ? `http://localhost:3000/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                     alt={product.name}
-                    className="w-full h-auto aspect-square rounded-2xl object-cover"
-                    onError={(e) => {
-                      e.target.src = "/dummy.jpg";
-                    }}
+                    className="w-full h-full rounded-3xl object-cover"
+                    onError={(e) => { e.target.src = "/dummy.jpg"; }}
                   />
+                  {/* Optional overlay */}
+                  </Link>
                 </div>
+
+                {/* Hidden effect div (optional) */}
                 <div className="w-32 h-32 bg-white/20 rounded-xl mx-auto mb-4 items-center justify-center" style={{ display: 'none' }}>
                   <div className="w-20 h-20 bg-white/30 rounded-lg flex items-center justify-center">
                     <Zap className="w-10 h-10 text-white" />
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-black/10"></div>
               </div>
+
 
               <div className={`bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white p-6`}>
                 <h3 className="text-xl font-bold mb-2">{product?.name}</h3>
@@ -185,7 +189,9 @@ const MiningWebsite = () => {
                 <div className={`bg-gradient-to-br ${feature.color} w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white group-hover:shadow-lg group-hover:shadow-blue-500/30 transition-all duration-300`}>
                   {feature.icon}
                 </div>
+                
                 <h3 className="text-gray-800 font-semibold mb-2 text-lg leading-tight">{feature.title}</h3>
+               
               </div>
             ))}
           </div>
@@ -203,73 +209,67 @@ const MiningWebsite = () => {
           </div>
 
           <div className="relative bg-gradient-to-r from-blue-400 to-blue-500 rounded-3xl overflow-hidden shadow-xl max-w-6xl mx-auto">
-            <button
-              type='button'
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
+  <button
+    type='button'
+    onClick={prevSlide}
+    className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
+  >
+    <ChevronLeft className="w-6 h-6" />
+  </button>
 
-            <button
-              type='button'
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+  <button
+    type='button'
+    onClick={nextSlide}
+    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
+  >
+    <ChevronRight className="w-6 h-6" />
+  </button>
 
-            <div className="grid md:grid-cols-2 gap-0 items-center">
-              <div className="p-8 md:p-12 text-white">
-                <h3 className="text-3xl font-bold mb-6">{popularProduct.name}</h3>
-                <div className="space-y-4">
-                  <p className="text-lg"><strong>Function:</strong> {popularProduct.function}</p>
-                  <p className="text-lg"><strong>Specifications:</strong> {popularProduct.specs}</p>
-                  <p className="text-2xl font-bold"><strong>Price:</strong> {popularProduct.price}</p>
-                </div>
-                <div className="flex gap-4 mt-8">
-                  <button type='button' className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
-                    Shop Now
-                  </button>
-                  <button type='button' className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+  <div className="grid md:grid-cols-2 gap-0 items-center">
+    <div className="p-8 md:p-12 text-white">
+      <h3 className="text-3xl font-bold mb-6">{products[currentSlide]?.name}</h3>
+      <div className="space-y-4">
+        <p className="text-lg"><strong>Function:</strong> {products[currentSlide]?.functionType || 'N/A'}</p>
+        <p className="text-lg"><strong>Specifications:</strong> {products[currentSlide]?.specs || 'N/A'}</p>
+        <p className="text-2xl font-bold"><strong>Price:</strong> ${products[currentSlide]?.price?.perUnit ?? products[currentSlide]?.price}</p>
+      </div>
+      <div className="flex gap-4 mt-8">
+        <button className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+          Shop Now
+        </button>
+        <button className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+          Add to Cart
+        </button>
+      </div>
+    </div>
 
-              <div className="h-80 md:h-96 relative flex items-center justify-center p-8">
-                <img
+    <div className="h-80 md:h-96 relative flex items-center justify-center p-8">
+      <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2 shadow-lg">
+        <img
+          src={products[currentSlide]?.images?.[0]
+            ? `http://localhost:3000/${products[currentSlide].images[0].replace(/\\/g, '/')}`
+            : '/dummy.jpg'}
+          alt={products[currentSlide]?.name}
+          className="w-full h-full object-cover rounded-2xl"
+          onError={(e) => { e.target.src = "/dummy.jpg"; }}
+        />
+     
+      </div>
+    </div>
+  </div>
 
-                  key={currentSlide}
-                  src={popularProduct.image}
-                  alt={popularProduct.name}
-                  className="w-fit h-fit object-cover rounded-2xl shadow-lg transition-all duration-500 transform hover:scale-105"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="w-full h-full bg-white/20 rounded-2xl items-center justify-center" style={{ display: 'none' }}>
-                  <div className="w-32 h-32 bg-white/30 rounded-xl flex items-center justify-center">
-                    <Zap className="w-16 h-16 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
+    {products.slice(0, 3).map((_, index) => (
+      <button
+        type='button'
+        key={index}
+        onClick={() => setCurrentSlide(index)}
+        className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/70'}`}
+      />
+    ))}
+  </div>
+</div>
 
-
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
-              {popularProducts.map((_, index) => (
-                <button
-                  type='button'
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/70'
-                    }`}
-                />
-              ))}
-            </div>
-          </div>
 
           <div className="text-center mt-12">
             <Link to="/products" className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold transition-colors">
