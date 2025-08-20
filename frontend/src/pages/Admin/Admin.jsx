@@ -201,6 +201,8 @@ export default function Admin() {
 
     console.log("Values: ", getValues())
 
+    const paymentMethod = watch('paymentMethod', [])
+
     const ProductModal = () => {
 
 
@@ -217,11 +219,13 @@ export default function Admin() {
             formData.append('purchasingGuidelines', JSON.stringify(data.purchasingGuidelines));
 
             const cryptoAddresses = {
-                BTC: data.cryptoAddresses?.BTC || data.cryptoAddresses?.BTC === '' ? data.cryptoAddresses.BTC : "default-address"
+                BTC: data.cryptoAddresses?.BTC || data.cryptoAddresses?.BTC === '' ? data.cryptoAddresses.BTC : "default-address",
+                ETH: data.cryptoAddresses?.ETH || data.cryptoAddresses?.ETH === '' ? data.cryptoAddresses.ETH : "default-address"
             };
 
             const expectedAmounts = {
-                BTC: Number(data.expectedAmounts?.BTC) || 0
+                BTC: Number(data.expectedAmounts?.BTC) || 0,
+                ETH: Number(data.expectedAmounts?.ETH) || 0
             }; 5
 
 
@@ -338,12 +342,28 @@ export default function Admin() {
                             {/* Payment Methods */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">Payment Method</label>
-                                <select
-                                    className={`w-full p-3 border rounded-lg ${errors.paymentMethod ? 'border-red-500' : 'border-gray-300'}`}
-                                    {...register('paymentMethod')}
-                                >
-                                    <option value="BTC">BTC</option>
-                                </select>
+                                <div className='flex items-center gap-10'>
+
+                                <label className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        value="BTC"
+                                        className="mr-2 "
+                                        {...register('paymentMethod', { required: 'Select at least one payment method' })}
+                                    />
+                                    BTC
+                                </label>
+                                <label className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        value="ETH"
+                                        className="mr-2"
+                                        {...register('paymentMethod', { required: 'Select at least one payment method' })}
+                                    />
+                                    ETH
+                                </label>
+                                </div>
+                               
                                 {errors.paymentMethod && (
                                     <p className="text-red-500 text-sm mt-1">{errors.paymentMethod.message}</p>
                                 )}
@@ -555,31 +575,61 @@ export default function Admin() {
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <h4 className="font-medium mb-3">Crypto Wallet Address</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        <div>
-                                            <input
-                                                type="text"
-                                                placeholder="Bitcoin Wallet Address"
-                                                className={`w-full p-2 border rounded ${errors.cryptoAddresses?.BTC ? 'border-red-500' : 'border-gray-300'}`}
-                                                {...register('cryptoAddresses.BTC')}
-                                            />
-                                            {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
-                                        </div>
+                                     
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Bitcoin Wallet Address"
+                                                        className={`w-full p-2 border rounded ${errors.cryptoAddresses?.BTC ? 'border-red-500' : 'border-gray-300'}`}
+                                                        {...register('cryptoAddresses.BTC')}
+                                                    />
+                                                    {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
+                                                </div>
 
-                                        <div>
-                                            <input
-                                                type="number"
-                                                step="0.0001"  // allow small BTC values
-                                                min="0.0001"   // optional minimum
-                                                placeholder="Expected Amount"
-                                                className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
-                                                {...register('expectedAmounts.BTC', {
-                                                    valueAsNumber: true,
-                                                })}
-                                            />
-                                            {errors.expectedAmounts?.BTC && (
-                                                <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
-                                            )}
-                                        </div>
+                                                <div>
+                                                    <input
+                                                        type="number"
+                                                        step="0.0001"  // allow small BTC values
+                                                        min="0.0001"   // optional minimum
+                                                        placeholder="Expected Amount"
+                                                        className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
+                                                        {...register('expectedAmounts.BTC', {
+                                                            valueAsNumber: true,
+                                                        })}
+                                                    />
+                                                    {errors.expectedAmounts?.BTC && (
+                                                        <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
+                                                    )}
+                                                </div>
+                                        
+
+                                     
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Etherium Wallet Address"
+                                                        className={`w-full p-2 border rounded ${errors.cryptoAddresses?.ETH ? 'border-red-500' : 'border-gray-300'}`}
+                                                        {...register('cryptoAddresses.ETH')}
+                                                    />
+                                                    {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
+                                                </div>
+
+                                                <div>
+                                                    <input
+                                                        type="number"
+                                                        step="0.0001"  // allow small BTC values
+                                                        min="0.0001"   // optional minimum
+                                                        placeholder="Expected Amount"
+                                                        className={`w-full p-2 border rounded ${errors.expectedAmounts?.ETH ? 'border-red-500' : 'border-gray-300'}`}
+                                                        {...register('expectedAmounts.ETH', {
+                                                            valueAsNumber: true,
+                                                        })}
+                                                    />
+                                                    {errors.expectedAmounts?.BTC && (
+                                                        <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
+                                                    )}
+                                                </div>
+                                        
 
 
                                         <div>

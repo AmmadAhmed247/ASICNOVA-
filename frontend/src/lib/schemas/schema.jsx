@@ -93,19 +93,8 @@ export const ProductSchema = z.object({
   status: z.enum(["Active", "Inactive", "Out Of Stock"]),
 
   paymentMethod: z
-    .union([
-      z.string().transform((val) =>
-        val
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      ),
-      z.array(z.string()),
-    ])
-    .transform((val) => (Array.isArray(val) ? val : val))
-    .refine((arr) => arr.length > 0, {
-      message: "At least one payment method is required",
-    }),
+    .array(z.string())
+    .min(1, "Atleast One Payment Method Is Required!"),  
 
   specifications: z.object({
     ProductGlance: z.object({
@@ -138,8 +127,11 @@ export const ProductSchema = z.object({
   images: z.array(z.instanceof(File)).optional(),
   cryptoAddresses: z.object({
     BTC: z.string().min(1, "BTC address is required"),
+    ETH: z.string().min(1, "ETH address is required")
   }),
   expectedAmounts: z.object({
     BTC: z.coerce.number().min(0, "BTC expected amount is required"),
-  }),
+    ETH: z.coerce.number().min(0, 'ETH expected amount is required')
+  })
+  
 });

@@ -50,7 +50,8 @@ const createProduct = async (req, res) => {
         if (typeof expectedAmounts === 'string') {
             const parsedAmounts = JSON.parse(expectedAmounts);
             expectedAmounts = {
-                BTC: Number(parsedAmounts.BTC) || 0
+                BTC: Number(parsedAmounts.BTC) || 0,
+                ETH: Number(parsedAmounts.ETH) || 0
             };
         }
 

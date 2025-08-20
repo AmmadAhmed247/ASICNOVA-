@@ -63,10 +63,12 @@ const productSchema = new mongoose.Schema({
     },
     cryptoAddresses: {
         BTC: { type: String, required: true },
+        ETH: {type: String, required: true}
 
     },
     expectedAmounts: {
         BTC: { type: mongoose.Schema.Types.Decimal128, required: true,min: 0.0001 },
+        ETH: {type: mongoose.Schema.Types.Decimal128, required: true, min: 0.001}
 
     }
 });
