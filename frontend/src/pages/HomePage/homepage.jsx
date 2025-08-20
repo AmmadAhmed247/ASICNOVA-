@@ -125,17 +125,17 @@ const MiningWebsite = () => {
             >
 
               <div className={`bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 h-64 relative overflow-hidden flex items-center justify-center`}>
-               
-<div className="bg-white  w-full max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl p-4 sm:p-6 md:p-8 lg:p-12 xl:p-20 mx-auto">
-  <img
-    src={product.images[0] || "/dummy.jpg"}
-    alt={product.name}
-    className="w-full h-auto aspect-square rounded-2xl object-cover"
-    onError={(e) => {
-      e.target.src = "/dummy.jpg";
-    }}
-  />
-</div>
+
+                <div className="bg-white  w-full max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl p-4 sm:p-6 md:p-8 lg:p-12 xl:p-20 mx-auto">
+                  <img
+                    src={product.images[0] || "/dummy.jpg"}
+                    alt={product.name}
+                    className="w-full h-auto aspect-square rounded-2xl object-cover"
+                    onError={(e) => {
+                      e.target.src = "/dummy.jpg";
+                    }}
+                  />
+                </div>
                 <div className="w-32 h-32 bg-white/20 rounded-xl mx-auto mb-4 items-center justify-center" style={{ display: 'none' }}>
                   <div className="w-20 h-20 bg-white/30 rounded-lg flex items-center justify-center">
                     <Zap className="w-10 h-10 text-white" />
@@ -239,7 +239,7 @@ const MiningWebsite = () => {
 
               <div className="h-80 md:h-96 relative flex items-center justify-center p-8">
                 <img
-                
+
                   key={currentSlide}
                   src={popularProduct.image}
                   alt={popularProduct.name}

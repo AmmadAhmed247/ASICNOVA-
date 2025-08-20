@@ -8,7 +8,7 @@ export const signupSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.email(),
+  email: z.string().email(),
   password: z.string().min(1, "Password is Required!")
 })
 
@@ -33,9 +33,44 @@ export const resetPasswordSchema = z.object({
     path: ["confirmPassword"],
   })
 
+// ✅ UPDATED BILLING SCHEMA to match backend expectations
 export const BillingSchema = z.object({
-  billingAddress: z.string().min(5, "Billing Address is Required!"),
-  shippingAddress: z.string().min(5, "Shipping Address is Required!"),
+  // Individual billing fields that backend expects
+  fullName: z.string()
+    .min(2, 'Full name must be at least 2 characters')
+    .max(100, 'Full name must be less than 100 characters'),
+  
+  email: z.string()
+    .email('Please enter a valid email address')
+    .max(255, 'Email must be less than 255 characters'),
+  
+  phone: z.string()
+    .min(10, 'Phone number must be at least 10 digits')
+    .max(20, 'Phone number must be less than 20 characters')
+    .regex(/^[\+]?[0-9\s\-\(\)]+$/, 'Please enter a valid phone number'),
+  
+  address: z.string()
+    .min(5, 'Address must be at least 5 characters')
+    .max(200, 'Address must be less than 200 characters'),
+  
+  city: z.string()
+    .min(2, 'City must be at least 2 characters')
+    .max(100, 'City must be less than 100 characters'),
+  
+  country: z.string()
+    .min(2, 'Country must be at least 2 characters')
+    .max(100, 'Country must be less than 100 characters'),
+  
+  postalCode: z.string()
+    .min(3, 'Postal code must be at least 3 characters')
+    .max(10, 'Postal code must be less than 10 characters')
+    .optional(),
+
+  // Keep your original fields for backward compatibility
+  billingAddress: z.string().min(5, "Billing Address is Required!").optional(),
+  shippingAddress: z.string().min(5, "Shipping Address is Required!").optional(),
+  
+  // Items array for cart calculation
   items: z.array(
     z.object({
       name: z.string(),

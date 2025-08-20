@@ -9,6 +9,14 @@ const processedTransactionSchema = new mongoose.Schema({
   blockNumber: { type: Number },
   status: { type: String, enum: ['pending', 'confirmed', 'processed'], default: 'pending' },
   verifiedAt: { type: Date },
+  orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' }, // Link to order
+  confirmations: { type: Number, default: 0 },
+  notes: { type: String }
 }, { timestamps: true });
+
+// Add indexes for better performance
+processedTransactionSchema.index({ orderId: 1 });
+processedTransactionSchema.index({ coin: 1, status: 1 });
+processedTransactionSchema.index({ recipient: 1 });
 
 module.exports = mongoose.model('ProcessedTransaction', processedTransactionSchema);

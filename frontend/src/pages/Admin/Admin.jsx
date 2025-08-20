@@ -220,9 +220,9 @@ export default function Admin() {
                 BTC: data.cryptoAddresses?.BTC || data.cryptoAddresses?.BTC === '' ? data.cryptoAddresses.BTC : "default-address"
             };
 
-          const expectedAmounts = {
-        BTC: Number(data.expectedAmounts?.BTC) || 0  
-    };5
+            const expectedAmounts = {
+                BTC: Number(data.expectedAmounts?.BTC) || 0
+            }; 5
 
 
             console.log("Crypto addresses to send:", cryptoAddresses);
@@ -568,18 +568,19 @@ export default function Admin() {
                                         <div>
                                             <input
                                                 type="number"
+                                                step="0.0001"  // allow small BTC values
+                                                min="0.0001"   // optional minimum
                                                 placeholder="Expected Amount"
                                                 className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
                                                 {...register('expectedAmounts.BTC', {
                                                     valueAsNumber: true,
-                                                    setValueAs: (value)=>{
-                                                        const num = parseFloat(value)
-                                                        return isNaN(num) ? 0 : num
-                                                    }
                                                 })}
                                             />
-                                            {errors.expectedAmounts?.BTC && <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>}
+                                            {errors.expectedAmounts?.BTC && (
+                                                <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
+                                            )}
                                         </div>
+
 
                                         <div>
 

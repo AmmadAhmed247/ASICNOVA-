@@ -6,7 +6,9 @@ const AuthRouter = require('./routes/auth.route')
 const ContactRouter = require('./routes/contact.route')
 const ProductRouter = require('./routes/product.route')
 const CartRouter = require('./routes/cart.route')
-const paymentRoutes=require('./routes/payment.route')
+const paymentRoutes = require('./routes/payment.route');
+const orderRoute=require('./routes/order.route')
+
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 dotenv.config()
@@ -23,8 +25,13 @@ app.use(express.urlencoded({extended: true}))
 app.use('/auth', AuthRouter)
 app.use('/contact', ContactRouter)
 app.use('/product', ProductRouter)
+app.use('/api',orderRoute );
+
 app.use('/cart', CartRouter)
-app.use("/api/payments", paymentRoutes);
+app.use('/api/payments', paymentRoutes);
+app.get("/health", (req, res) => {
+  res.json({ ok: true });
+});
 app.get("/",()=>{
     console.log("server is running on ngrok");
     

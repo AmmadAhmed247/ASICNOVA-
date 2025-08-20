@@ -66,7 +66,7 @@ const productSchema = new mongoose.Schema({
 
     },
     expectedAmounts: {
-        BTC: { type: Number, required: true },
+        BTC: { type: mongoose.Schema.Types.Decimal128, required: true,min: 0.0001 },
 
     }
 });

@@ -1,33 +1,70 @@
+// payment.controller.js
 const Order = require('../models/order.model');
 const ProcessedTransaction = require('../models/processedTransaction.model');
 const axios = require('axios');
+const { parseUnits } = require('ethers'); // for ETH precision
 
-const coinApis = {
-  BTC: async (txId) => {
-    try {
-      const resp = await axios.get(`https://blockchain.info/rawtx/${txId}?cors=true`);
-      return resp.data;
-    } catch (err) {
-      console.error('BTC API error:', err.message);
-      return null;
-    }
-  },
-  ETH: async (txId) => {
-    try {
-      const resp = await axios.get(
-        `https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${txId}&apikey=${process.env.ETHERSCAN_API_KEY}`
-      );
-      return resp.data?.result || null;
-    } catch (err) {
-      console.error('ETH API error:', err.message);
-      return null;
-    }
-  },
-  LTC: async (txId) => null,
-  USDT: async (txId) => null,
+// -----------------------
+// BTC Conversion: string → satoshis
+// -----------------------
+const convertBTCToSatoshis = (btcAmount) => {
+  const [whole = '0', decimal = ''] = btcAmount.toString().split('.');
+  const paddedDecimal = (decimal + '00000000').slice(0, 8); // pad to 8 decimals
+  const satoshiStr = whole + paddedDecimal;
+  return BigInt(satoshiStr);
 };
 
+// -----------------------
+// BTC Verification using BlockCypher
+// -----------------------
+const verifyBTC_BlockCypher = async (txId, receiveAddress, expectedAmount) => {
+  try {
+    const res = await axios.get(`https://api.blockcypher.com/v1/btc/test3/txs/${txId}`);
+    const tx = res.data;
+    if (!tx.outputs) return false;
+
+    const expectedSatoshis = convertBTCToSatoshis(expectedAmount);
+    let receivedSatoshis = BigInt(0);
+
+    tx.outputs.forEach(o => {
+      if (o.addresses.includes(receiveAddress)) {
+        receivedSatoshis += BigInt(o.value);
+      }
+    });
+
+    console.log('BTC Verification:', {
+      expectedSatoshis: expectedSatoshis.toString(),
+      receivedSatoshis: receivedSatoshis.toString(),
+    });
+
+    return receivedSatoshis >= expectedSatoshis;
+  } catch (err) {
+    console.error('BlockCypher API error:', err.message);
+    return false;
+  }
+};
+
+// -----------------------
+// ETH Verification using ethers.js
+// -----------------------
+const verifyETH = async (txData, receiveAddress, expectedAmount) => {
+  if (!txData) return null;
+  const expectedWei = parseUnits(expectedAmount.toString(), 'ether'); // safe BigInt
+  const sentWei = BigInt(txData.value);
+
+  if (txData.to?.toLowerCase() === receiveAddress.toLowerCase() && sentWei >= expectedWei) {
+    return {
+      amount: Number(sentWei) / 1e18,
+      blockNumber: parseInt(txData.blockNumber, 16),
+      sender: txData.from,
+    };
+  }
+  return null;
+};
+
+// -----------------------
 // Start Payment Timer
+// -----------------------
 const startPaymentTimer = async (req, res) => {
   const { orderId } = req.body;
   if (!orderId) return res.status(400).json({ success: false, message: 'orderId is required' });
@@ -55,7 +92,9 @@ const startPaymentTimer = async (req, res) => {
   }
 };
 
+// -----------------------
 // Verify Payment
+// -----------------------
 const verifyPayment = async (req, res) => {
   const { orderId, txId } = req.body;
   if (!orderId || !txId) return res.status(400).json({ success: false, message: 'orderId and txId are required' });
@@ -76,36 +115,22 @@ const verifyPayment = async (req, res) => {
     if (existingTx) return res.status(400).json({ success: false, message: 'Transaction already processed' });
 
     const coin = order.selectedCoin.toUpperCase();
-    const txData = await coinApis[coin](txId);
-
-    if (!txData) {
-      return res.status(400).json({ success: false, message: `Unable to fetch ${coin} transaction data` });
-    }
-
-    let confirmed = false;
     let txInfo = {};
 
     if (coin === 'BTC') {
-      const match = txData.out?.find(
-        (o) => o.addr === order.receiveAddress && o.value / 1e8 >= parseFloat(order.cryptoAmountLocked)
-      );
-      if (match) {
-        confirmed = true;
-        txInfo = {
-          amount: match.value / 1e8,
-          blockNumber: txData.block_height,
-          sender: txData.inputs?.[0]?.prev_out?.addr || 'Unknown',
-        };
-      }
+      const isPaid = await verifyBTC_BlockCypher(txId, order.receiveAddress, order.cryptoAmountLocked);
+      if (!isPaid) return res.status(400).json({ success: false, message: 'Transaction invalid or insufficient amount' });
+      txInfo = { amount: parseFloat(order.cryptoAmountLocked), blockNumber: null, sender: 'Unknown' };
     } else if (coin === 'ETH') {
-      const valueInEth = parseInt(txData.value, 16) / 1e18;
-      if (txData.to?.toLowerCase() === order.receiveAddress.toLowerCase() && valueInEth >= parseFloat(order.cryptoAmountLocked)) {
-        confirmed = true;
-        txInfo = { amount: valueInEth, blockNumber: parseInt(txData.blockNumber, 16), sender: txData.from };
-      }
+      const txData = await axios.get(
+        `https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${txId}&apikey=${process.env.ETHERSCAN_API_KEY}`
+      );
+      const ethInfo = await verifyETH(txData.data.result, order.receiveAddress, order.cryptoAmountLocked);
+      if (!ethInfo) return res.status(400).json({ success: false, message: 'Transaction invalid or insufficient amount' });
+      txInfo = ethInfo;
+    } else {
+      return res.status(400).json({ success: false, message: 'Unsupported coin' });
     }
-
-    if (!confirmed) return res.status(400).json({ success: false, message: 'Transaction invalid or insufficient amount' });
 
     // Save processed transaction
     const processedTx = new ProcessedTransaction({
@@ -127,12 +152,14 @@ const verifyPayment = async (req, res) => {
 
     return res.json({ success: true, message: `${coin} payment confirmed`, transactionDetails: processedTx });
   } catch (err) {
-    console.error('verifyPayment error:', err.message);
+    console.error('verifyPayment error:', err.message, err.stack);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
 
+// -----------------------
 // Check Payment Status
+// -----------------------
 const checkPaymentStatus = async (req, res) => {
   const { orderId } = req.params;
   if (!orderId) return res.status(400).json({ success: false, message: 'orderId is required' });
