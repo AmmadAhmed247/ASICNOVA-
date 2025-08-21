@@ -292,18 +292,21 @@ export default function SinglePage() {
                 </span>
               </p>
               <p className="text-xl opacity-90">
-                Price: <span className="font-semibold"> ${data?.price?.perGram}/G | ${data?.price?.perUnit}/U </span>
+                Price: <span className="font-semibold"> ${data?.price?.perGram}/gm | ${data?.price?.perUnit}/Unit </span>
               </p>
               <p className="text-xl opacity-90">
-                Payment Methods: <span className="font-semibold">{data?.paymentMethod?.join(' | ')}</span>
+                Payment Methods: <span className="font-semibold">{data?.paymentMethod ? JSON.parse(data.paymentMethod).join(" | ") : "N/A"}</span>
               </p>
               <div className="flex flex-col">
+                
                 <button
                   onClick={async () => {
                     await useAddToCartMutation.mutateAsync({
                       productId: id,
                       quantity
                     })
+                    console.log("Sending to backend:", { productId: id, quantity });
+
                     navigate('/cart')
                   }}
                   className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'

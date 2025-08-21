@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const processedTransactionSchema = new mongoose.Schema({
-  txid: { type: String, required: true, unique: true, index: true },
+  txid: { type: String, required: true, unique: true }, // <-- removed "index: true"
   coin: { type: String, required: true, enum: ['BTC', 'ETH', 'LTC', 'USDT'] },
   amount: { type: Number, required: true },
   recipient: { type: String, required: true },

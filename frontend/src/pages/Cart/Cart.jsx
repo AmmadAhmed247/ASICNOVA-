@@ -6,6 +6,9 @@ import { useCart } from '../../lib/hooks/useCart';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BillingSchema } from '../../lib/schemas/schema';
+import { Trash2 } from "lucide-react";
+
+
 
 // Countdown Timer
 const Countdown = ({ expiryTime, onExpire }) => {
@@ -46,10 +49,112 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [paymentExpired, setPaymentExpired] = useState(false);
+  const [paymentVerified, setPaymentVerified] = useState(false);
+  const [localCartItems, setLocalCartItems] = useState([]);
 
   const { register, handleSubmit, formState: { errors }, getValues } = useForm({
     resolver: zodResolver(BillingSchema)
   });
+
+  // Auto-check payment status when on payment step
+  useEffect(() => {
+    let interval;
+    if (orderId && currentStep === 2 && !paymentVerified) { // Step 2 is PayStep
+      interval = setInterval(async () => {
+        try {
+          const res = await axios.get(`http://localhost:3000/api/payments/status/${orderId}`);
+          console.log('Payment status check:', res.data);
+
+          if (res.data.success && res.data.status === "PAID") {
+            setPaymentVerified(true);
+            setStatusMsg('Payment confirmed! Redirecting...');
+
+            // Auto move to submit step after 2 seconds
+            setTimeout(() => {
+              setCurrentStep(3); // Move to Submit step
+            }, 5000);
+
+            clearInterval(interval);
+          }
+        } catch (err) {
+          console.error("Error checking payment status:", err.response?.data || err.message);
+        }
+      }, 10000); // Check every 10 seconds
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [orderId, currentStep, paymentVerified]);
+  useEffect(() => {
+    setLocalCartItems(cartItems);
+  }, [cartItems]);
+
+  const handleRemoveItem = async (productId) => {
+    try {
+      console.log('=== REMOVE ITEM DEBUG ===');
+      console.log('Product ID to remove:', productId);
+      console.log('Product ID type:', typeof productId);
+      console.log('Current cart items:', localCartItems);
+      
+      // Check if productId exists
+      if (!productId) {
+        console.error('No product ID provided');
+        alert('Error: No product ID provided');
+        return;
+      }
+
+      console.log('Making DELETE request...');
+      
+      // Send productId to backend
+      const res = await axios.delete("http://localhost:3000/cart/delete", {
+        data: { productId: productId.toString() }, // Ensure it's a string
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Delete response status:', res.status);
+      console.log('Delete response data:', res.data);
+      
+      if (res.data) {
+        // Update local state with server response
+        setLocalCartItems(res.data);
+        console.log('Successfully updated cart');
+      }
+      
+    } catch (err) {
+      console.error('=== DELETE ERROR ===');
+      console.error('Error status:', err.response?.status);
+      console.error('Error data:', err.response?.data);
+      console.error('Error message:', err.message);
+      
+      // More specific error messages
+      if (err.response?.status === 401) {
+        alert("Authentication error. Please log in again.");
+      } else if (err.response?.status === 404) {
+        alert("Item not found in cart.");
+      } else if (err.response?.data?.message) {
+        alert(`Error: ${err.response.data.message}`);
+      } else {
+        alert("Failed to remove item from cart. Please try again.");
+      }
+    }
+  };
+
+
+
+  // Auto move from Submit to Complete step
+  useEffect(() => {
+    if (currentStep === 3 && paymentVerified) {
+      const timer = setTimeout(() => {
+        setCurrentStep(4); // Move to Complete step
+      }, 5000); // Wait 3 seconds on submit step
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, paymentVerified]);
 
   useEffect(() => {
     if (cartItems.length > 0) {
@@ -154,7 +259,12 @@ const Cart = () => {
     try {
       const res = await axios.post('http://localhost:3000/api/payments/verify', { orderId, txId });
       setStatusMsg(res.data.message);
-      if (res.data.success) setCurrentStep(prev => prev + 1);
+      if (res.data.success) {
+        setPaymentVerified(true);
+        setTimeout(() => {
+          setCurrentStep(3); // Move to Submit step
+        }, 1500);
+      }
     } catch (err) {
       setStatusMsg(err.response?.data?.message || 'Error verifying payment');
     } finally {
@@ -181,6 +291,13 @@ const Cart = () => {
             <div className="text-right">
               <p className="font-medium">${(item.product?.price?.perUnit * item.quantity).toLocaleString()}</p>
               <p className="text-sm text-gray-500">${item.product.price?.perUnit.toLocaleString()} each</p>
+              <button
+                onClick={() => handleRemoveItem(item.product._id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={20} />
+              </button>
+
             </div>
           </div>
         )
@@ -219,12 +336,23 @@ const Cart = () => {
   const PayStep = () => (
     <div className="bg-white p-6 rounded-lg shadow mb-6">
       <h2 className="text-xl font-semibold mb-4">Pay Your Order</h2>
+
+      {/* Payment Status Alert */}
+      {paymentVerified && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center">
+            <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+            <span className="text-green-800 font-medium">Payment Verified Successfully!</span>
+          </div>
+          <p className="text-green-700 text-sm mt-1">Redirecting to order confirmation...</p>
+        </div>
+      )}
+
       <div className="mb-4">
         <label className="text-sm font-medium mb-1 block">Select Coin:</label>
-        <select value={selectedCoin} onChange={e => setSelectedCoin(e.target.value)} className="border p-2 rounded w-full max-w-xs">
+        <select value={selectedCoin} onChange={e => setSelectedCoin(e.target.value)} className="border p-2 rounded w-full max-w-xs" disabled={paymentVerified}>
           <option value="BTC">Bitcoin (BTC)</option>
           <option value="ETH">Ethereum (ETH)</option>
-          <option value="USDT">Tether (USDT)</option>
         </select>
       </div>
       <div className="bg-blue-50 p-4 rounded mb-4">
@@ -233,38 +361,86 @@ const Cart = () => {
         <p className="text-sm mt-2">To address:</p>
         <div className="flex items-center bg-white p-2 rounded border">
           <code className="flex-1 break-all">{receiveAddress}</code>
-          <button onClick={copyAddress} className="ml-2 p-1 bg-gray-200 rounded hover:bg-gray-300">{copied ? 'Copied!' : <Copy size={16} />}</button>
+          <button onClick={copyAddress} className="ml-2 p-1 bg-gray-200 rounded hover:bg-gray-300" disabled={paymentVerified}>
+            {copied ? 'Copied!' : <Copy size={16} />}
+          </button>
         </div>
       </div>
       <div className="text-center mb-4">
         <QRCodeCanvas value={receiveAddress} size={180} />
         <p className="text-sm text-gray-500 mt-2">Scan to pay with {selectedCoin}</p>
       </div>
-      <Countdown expiryTime={quoteExpiresAt} onExpire={() => setPaymentExpired(true)} />
-      <input type="text" placeholder={`Enter ${selectedCoin} TXID`} value={txId} onChange={e => setTxId(e.target.value)} className="w-full p-2 border rounded mb-2" disabled={paymentExpired} />
-      <button onClick={verifyPaymentHandler} disabled={loading || paymentExpired || !txId.trim() || !orderId} className={`w-full py-2 rounded mb-2 ${paymentExpired ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
-        {loading ? 'Verifying...' : 'Verify Payment'}
-      </button>
-      {statusMsg && <p className="text-red-600 mt-2">{statusMsg}</p>}
+
+      {!paymentVerified && (
+        <>
+          <Countdown expiryTime={quoteExpiresAt} onExpire={() => setPaymentExpired(true)} />
+          <input
+            type="text"
+            placeholder={`Enter ${selectedCoin} TXID`}
+            value={txId}
+            onChange={e => setTxId(e.target.value)}
+            className="w-full p-2 border rounded mb-2"
+            disabled={paymentExpired || paymentVerified}
+          />
+          <button
+            onClick={verifyPaymentHandler}
+            disabled={loading || paymentExpired || !txId.trim() || !orderId || paymentVerified}
+            className={`w-full py-2 rounded mb-2 ${paymentExpired || paymentVerified ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+          >
+            {loading ? 'Verifying...' : 'Verify Payment'}
+          </button>
+        </>
+      )}
+
+      {statusMsg && (
+        <p className={`mt-2 ${paymentVerified ? 'text-green-600' : 'text-red-600'}`}>
+          {statusMsg}
+        </p>
+      )}
+
+      {paymentVerified && (
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-600">We're automatically checking your payment status...</p>
+          <div className="mt-2">
+            <div className="inline-flex items-center px-4 py-2 bg-green-100 rounded-full">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2"></div>
+              <span className="text-green-800 text-sm">Processing...</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
   const SubmitStep = () => (
     <div className="bg-white p-6 rounded-lg shadow mb-6 text-center">
-      <h2 className="text-xl font-semibold mb-2">Submit Order</h2>
-      <p>Total: ${calculateTotal().toLocaleString()}</p>
-      <p className="text-gray-500 mt-2">Once payment is verified, click Next to complete your order.</p>
+      <div className="mx-auto w-16 h-16 bg-blue-100 flex items-center justify-center rounded-full mb-4">
+        <Send className="w-8 h-8 text-blue-600" />
+      </div>
+      <h2 className="text-xl font-semibold mb-2">Order Submitted Successfully!</h2>
+      <p className="text-gray-600 mb-2">Your payment has been verified and order is being processed.</p>
+      <p className="font-bold text-lg">Total: ${calculateTotal().toLocaleString()}</p>
+      <div className="mt-4">
+        <div className="animate-pulse text-blue-600">
+          Processing your order...
+        </div>
+      </div>
     </div>
   );
 
   const CompleteStep = () => (
     <div className="bg-white p-6 rounded-lg shadow mb-6 text-center">
-      <div className="mx-auto w-16 h-16 bg-green-100 flex items-center justify-center rounded-full mb-4">
-        <CheckCircle className="w-8 h-8 text-green-600" />
+      <div className="mx-auto w-16 h-16 bg-blue-200 flex items-center justify-center rounded-full mb-4">
+        <CheckCircle className="w-8 h-8 text-blue-600" />
       </div>
-      <h2 className="text-2xl font-semibold text-green-600 mb-2">Order Completed!</h2>
-      <p className="text-gray-500 mb-2">Your order has been successfully placed.</p>
+      <h2 className="text-2xl font-semibold text-blue-600 mb-2">Order Completed!</h2>
+      <p className="text-gray-500 mb-2">Your order has been successfully placed and confirmed.</p>
       <p className="font-bold">Total: ${calculateTotal().toLocaleString()}</p>
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+        <p className="text-blue-800 text-sm">
+          Congratulations! Your order is confirmed and will be processed within 24 hours.
+        </p>
+      </div>
     </div>
   );
 
@@ -273,7 +449,7 @@ const Cart = () => {
     { id: 1, name: 'Order Info', icon: FileText },
     { id: 2, name: 'Pay', icon: CreditCard },
     { id: 3, name: 'Submit', icon: Send },
-    { id: 4, name: 'Complete', icon: CheckCircle }
+    { id: 4, name: 'Complete', icon: CheckCircle },
   ];
 
   const hasSelectedItems = cartItems.filter(item => selectedItems[item._id] && item.product).length > 0;
@@ -313,12 +489,12 @@ const Cart = () => {
 
         {/* Navigation Buttons */}
         <div className="flex justify-between mt-4">
-          {currentStep > 0 && currentStep < 4 && (
+          {currentStep > 0 && currentStep < 3 && !paymentVerified && (
             <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
               Back
             </button>
           )}
-          {currentStep < 3 && (
+          {currentStep < 2 && (
             <button
               onClick={async () => {
                 if (currentStep === 1) {

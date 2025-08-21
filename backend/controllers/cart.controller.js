@@ -94,19 +94,41 @@ const updateCartItem = async (req, res) => {
     }
 };
 
-
 const removeItem = async (req, res) => {
     try {
-        const { productId } = req.body;
+        const { productId } = req.body; // Changed from req.params to req.body
+        console.log('Removing product with ID:', productId);
+        
+        if (!productId) {
+            return res.status(400).json({ message: 'Product ID is required' });
+        }
+        
         const user = await userModel.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        user.cart = user.cart.filter(i => i.product.toString() !== productId);
+        console.log('Cart before removal:', user.cart.length, 'items');
+        
+        const originalLength = user.cart.length;
+        user.cart = user.cart.filter(item => {
+            const itemProductId = item.product._id ? item.product._id.toString() : item.product.toString();
+            const keep = itemProductId !== productId.toString();
+            console.log(`Checking item ${itemProductId} vs ${productId}: ${keep ? 'KEEP' : 'REMOVE'}`);
+            return keep;
+        });
+        
+        console.log('Items removed:', originalLength - user.cart.length);
+        
+        if (user.cart.length === originalLength) {
+            return res.status(404).json({ message: 'Product not found in cart' });
+        }
+        
         await user.save();
         await user.populate('cart.product');
+        
+        console.log('Updated cart with', user.cart.length, 'items');
         res.status(200).json(user.cart);
     } catch(error) {
-        console.log(error)
+        console.error('Error in removeItem:', error);
         res.status(500).json({ message: 'Error removing item from cart' });
     }
 }
