@@ -44,7 +44,7 @@ export default function SinglePage() {
 
   useEffect(() => {
     setCustomerReviewsState(customerReviews);
-  }, [customerReviews]);
+  }, [[customerReviews?.length]]);
 
   const handlePostReview = (formData) => {
     if (!currentUser?.fullName?.trim() || !formData.review?.trim()) return;
@@ -188,7 +188,7 @@ export default function SinglePage() {
             </div>
 
             {customerReviewsState.map((review, id) => (
-              <div>
+              <div className='bg-gray-100 p-4 h-fit w-full mb-2 rounded-md ' >
                 <ul className=''>
                   <li className='flex flex-col mb-10 justify-center  gap-2'>
                     <div className='flex items-center gap-2'>
@@ -196,7 +196,7 @@ export default function SinglePage() {
                       <span className='font-bold'>{review.name}</span>
 
                     </div>
-                    <div className='font-semibold'>
+                    <div className='font-semibold  '>
                       <span>{review.review}</span>
                     </div>
                   </li>
@@ -263,7 +263,7 @@ export default function SinglePage() {
         <div className="max-w-7xl mx-auto px-8 py-15">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="bg- rounded-2xl flex items-center justify-center p-4 shadow-lg ">
-              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-12 border-white/90 shadow-lg">
+              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-12  shadow-lg">
   <img
     src={data?.images?.[0] ? `http://localhost:3000/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
     alt={data?.name}
@@ -277,10 +277,10 @@ export default function SinglePage() {
 
             <div className="text-white space-y-6">
               <h1 className="text-5xl font-bold leading-tight">{data?.name}</h1>
-              <p className="text-xl opacity-90">
+              <p className="text-xl font-semibold opacity-90">
                 Functions: <span className="font-semibold">{data?.functionType}</span>
               </p>
-              <p className="text-xl opacity-90">
+              <p className="text-xl font-semibold opacity-90">
                 Specification: <span className="font-semibold">
                   {typeof ProductGlance?.inputVoltage === 'object'
                     ? `${ProductGlance.inputVoltage.min}-${ProductGlance.inputVoltage.max} V`
@@ -291,10 +291,10 @@ export default function SinglePage() {
                     : ProductGlance?.inputFrequency}
                 </span>
               </p>
-              <p className="text-xl opacity-90">
+              <p className="text-xl font-semibold opacity-90">
                 Price: <span className="font-semibold"> ${data?.price?.perGram}/gm | ${data?.price?.perUnit}/Unit </span>
               </p>
-              <p className="text-xl opacity-90">
+              <p className="text-xl font-semibold opacity-90">
                 Payment Methods: <span className="font-semibold">{data?.paymentMethod ? JSON.parse(data.paymentMethod).join(" | ") : "N/A"}</span>
               </p>
               <div className="flex flex-col">
@@ -309,7 +309,7 @@ export default function SinglePage() {
 
                     navigate('/cart')
                   }}
-                  className='bg-orange-500 w-fit hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
+                  className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
                 >
                   Buy Now
                 </button>

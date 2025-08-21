@@ -308,9 +308,9 @@ const Cart = () => {
 
   const OrderInfoStep = () => (
     <form onSubmit={handleSubmit(onFormSubmit)}>
-      <div className="bg-white p-6 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <h3 className="font-semibold mb-2">Billing Details</h3>
+      <div className="bg-white p-5 rounded-lg shadow mb-6 ">
+        <div className='flex flex-col gap-5 ' >
+          <h3 className="font-bold text-2xl mb-2">Billing Details</h3>
           <input placeholder="Full Name" {...register('fullName', { required: true })} className="w-full p-2 border rounded mb-1" />
           <input placeholder="Email" {...register('email', { required: true })} className="w-full p-2 border rounded mb-1" />
           <input placeholder="Phone" {...register('phone')} className="w-full p-2 border rounded mb-1" />
@@ -320,14 +320,14 @@ const Cart = () => {
           <input placeholder="Postal Code" {...register('postalCode')} className="w-full p-2 border rounded mb-1" />
         </div>
         <div>
-          <h3 className="font-semibold mb-2">Shipping Details (Optional)</h3>
+          {/* <h3 className="font-semibold mb-2">Shipping Details (Optional)</h3>
           <input placeholder="Full Name" {...register('shippingFullName')} className="w-full p-2 border rounded mb-1" />
           <input placeholder="Email" {...register('shippingEmail')} className="w-full p-2 border rounded mb-1" />
           <input placeholder="Phone" {...register('shippingPhone')} className="w-full p-2 border rounded mb-1" />
           <input placeholder="Address" {...register('shippingAddress')} className="w-full p-2 border rounded mb-1" />
           <input placeholder="City" {...register('shippingCity')} className="w-full p-2 border rounded mb-1" />
           <input placeholder="Country" {...register('shippingCountry')} className="w-full p-2 border rounded mb-1" />
-          <input placeholder="Postal Code" {...register('shippingPostalCode')} className="w-full p-2 border rounded mb-1" />
+          <input placeholder="Postal Code" {...register('shippingPostalCode')} className="w-full p-2 border rounded mb-1" /> */}
         </div>
       </div>
     </form>

@@ -4,7 +4,7 @@ import { ContactContext } from '../Context/ContactContext';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema } from '../lib/schemas/schema';
-
+import { Link } from 'react-router-dom';
 const Footer = ({className}) => {
 
   const { submitInquiry } = useContext(ContactContext)
@@ -28,8 +28,8 @@ const Footer = ({className}) => {
       <div className={className}>
 
         <div className="flex flex-col gap-6 font-semibold text-center md:text-left">
-          <p className="hover:text-blue-400 cursor-pointer transition-colors">Home</p>
-          <p className="hover:text-blue-400 cursor-pointer transition-colors">Contact Us</p>
+          <Link to={"/"} className="hover:text-blue-400 cursor-pointer transition-colors">Home</Link>
+          <Link to={"/contact"} className="hover:text-blue-400 cursor-pointer transition-colors">Contact Us</Link>
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Terms & Conditions</p>
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Privacy Policy</p>
           <p className="hover:text-blue-400 cursor-pointer transition-colors">Refund Policy</p>
