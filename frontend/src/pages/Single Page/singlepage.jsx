@@ -259,19 +259,19 @@ export default function SinglePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Product Section */}
-      <section className="bg-gradient-to-br from-blue-500 to-blue-400 mx-4 my-8 rounded-3xl overflow-hidden">
+      <section className="bg-gradient-to-br from-blue-500 to-blue-600 mx-4 my-8 rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-8 py-15">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="bg- rounded-2xl flex items-center justify-center p-4 shadow-lg ">
-              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-12  shadow-lg">
-  <img
-    src={data?.images?.[0] ? `http://localhost:3000/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
-    alt={data?.name}
-    className="w-full h-full object-cover"
-    onError={(e) => { e.target.src = "/dummy.jpg"; }}
-  />
- 
-</div>
+            <div className="bg- rounded-2xl flex items-center justify-center p-4  ">
+              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-8  shadow-lg">
+                <img
+                  src={data?.images?.[0] ? `http://localhost:3000/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
+                  alt={data?.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.src = "/dummy.jpg"; }}
+                />
+
+              </div>
 
             </div>
 
@@ -298,7 +298,7 @@ export default function SinglePage() {
                 Payment Methods: <span className="font-semibold">{data?.paymentMethod ? JSON.parse(data.paymentMethod).join(" | ") : "N/A"}</span>
               </p>
               <div className="flex flex-col">
-                
+
                 <button
                   onClick={async () => {
                     await useAddToCartMutation.mutateAsync({
