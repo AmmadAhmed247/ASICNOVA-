@@ -26,6 +26,11 @@ app.use(express.urlencoded({extended: true}))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
+app.use('/', (req,res)=>{
+    res.json({
+        message: "Working!"
+    })
+})
 
 app.use('/auth', AuthRouter)
 app.use('/contact', ContactRouter)
