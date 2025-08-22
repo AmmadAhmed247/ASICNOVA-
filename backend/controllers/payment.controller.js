@@ -3,6 +3,7 @@ const Order = require('../models/order.model');
 const ProcessedTransaction = require('../models/processedTransaction.model');
 const axios = require('axios');
 const { parseUnits } = require('ethers'); // for ETH precision
+const transporter = require('../config/nodemailer')
 
 // -----------------------
 // BTC Conversion: string → satoshis
@@ -16,13 +17,6 @@ const convertBTCToSatoshis = (btcAmount) => {
 
 
 async function sendOrderEmail(order, email) {
-  let transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "your-email@gmail.com",
-      pass: "your-app-password",
-    },
-  });
 
   const htmlContent = `
   <div style="background-color:#f9fafb; padding:24px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
