@@ -56,7 +56,7 @@ async function sendOrderEmail(order, email) {
 // -----------------------
 const verifyBTC_BlockCypher = async (txId, receiveAddress, expectedAmount) => {
   try {
-    const res = await axios.get(`https://api.blockcypher.com/v1/btc/test3/txs/${txId}`);
+    const res = await axios.get(`https://api.blockcypher.com/v1/btc/main/txs/${txId}`);
     const tx = res.data;
     if (!tx.outputs) return false;
 

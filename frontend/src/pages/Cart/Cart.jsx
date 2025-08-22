@@ -584,7 +584,7 @@ const Cart = () => {
         {statusMsg && (
           <div className={`p-3 rounded-lg mb-4 ${
             paymentVerified 
-              ? 'bg-green-50 border border-green-200 text-green-800' 
+              ? 'bg-blue-50 border border-blue-200 text-blue-800' 
               : 'bg-red-50 border border-red-200 text-red-800'
           }`}>
             <p className="text-sm">{statusMsg}</p>
@@ -593,12 +593,12 @@ const Cart = () => {
 
         {/* Payment Processing Indicator */}
         {paymentVerified && (
-          <div className="text-center bg-green-50 border border-green-200 rounded-lg p-6">
-            <div className="inline-flex items-center px-4 py-2 bg-green-100 rounded-full mb-3">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2"></div>
-              <span className="text-green-800 text-sm font-medium">Processing Payment...</span>
+          <div className="text-center bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full mb-3">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+              <span className="text-blue-800 text-sm font-medium">Processing Payment...</span>
             </div>
-            <p className="text-sm text-green-700">
+            <p className="text-sm text-blue-700">
               We're automatically confirming your payment on the blockchain. This may take a few minutes.
             </p>
           </div>
