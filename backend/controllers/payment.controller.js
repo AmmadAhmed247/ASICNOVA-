@@ -14,47 +14,6 @@ const convertBTCToSatoshis = (btcAmount) => {
   return BigInt(satoshiStr);
 };
 
-async function sendOrderEmail(order, email) {
-  let transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "your-email@gmail.com",
-      pass: "your-app-password",
-    },
-  });
-
-  const htmlContent = `
-  <div style="background-color:#f9fafb; padding:24px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
-    <h2 style="font-size:20px; font-weight:bold; color:#1f2937; margin-bottom:16px;">ASICNOVA Order Confirmation</h2>
-
-    <p style="color:#374151; margin-bottom:12px;">Dear ${order.billingDetails.fullName || "Customer"},</p>
-    <p style="color:#374151; margin-bottom:24px;">
-      Your payment has been successfully confirmed ✅. Below are your order details:
-    </p>
-
-    <div style="background-color:#ffffff; border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-bottom:24px;">
-      <p style="color:#1f2937; margin:4px 0;"><span style="font-weight:600;">Order ID:</span> ${order._id}</p>
-      <p style="color:#1f2937; margin:4px 0;"><span style="font-weight:600;">Date:</span> ${order.verifiedAt}</p>
-      <p style="color:#1f2937; margin:4px 0;"><span style="font-weight:600;">Total:</span> ${order.cryptoAmountLocked} ${order.selectedCoin}</p>
-      <p style="color:#1f2937; margin:4px 0;"><span style="font-weight:600;">Payment Method:</span> ${order.selectedCoin}</p>
-      <p style="color:#1f2937; margin:4px 0;"><span style="font-weight:600;">Transaction ID:</span> ${order.txId}</p>
-    </div>
-
-    <p style="color:#374151; margin-bottom:24px;">Thank you for your order.</p>
-
-    <p style="font-size:12px; color:#6b7280; margin-top:16px;">© ${new Date().getFullYear()} ASICNOVA</p>
-  </div>
-`;
-
-
-  await transporter.sendMail({
-    from: '"ASICNOVA" <your-email@gmail.com>',
-    to: email,
-    subject: "ASICNOVA Payment Confirmation",
-    html: htmlContent,
-  });
-}
-
 // -----------------------
 // BTC Verification using BlockCypher
 // -----------------------
@@ -190,11 +149,6 @@ const verifyPayment = async (req, res) => {
     order.txId = txId;
     order.verifiedAt = new Date();
     await order.save();
-
-    const customerEmail = order.shippingDetails?.email || order.billingDetails.email;
-
-
-    await sendOrderEmail(order, customerEmail)
 
     return res.json({ success: true, message: `${coin} payment confirmed`, transactionDetails: processedTx });
   } catch (err) {

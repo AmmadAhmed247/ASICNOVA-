@@ -44,7 +44,7 @@ export default function SinglePage() {
 
   useEffect(() => {
     setCustomerReviewsState(customerReviews);
-  }, [[customerReviews?.length]]);
+  }, [[customerReviews]]);
 
   const handlePostReview = (formData) => {
     if (!currentUser?.fullName?.trim() || !formData.review?.trim()) return;
@@ -263,7 +263,7 @@ export default function SinglePage() {
         <div className="max-w-7xl mx-auto px-8 py-15">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="bg- rounded-2xl flex items-center justify-center p-4  ">
-              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-8  shadow-lg">
+              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-8 border-white  shadow-lg">
                 <img
                   src={data?.images?.[0] ? `http://localhost:3000/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                   alt={data?.name}
