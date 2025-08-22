@@ -43,9 +43,9 @@ async function sendOrderEmail(order, email) {
 
 
   await transporter.sendMail({
-    from: '"ASICNOVA" <your-email@gmail.com>',
+    from: process.env.EMAIL_USER,
     to: email,
-    subject: "ASICNOVA Payment Confirmation",
+    subject: "ASICNOVA - Payment Confirmation",
     html: htmlContent,
   });
 }
