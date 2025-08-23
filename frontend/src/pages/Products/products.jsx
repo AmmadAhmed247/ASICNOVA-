@@ -68,7 +68,7 @@ export default function ProductPage() {
               <Link to={`/products/${product._id}`} className="w-full mb-4">
                 <div className="relative w-full h-60 rounded-2xl overflow-hidden">
                   <img
-                    src={product.images[0] ? `http://localhost:3000/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
+                    src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                     alt={product.name}
                     className="w-full h-full object-cover"
                     onError={(e) => { e.target.src = "/dummy.jpg"; }}
