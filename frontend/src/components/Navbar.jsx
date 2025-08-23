@@ -194,7 +194,7 @@ export default function Navbar() {
 
                     <button
                       type="button"
-                      className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full cursor-pointer transition-colors"
+                      className="flex px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full cursor-pointer transition-colors"
                       onClick={() => {
                         setProfileOpen(false);
                         onLogout();

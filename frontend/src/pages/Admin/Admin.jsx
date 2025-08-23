@@ -1275,8 +1275,6 @@ export default function Admin() {
                 return renderOrders();
             case 'inquiries':
                 return renderInquiries();
-            case 'inquiries':
-                return renderInquiries();
             default:
                 return renderDashboard();
         }
