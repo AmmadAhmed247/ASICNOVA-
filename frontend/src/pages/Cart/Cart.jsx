@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Check, ShoppingCart, FileText, CreditCard, Send, CheckCircle, Copy } from 'lucide-react';
 import { useCart } from '../../lib/hooks/useCart';
@@ -7,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BillingSchema } from '../../lib/schemas/schema';
 import { Trash2 } from "lucide-react";
+import api from '../../lib/config/axios'
 
 // Countdown Timer
 const Countdown = ({ expiryTime, onExpire }) => {
@@ -60,7 +60,7 @@ const Cart = () => {
     if (orderId && currentStep === 2 && !paymentVerified) { // Step 2 is PayStep
       interval = setInterval(async () => {
         try {
-          const res = await axios.get(`http://localhost:3000/api/payments/status/${orderId}`);
+          const res = await api.get(`/payments/status/${orderId}`);
           console.log('Payment status check:', res.data);
 
           if (res.data.success && res.data.status === "PAID") {
@@ -91,7 +91,7 @@ const Cart = () => {
 
   const handleRemoveItem = async (productId) => {
     try {
-      await axios.delete("http://localhost:3000/cart/delete", {
+      await api.delete("/cart/delete", {
         data: { productId: productId.toString() },
         withCredentials: true,
         headers: { 'Content-Type': 'application/json' }
@@ -189,7 +189,7 @@ const Cart = () => {
         }
       };
 
-      const res = await axios.post('http://localhost:3000/api/orders/create', payload);
+      const res = await api.post('/orders/create', payload);
 
       if (res.data.success) {
         const createdOrder = res.data.order;
@@ -218,7 +218,7 @@ const Cart = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/payments/verify', { orderId, txId });
+      const res = await api.post('/payments/verify', { orderId, txId });
       setStatusMsg(res.data.message);
       if (res.data.success) {
         setPaymentVerified(true);
@@ -299,10 +299,10 @@ const Cart = () => {
         setLoadingCoinData(true);
         try {
           // Fetch BTC data
-          const btcResponse = await axios.get(`http://localhost:3000/api/orders/payment-info/${orderId}/BTC`);
+          const btcResponse = await api.get(`/orders/payment-info/${orderId}/BTC`);
           
           // Fetch ETH data  
-          const ethResponse = await axios.get(`http://localhost:3000/api/orders/payment-info/${orderId}/ETH`);
+          const ethResponse = await api.get(`/orders/payment-info/${orderId}/ETH`);
 
           setCoinData({
             BTC: {
