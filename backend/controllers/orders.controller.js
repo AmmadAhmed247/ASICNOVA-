@@ -30,7 +30,7 @@ const createOrder = async (req, res) => {
     if (!billingDetails?.fullName || !billingDetails?.email || !billingDetails?.address)
       return res.status(400).json({ success: false, message: "Billing details are required" });
 
-    // Calculate total USD from frontend item prices (trusted server-side)
+    // Calculate total USD
     let totalUSD = 0;
     items.forEach(item => {
       if (!item.priceUSD || !item.quantity)
@@ -38,7 +38,6 @@ const createOrder = async (req, res) => {
       totalUSD += item.priceUSD * item.quantity;
     });
 
-    // Use the first item's product to define which address to use (or customize your logic)
     const product = await Product.findById(items[0].productId);
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
 
@@ -46,30 +45,63 @@ const createOrder = async (req, res) => {
     if (!receiveAddress)
       return res.status(400).json({ success: false, message: `${coin} not supported for this product` });
 
-    // Calculate dynamic crypto amount at time of order
-    const priceUSD = await getCryptoPriceUSD(coin);
-    const cryptoAmountLocked = (totalUSD / priceUSD).toFixed(8);
-
+    // Step 1: Save order immediately without cryptoAmountLocked
     const order = new Order({
       userId: userId || null,
       items,
       totalUSD,
       selectedCoin: coin,
-      cryptoAmountLocked,
       receiveAddress,
       billingDetails,
       shippingDetails: shippingDetails || billingDetails,
-      status: "AWAITING_PAYMENT",
-      quoteExpiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 min
+      status: "PENDING_PRICE",
+      quoteExpiresAt: new Date(Date.now() + 15 * 60 * 1000)
     });
 
     await order.save();
-    return res.json({ success: true, message: "Order created", order });
+
+    // Step 2: Fetch crypto price asynchronously
+    (async () => {
+      let retries = 3;
+      let delay = 1000; // 1 second
+      while (retries > 0) {
+        try {
+          const priceUSD = await getCryptoPriceUSD(coin);
+          order.cryptoAmountLocked = (totalUSD / priceUSD).toFixed(8);
+          order.status = "AWAITING_PAYMENT";
+          await order.save();
+          break; // success
+        } catch (error) {
+          if (error.response?.status === 429) {
+            // Respect CoinGecko's retry-after if present
+            const retryAfter = parseInt(error.response.headers['retry-after'], 10) || 10;
+            console.log(`Rate limited, retrying in ${retryAfter} seconds`);
+            await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+          } else {
+            console.error("Failed to fetch crypto price:", error);
+            order.status = "PRICE_FAILED";
+            await order.save();
+            break;
+          }
+          retries--;
+        }
+      }
+    })();
+
+    // Return response immediately
+    return res.json({
+      success: true,
+      message: "Order created. Crypto amount will be calculated shortly.",
+      orderId: order._id,
+      status: order.status
+    });
+
   } catch (error) {
     console.error("createOrder error:", error);
     return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
 
 // Get payment info for specific coin type
 const getPaymentInfo = async (req, res) => {
