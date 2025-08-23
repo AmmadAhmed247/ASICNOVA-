@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const { submitInquiry } = require('../controllers/contact.controller')
+const { submitInquiry, getAllInquiries } = require('../controllers/contact.controller')
 
 router.post('/submit-inquiry', submitInquiry)
+router.get('/inquiries', getAllInquiries)
 
 module.exports = router;

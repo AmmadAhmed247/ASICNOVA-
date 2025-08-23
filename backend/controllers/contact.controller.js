@@ -29,6 +29,21 @@ const submitInquiry = async (req,res)=>{
     }
 }
 
+const getAllInquiries = async (req, res) => {
+    try {
+        const inquiries = await contactModel.find().sort({ createdAt: -1 }) 
+        return res.status(200).json({
+            success: true,
+            inquiries
+        })
+    } catch (error) {
+        console.log("An Error Occurred!", error)
+        res.status(500).json({ error: "Internal Server Error" })
+    }
+}
+
+
 module.exports = {
-    submitInquiry
+    submitInquiry,
+    getAllInquiries
 }

@@ -29,45 +29,17 @@ import { addProduct, useDeleteProduct, useEditProduct } from '../../lib/hooks/us
 import { useProducts } from '../../lib/hooks/useProduct';
 import AdminOrderManagement from '../../components/AdminOrderManagement';
 import toast from 'react-hot-toast';
+import { useAllOrders } from '../../lib/hooks/useOrder';
 
 
-const mockOrders = [
-    {
-        id: "ORD-001",
-        customerName: "Alice Johnson",
-        email: "alice@example.com",
-        phone: "+1-555-0123",
-        address: "123 Mining St, Crypto City, CC 12345",
-        productName: "Bitcoin Miner S19 Pro",
-        quantity: 2,
-        totalPrice: 5998,
-        paymentMethod: "Bitcoin",
-        orderDate: "2024-08-15",
-        status: "pending",
-        shippingDetails: {
-            carrier: "DHL Express",
-            trackingNumber: "DHL123456789",
-            estimatedDelivery: "2024-08-25"
-        }
-    },
-    {
-        id: "ORD-002",
-        customerName: "Bob Wilson",
-        email: "bob@example.com",
-        phone: "+1-555-0456",
-        address: "456 Hash Ave, Blockchain Heights, BH 67890",
-        productName: "Ethereum Miner E9 Pro",
-        quantity: 1,
-        totalPrice: 3999,
-        paymentMethod: "USDT",
-        orderDate: "2024-08-16",
-        status: "shipped"
-    }
-];
 
 export default function Admin() {
+
+    const { data: orderData } = useAllOrders()
+
+    const orders = orderData?.orders ?? [];
+
     const [activeTab, setActiveTab] = useState('dashboard');
-    const [orders, setOrders] = useState(mockOrders);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showProductModal, setShowProductModal] = useState(false);
@@ -175,11 +147,19 @@ export default function Admin() {
         return matchesSearch && matchesStatus
     })
 
-    const filteredOrders = orders.filter(order =>
-        (order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.id.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (filterStatus === 'all' || order.status === filterStatus)
-    );
+    const filteredOrders = orders.filter(order => {
+        const name = order.customerName || order.billingDetails?.name || "";
+        const id = order._id || "";
+
+        const matchesSearch =
+            name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            id.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesStatus =
+            filterStatus === "all" || order.status === filterStatus;
+
+        return matchesSearch && matchesStatus;
+    });
 
 
 
@@ -345,26 +325,26 @@ export default function Admin() {
                                 <label className="block text-sm font-medium mb-2">Payment Method</label>
                                 <div className='flex items-center gap-10'>
 
-                                <label className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        value="BTC"
-                                        className="mr-2 "
-                                        {...register('paymentMethod', { required: 'Select at least one payment method' })}
-                                    />
-                                    BTC
-                                </label>
-                                <label className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        value="ETH"
-                                        className="mr-2"
-                                        {...register('paymentMethod', { required: 'Select at least one payment method' })}
-                                    />
-                                    ETH
-                                </label>
+                                    <label className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            value="BTC"
+                                            className="mr-2 "
+                                            {...register('paymentMethod', { required: 'Select at least one payment method' })}
+                                        />
+                                        BTC
+                                    </label>
+                                    <label className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            value="ETH"
+                                            className="mr-2"
+                                            {...register('paymentMethod', { required: 'Select at least one payment method' })}
+                                        />
+                                        ETH
+                                    </label>
                                 </div>
-                               
+
                                 {errors.paymentMethod && (
                                     <p className="text-red-500 text-sm mt-1">{errors.paymentMethod.message}</p>
                                 )}
@@ -576,61 +556,61 @@ export default function Admin() {
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <h4 className="font-medium mb-3">Crypto Wallet Address</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                     
-                                                <div>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Bitcoin Wallet Address"
-                                                        className={`w-full p-2 border rounded ${errors.cryptoAddresses?.BTC ? 'border-red-500' : 'border-gray-300'}`}
-                                                        {...register('cryptoAddresses.BTC')}
-                                                    />
-                                                    {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
-                                                </div>
 
-                                                <div>
-                                                    <input
-                                                        type="number"
-                                                        step="0.0001"  // allow small BTC values
-                                                        min="0.0001"   // optional minimum
-                                                        placeholder="Expected Amount"
-                                                        className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
-                                                        {...register('expectedAmounts.BTC', {
-                                                            valueAsNumber: true,
-                                                        })}
-                                                    />
-                                                    {errors.expectedAmounts?.BTC && (
-                                                        <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
-                                                    )}
-                                                </div>
-                                        
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Bitcoin Wallet Address"
+                                                className={`w-full p-2 border rounded ${errors.cryptoAddresses?.BTC ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('cryptoAddresses.BTC')}
+                                            />
+                                            {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
+                                        </div>
 
-                                     
-                                                <div>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Etherium Wallet Address"
-                                                        className={`w-full p-2 border rounded ${errors.cryptoAddresses?.ETH ? 'border-red-500' : 'border-gray-300'}`}
-                                                        {...register('cryptoAddresses.ETH')}
-                                                    />
-                                                    {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
-                                                </div>
+                                        <div>
+                                            <input
+                                                type="number"
+                                                step="0.0001"  // allow small BTC values
+                                                min="0.0001"   // optional minimum
+                                                placeholder="Expected Amount"
+                                                className={`w-full p-2 border rounded ${errors.expectedAmounts?.BTC ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('expectedAmounts.BTC', {
+                                                    valueAsNumber: true,
+                                                })}
+                                            />
+                                            {errors.expectedAmounts?.BTC && (
+                                                <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
+                                            )}
+                                        </div>
 
-                                                <div>
-                                                    <input
-                                                        type="number"
-                                                        step="0.0001"  // allow small BTC values
-                                                        min="0.0001"   // optional minimum
-                                                        placeholder="Expected Amount"
-                                                        className={`w-full p-2 border rounded ${errors.expectedAmounts?.ETH ? 'border-red-500' : 'border-gray-300'}`}
-                                                        {...register('expectedAmounts.ETH', {
-                                                            valueAsNumber: true,
-                                                        })}
-                                                    />
-                                                    {errors.expectedAmounts?.BTC && (
-                                                        <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
-                                                    )}
-                                                </div>
-                                        
+
+
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Etherium Wallet Address"
+                                                className={`w-full p-2 border rounded ${errors.cryptoAddresses?.ETH ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('cryptoAddresses.ETH')}
+                                            />
+                                            {errors.cryptoAddresses?.BTC && <p className="text-red-500 text-xs mt-1">{errors.cryptoAddresses?.BTC.message}</p>}
+                                        </div>
+
+                                        <div>
+                                            <input
+                                                type="number"
+                                                step="0.0001"  // allow small BTC values
+                                                min="0.0001"   // optional minimum
+                                                placeholder="Expected Amount"
+                                                className={`w-full p-2 border rounded ${errors.expectedAmounts?.ETH ? 'border-red-500' : 'border-gray-300'}`}
+                                                {...register('expectedAmounts.ETH', {
+                                                    valueAsNumber: true,
+                                                })}
+                                            />
+                                            {errors.expectedAmounts?.BTC && (
+                                                <p className="text-red-500 text-xs mt-1">{errors.expectedAmounts?.BTC.message}</p>
+                                            )}
+                                        </div>
+
 
 
                                         <div>
@@ -725,14 +705,17 @@ export default function Admin() {
         const handleStatusUpdate = (newStatus) => {
             const updatedOrder = { ...orderData, status: newStatus };
             setOrderData(updatedOrder);
-            setOrders(orders.map(o => o.id === selectedOrder.id ? updatedOrder : o));
+            setOrders(orders.map(o => o._id === selectedOrder._id ? updatedOrder : o));
         };
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                 <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                    {/* Header */}
                     <div className="p-6 border-b flex justify-between items-center">
-                        <h2 className="text-xl font-semibold">Order Details - {orderData?.id}</h2>
+                        <h2 className="text-xl font-semibold">
+                            Order Details - {orderData?._id}
+                        </h2>
                         <button
                             type="button"
                             onClick={() => setShowOrderModal(false)}
@@ -767,27 +750,27 @@ export default function Admin() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm text-gray-600">Name</label>
-                                    <p className="font-medium">{orderData?.customerName}</p>
+                                    <p className="font-medium">{orderData?.billingDetails?.name}</p>
                                 </div>
                                 <div>
                                     <label className="block text-sm text-gray-600">Email</label>
                                     <p className="font-medium flex items-center gap-1">
                                         <Mail size={16} />
-                                        {orderData?.email}
+                                        {orderData?.billingDetails?.email}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="block text-sm text-gray-600">Phone</label>
                                     <p className="font-medium flex items-center gap-1">
                                         <Phone size={16} />
-                                        {orderData?.phone}
+                                        {orderData?.billingDetails?.phone}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="block text-sm text-gray-600">Address</label>
                                     <p className="font-medium flex items-center gap-1">
                                         <MapPin size={16} />
-                                        {orderData?.address}
+                                        {orderData?.billingDetails?.address}
                                     </p>
                                 </div>
                             </div>
@@ -799,22 +782,26 @@ export default function Admin() {
                                 <Package size={20} />
                                 Product Information
                             </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label className="block text-sm text-gray-600">Product</label>
-                                    <p className="font-medium">{orderData?.productName}</p>
-                                </div>
-                                <div>
-                                    <label className="block text-sm text-gray-600">Quantity</label>
-                                    <p className="font-medium">{orderData?.quantity}</p>
-                                </div>
-                                <div>
-                                    <label className="block text-sm text-gray-600">Total Price</label>
-                                    <p className="font-medium flex items-center gap-1">
-                                        <DollarSign size={16} />
-                                        ${orderData?.totalPrice}
-                                    </p>
-                                </div>
+                            <div className="space-y-4">
+                                {orderData?.items?.map((item, idx) => (
+                                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm text-gray-600">Product</label>
+                                            <p className="font-medium">{item.productName}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm text-gray-600">Quantity</label>
+                                            <p className="font-medium">{item.quantity}</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm text-gray-600">Total Price</label>
+                                            <p className="font-medium flex items-center gap-1">
+                                                <DollarSign size={16} />
+                                                ${item.price * item.quantity}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
@@ -829,7 +816,11 @@ export default function Admin() {
                                     <Calendar size={20} />
                                     Order Date
                                 </h3>
-                                <p className="font-medium">{orderData?.orderDate}</p>
+                                <p className="font-medium">
+                                    {orderData?.createdAt
+                                        ? new Date(orderData.createdAt).toLocaleDateString()
+                                        : ""}
+                                </p>
                             </div>
                         </div>
 
@@ -855,6 +846,7 @@ export default function Admin() {
                         )}
                     </div>
 
+                    {/* Footer */}
                     <div className="p-6 border-t flex justify-end">
                         <button
                             type="button"
@@ -868,6 +860,7 @@ export default function Admin() {
             </div>
         );
     };
+
 
     const renderDashboard = () => (
         <div className="space-y-6">
@@ -885,7 +878,7 @@ export default function Admin() {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-gray-600">Total Orders</p>
-                            <p className="text-2xl font-semibold">{orders.length}</p>
+                            <p className="text-2xl font-semibold">{orders?.length}</p>
                         </div>
                         <ShoppingCart className="text-green-500" size={32} />
                     </div>
@@ -906,7 +899,10 @@ export default function Admin() {
                         <div>
                             <p className="text-sm text-gray-600">Total Revenue</p>
                             <p className="text-2xl font-semibold">
-                                ${orders.reduce((sum, order) => sum + order.totalPrice, 0).toLocaleString()}
+                                ${orders.reduce(
+                                    (sum, order) => sum + order.items.reduce((itemSum, item) => itemSum + item.totalUSD, 0),
+                                    0
+                                ).toLocaleString()}
                             </p>
                         </div>
                         <DollarSign className="text-purple-500" size={32} />
@@ -932,27 +928,28 @@ export default function Admin() {
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {orders.slice(0, 5).map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50">
+                                <tr key={order?._id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        {order.id}
+                                        {order?._id}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {order.customerName}
+                                        {order?.billingDetails?.fullName}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {order.productName}
+                                        {order?.items?.map(item => item.name).join(", ")}
+
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 text-xs rounded-full ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                                                order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                            order?.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                                order?.status === 'delivered' ? 'bg-green-100 text-green-800' :
                                                     'bg-gray-100 text-gray-800'
                                             }`}>
-                                            {order.status}
+                                            {order?.status}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        ${order.totalPrice}
+                                        ${order?.totalUSD}
                                     </td>
                                 </tr>
                             ))}
