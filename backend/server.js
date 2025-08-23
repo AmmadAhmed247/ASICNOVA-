@@ -30,8 +30,8 @@ app.get("/health", (req, res) => {
   res.json({ ok: true });
 })
 
-app.get("/", () => {
-  console.log("server is running on ngrok");
+app.get("/health", () => {
+  console.log("perfect");
 })
 
 // Initialize the app after database connection
