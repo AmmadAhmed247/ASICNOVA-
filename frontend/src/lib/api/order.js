@@ -3,7 +3,7 @@ import axios from '../config/axios';
 // Get all orders (Admin)
 export const getAllOrders = async (params = {}) => {
   try {
-    const response = await axios.get('/api/admin/orders', { params });
+    const response = await axios.get('/admin/orders', { params });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -13,7 +13,7 @@ export const getAllOrders = async (params = {}) => {
 // Get user orders
 export const getUserOrders = async (userId, params = {}) => {
   try {
-    const response = await axios.get(`/api/user/${userId}/orders`, { params });
+    const response = await axios.get(`/user/${userId}/orders`, { params });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -23,7 +23,7 @@ export const getUserOrders = async (userId, params = {}) => {
 // Get single order by ID
 export const getOrderById = async (orderId) => {
   try {
-    const response = await axios.get(`/api/orders/${orderId}`);
+    const response = await axios.get(`/orders/${orderId}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -33,7 +33,7 @@ export const getOrderById = async (orderId) => {
 // Update order status (Admin)
 export const updateOrderStatus = async (orderId, statusData) => {
   try {
-    const response = await axios.put(`/api/admin/orders/${orderId}/status`, statusData);
+    const response = await axios.put(`/admin/orders/${orderId}/status`, statusData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -43,7 +43,7 @@ export const updateOrderStatus = async (orderId, statusData) => {
 // Update tracking information (Admin)
 export const updateTrackingInfo = async (orderId, trackingData) => {
   try {
-    const response = await axios.put(`/api/admin/orders/${orderId}/tracking`, trackingData);
+    const response = await axios.put(`/admin/orders/${orderId}/tracking`, trackingData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -53,7 +53,7 @@ export const updateTrackingInfo = async (orderId, trackingData) => {
 // Update shipping address (User)
 export const updateShippingAddress = async (orderId, shippingData) => {
     try {
-      const response = await axios.put(`/api/orders/${orderId}/shipping`, {
+      const response = await axios.put(`/orders/${orderId}/shipping`, {
         shippingDetails: shippingData
       });
       return response.data;
@@ -66,7 +66,7 @@ export const updateShippingAddress = async (orderId, shippingData) => {
 // Create new order
 export const createOrder = async (orderData) => {
   try {
-    const response = await axios.post('/api/orders/create', orderData);
+    const response = await axios.post('/orders/create', orderData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -76,7 +76,7 @@ export const createOrder = async (orderData) => {
 // Get payment info for order
 export const getPaymentInfo = async (orderId, coinType) => {
   try {
-    const response = await axios.get(`/api/orders/payment-info/${orderId}/${coinType}`);
+    const response = await axios.get(`/orders/payment-info/${orderId}/${coinType}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

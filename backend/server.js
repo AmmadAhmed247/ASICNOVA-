@@ -51,9 +51,9 @@ const initializeApp = async () => {
     app.use('/auth', AuthRouter)
     app.use('/contact', ContactRouter)
     app.use('/product', ProductRouter)
-    app.use('/api', orderRoute);
+    app.use('/orders', orderRoute);
     app.use('/cart', CartRouter)
-    app.use('/api/payments', paymentRoutes);
+    app.use('/payments', paymentRoutes);
     
     // Start server
     app.listen(3000, () => {
