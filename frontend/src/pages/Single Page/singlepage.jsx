@@ -265,7 +265,7 @@ export default function SinglePage() {
             <div className="bg- rounded-2xl flex items-center justify-center p-4  ">
               <div className="relative w-full h-80 rounded-2xl overflow-hidden border-8 border-white  shadow-lg">
                 <img
-                  src={data?.images?.[0] ? `http://localhost:3000/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
+                  src={data?.images?.[0] ? `/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                   alt={data?.name}
                   className="w-full h-full object-cover"
                   onError={(e) => { e.target.src = "/dummy.jpg"; }}
