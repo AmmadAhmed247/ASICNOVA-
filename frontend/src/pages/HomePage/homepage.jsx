@@ -261,7 +261,7 @@ const MiningWebsite = () => {
                 <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2 shadow-xl">
                   <img
                     src={products[currentSlide]?.images?.[0]
-                      ? `http://localhost:3000/${products[currentSlide].images[0].replace(/\\/g, '/')}`
+                      ? `/${products[currentSlide].images[0].replace(/\\/g, '/')}`
                       : '/dummy.jpg'}
                     alt={products[currentSlide]?.name}
                     className="w-full h-full object-cover rounded-2xl"
