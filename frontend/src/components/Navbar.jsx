@@ -37,14 +37,11 @@ export default function Navbar() {
     try {
       // Fetch all products and filter on frontend (or modify backend to accept search query)
       const response = await api.get('/product/get-products');
+      console.log(response)
 
       const products = response.data.products || response.data;
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-
-
+      
       // Filter products based on search query
       const filtered = products.filter(product =>
         product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
