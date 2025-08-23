@@ -36,7 +36,7 @@ export default function Navbar() {
 
     try {
       // Fetch all products and filter on frontend (or modify backend to accept search query)
-      const response = await api.get('/product/get-products');
+      const response = await api.get('product/get-products');
       console.log(response.data)
 
       // const products = response.data.products || response.data;
