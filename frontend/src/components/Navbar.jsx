@@ -39,7 +39,7 @@ export default function Navbar() {
       const response = await api.get('/product/get-products');
       console.log(response.data)
 
-      // const products = response.data.products || response.data;
+      const products = response?.data?.products 
 
   
       // Filter products based on search query
