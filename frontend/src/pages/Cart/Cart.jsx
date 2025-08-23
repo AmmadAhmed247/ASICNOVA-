@@ -32,7 +32,7 @@ const Countdown = ({ expiryTime, onExpire }) => {
 };
 
 const Cart = () => {
-  const { data = [] } = useCart();
+  const { data = [],refetch  } = useCart();
   const cartItems = data;
 
   const [selectedItems, setSelectedItems] = useState({});
@@ -91,56 +91,20 @@ const Cart = () => {
 
   const handleRemoveItem = async (productId) => {
     try {
-      console.log('=== REMOVE ITEM DEBUG ===');
-      console.log('Product ID to remove:', productId);
-      console.log('Product ID type:', typeof productId);
-      console.log('Current cart items:', localCartItems);
-      
-      // Check if productId exists
-      if (!productId) {
-        console.error('No product ID provided');
-        alert('Error: No product ID provided');
-        return;
-      }
-
-      console.log('Making DELETE request...');
-      
-      // Send productId to backend
-      const res = await axios.delete("http://localhost:3000/cart/delete", {
-        data: { productId: productId.toString() }, // Ensure it's a string
+      await axios.delete("http://localhost:3000/cart/delete", {
+        data: { productId: productId.toString() },
         withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
-
-      console.log('Delete response status:', res.status);
-      console.log('Delete response data:', res.data);
-      
-      if (res.data) {
-        // Update local state with server response
-        setLocalCartItems(res.data);
-        console.log('Successfully updated cart');
-      }
-      
+  
+      // Refresh cart from server
+      refetch();
     } catch (err) {
-      console.error('=== DELETE ERROR ===');
-      console.error('Error status:', err.response?.status);
-      console.error('Error data:', err.response?.data);
-      console.error('Error message:', err.message);
-      
-      // More specific error messages
-      if (err.response?.status === 401) {
-        alert("Authentication error. Please log in again.");
-      } else if (err.response?.status === 404) {
-        alert("Item not found in cart.");
-      } else if (err.response?.data?.message) {
-        alert(`Error: ${err.response.data.message}`);
-      } else {
-        alert("Failed to remove item from cart. Please try again.");
-      }
+      console.error(err);
+      alert("Failed to remove item");
     }
   };
+  
 
   // Auto move from Submit to Complete step
   useEffect(() => {

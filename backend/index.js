@@ -14,8 +14,39 @@ const path = require('path');
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 dotenv.config()
-ConnectToDB()
-require("./cronJobs/expireOrders");
+
+// Initialize the app after database connection
+const initializeApp = async () => {
+  try {
+    // Wait for database connection
+    await ConnectToDB();
+    console.log('Connected To DB!');
+    
+    // Import all models to ensure they are registered
+    require('./models');
+    
+    // Require cron jobs after DB connection
+    require("./cronJobs/expireOrders");
+    
+    // Mount routes after DB connection is established
+    app.use('/auth', AuthRouter)
+    app.use('/contact', ContactRouter)
+    app.use('/product', ProductRouter)
+    app.use('/api', orderRoute);
+    app.use('/cart', CartRouter)
+    app.use('/api/payments', paymentRoutes);
+    
+    // Start server
+    app.listen(3000, () => {
+      console.log("Listening To PORT 3000")
+    });
+    
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+    process.exit(1);
+  }
+};
+
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
@@ -25,24 +56,13 @@ app.use(cookieParser())
 app.use(express.urlencoded({extended: true}))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-
-app.use('/auth', AuthRouter)
-app.use('/contact', ContactRouter)
-app.use('/product', ProductRouter)
-app.use('/api',orderRoute );
-
-app.use('/cart', CartRouter)
-app.use('/api/payments', paymentRoutes);
 app.get("/health", (req, res) => {
   res.json({ ok: true });
 });
+
 app.get("/",()=>{
     console.log("server is running on ngrok");
-    
 })
 
-
-app.listen(3000, (req,res)=>{
-    console.log("Listning To PORT")
-})
+// Initialize the app
+initializeApp();

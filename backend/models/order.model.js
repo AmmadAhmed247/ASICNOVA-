@@ -61,11 +61,34 @@ const orderSchema = new mongoose.Schema(
     txId: { type: String, default: null },
     verifiedAt: { type: Date },
     
+    // Enhanced order status with new options
     status: { 
       type: String, 
-      enum: ["PENDING", "AWAITING_PAYMENT", "PAID", "FAILED", "EXPIRED", "CANCELLED"], 
+      enum: [
+        "PENDING", 
+        "AWAITING_PAYMENT", 
+        "PAID", 
+        "CONFIRMED", 
+        "IN_WAREHOUSE", 
+        "SHIPPED", 
+        "DELIVERED", 
+        "FAILED", 
+        "EXPIRED", 
+        "CANCELLED"
+      ], 
       default: "PENDING" 
     },
+
+    // Tracking information
+    trackingNumber: { type: String },
+    carrier: { type: String },
+    estimatedDelivery: { type: Date },
+    shippedAt: { type: Date },
+    deliveredAt: { type: Date },
+
+    // Admin notes and internal status
+    adminNotes: { type: String },
+    internalStatus: { type: String },
 
     paymentMethod: { type: String, default: "crypto" },
     notes: { type: String }
@@ -79,6 +102,7 @@ orderSchema.index({ status: 1 });
 orderSchema.index({ selectedCoin: 1 });
 orderSchema.index({ receiveAddress: 1 });
 orderSchema.index({ txId: 1 });
+orderSchema.index({ trackingNumber: 1 });
 
 // Auto-calc per-item total + order total
 orderSchema.pre('save', function(next) {

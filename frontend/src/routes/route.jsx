@@ -8,6 +8,7 @@ import SignUp from "../pages/Auth/SignUp.jsx";
 import AboutUs from "../pages/AboutUs/AboutUs.jsx";
 import ContactSalesPage from "../pages/Contact/Contact.jsx";
 import Admin from "../pages/Admin/Admin.jsx";
+import UserOrders from "../pages/UserOrders/UserOrders.jsx";
 import Unauthorized from "../pages/Error Pages/Unauthorized.jsx";
 import NotFound from "../pages/Error Pages/NotFound.jsx";
 import ProtectedRoute from "./protected-route.jsx";
@@ -34,6 +35,13 @@ const router = createBrowserRouter([
         element: <ProtectedRoute/>,
         children: [
           {path: '', element: <Admin/>}
+        ]
+      },
+      {
+        path: '/orders',
+        element: <ProtectedRoute/>,
+        children: [
+          {path: '', element: <UserOrders/>}
         ]
       },
       { path: '/products/:id', element: <Singlepage /> },

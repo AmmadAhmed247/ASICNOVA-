@@ -4,6 +4,7 @@ import { FaSearch, FaUserCircle, FaGlobe, FaTimes } from "react-icons/fa";
 import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { Navigate } from "react-router-dom";
+import { FaCartPlus } from "react-icons/fa";
 
 
 export default function Navbar() {
@@ -17,6 +18,9 @@ export default function Navbar() {
   const profileRef = useRef();
   const searchRef = useRef();
   const Navigate=useNavigate()
+
+
+
 
   // Live search function with your API
   const performSearch = async (searchQuery) => {
@@ -120,7 +124,11 @@ export default function Navbar() {
           <Link to="/products" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Shop</Link>
           <Link to="/about" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">About Us</Link>
           <Link to="/contact" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Contact Us</Link>
-          <Link to="/cart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Cart</Link>
+          {User && (
+  <Link to="/cart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
+    <FaCartPlus size={27} />
+  </Link>
+)}
         </div>
 
 
@@ -163,17 +171,32 @@ export default function Navbar() {
                       Sign Up
                     </Link>
                   </>
-                ) : <button type="button" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full cursor-pointer transition-colors" onClick={() => {setProfileOpen(false); onLogout()}}>
-                    Logout
-                </button>}
+                ) : (
+                  <>
+                    <Link
+                      to="/orders"
+                      className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    <button 
+                      type="button" 
+                      className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full cursor-pointer transition-colors" 
+                      onClick={() => {setProfileOpen(false); onLogout()}}
+                    >
+                      Logout
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
 
-          <button className="flex items-center p-2 text-blue-600 rounded hover:bg-blue-50 transition-colors">
+          {/* <button className="flex items-center p-2 text-blue-600 rounded hover:bg-blue-50 transition-colors">
             <FaGlobe  className="mr-1  text-blue-600" /> 
             <span className="text-gray-700">EN</span>
-          </button>
+          </button> */}
         </div>
 
         <button className="md:hidden p-2 border border-gray-300 rounded text-gray-700 hover:bg-blue-50 transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
@@ -281,12 +304,26 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Home</Link>
-          <Link to="/shop" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Shop</Link>
+          <Link to="/products" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Shop</Link>
           <Link to="/about" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">About Us</Link>
           <Link to="/contact" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Contact Us</Link>
           <Link to="/cart" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Cart</Link>
-          <Link to="/login" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Sign In</Link>
-          <Link to="/signup" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Sign Up</Link>
+          {User ? (
+            <>
+              <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">My Orders</Link>
+              <button 
+                onClick={onLogout}
+                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Sign In</Link>
+              <Link to="/signup" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Sign Up</Link>
+            </>
+          )}
         </div>
       )}
     </nav>

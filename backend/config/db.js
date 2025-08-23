@@ -3,7 +3,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 function ConnectToDB(){
-    mongoose.connect(process.env.MONGO_URL).then(()=>{
+    return mongoose.connect(process.env.MONGO_URL).then(()=>{
         console.log("Connected To DB!")
     })
 }
