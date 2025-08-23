@@ -37,7 +37,6 @@ const SignUp = () => {
       if (valid) {
         verifyOTPAndPassword(data)
         navigate('/login')
-        console.log("Submitted Data: ", data)
       };
     }
   };

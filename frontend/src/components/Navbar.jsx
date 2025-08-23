@@ -17,7 +17,8 @@ export default function Navbar() {
   const { User, logout } = useContext(AuthContext)
   const profileRef = useRef();
   const searchRef = useRef();
-  const Navigate=useNavigate()
+  const Navigate = useNavigate()
+
 
 
 
@@ -31,18 +32,18 @@ export default function Navbar() {
     }
 
     setIsSearching(true);
-    
+
     try {
       // Fetch all products and filter on frontend (or modify backend to accept search query)
       const response = await fetch('http://localhost:3000/product/get-products');
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
-      
+
       const data = await response.json();
       const products = data.products || data; // Handle different response structures
-      
+
       // Filter products based on search query
       const filtered = products.filter(product =>
         product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,7 +51,7 @@ export default function Navbar() {
         product.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description?.toLowerCase().includes(searchQuery.toLowerCase())
       ).slice(0, 8); // Limit to 8 results for dropdown
-      
+
       setSearchResults(filtered);
       setIsSearching(false);
     } catch (error) {
@@ -89,10 +90,10 @@ export default function Navbar() {
     setSearchResults([]);
   };
 
-  const onLogout = ()=>{
+  const onLogout = () => {
     logout()
 
-    if(!logout()){
+    if (!logout()) {
       toast.error("Logout Failed!")
     }
     Navigate('/')
@@ -125,10 +126,10 @@ export default function Navbar() {
           <Link to="/about" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">About Us</Link>
           <Link to="/contact" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Contact Us</Link>
           {User && (
-  <Link to="/cart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
-    <FaCartPlus size={27} />
-  </Link>
-)}
+            <Link to="/cart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
+              <FaCartPlus size={27} />
+            </Link>
+          )}
         </div>
 
 
@@ -147,7 +148,7 @@ export default function Navbar() {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center p-2 text-blue-600 rounded gap-2 hover:bg-blue-50 transition-colors"
             >
-              <FaUserCircle  className="h-6 w-6 text-blue-600" />
+              <FaUserCircle className="h-6 w-6 text-blue-600" />
               <div className="text-gray-700">{User?.fullName}</div>
             </button>
 
@@ -180,10 +181,24 @@ export default function Navbar() {
                     >
                       My Orders
                     </Link>
-                    <button 
-                      type="button" 
-                      className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full cursor-pointer transition-colors" 
-                      onClick={() => {setProfileOpen(false); onLogout()}}
+
+                    {User?.isAdmin === true && (
+                      <Link
+                        to="/admin"
+                        className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        Admin Portal
+                      </Link>
+                    )}
+
+                    <button
+                      type="button"
+                      className="flex px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full cursor-pointer transition-colors"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        onLogout();
+                      }}
                     >
                       Logout
                     </button>
@@ -191,6 +206,7 @@ export default function Navbar() {
                 )}
               </div>
             )}
+
           </div>
 
           {/* <button className="flex items-center p-2 text-blue-600 rounded hover:bg-blue-50 transition-colors">
@@ -217,7 +233,7 @@ export default function Navbar() {
                 className="w-full py-4 px-4 rounded-2xl  border border-gray-300 focus:outline-none  text-gray-900 bg-white font-medium placeholder-gray-500"
                 autoFocus
               />
-              
+
               {/* Live Search Results Dropdown */}
               {(query.trim() && (searchResults.length > 0 || isSearching)) && (
                 <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 border-t-0 rounded-b-lg shadow-lg z-50 max-h-80 overflow-y-auto">
@@ -243,32 +259,32 @@ export default function Navbar() {
                               </div>
                               {product.description && (
                                 <div className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                  {product.description.length > 60 
-                                    ? `${product.description.substring(0, 60)}...` 
+                                  {product.description.length > 60
+                                    ? `${product.description.substring(0, 60)}...`
                                     : product.description
                                   }
                                 </div>
                               )}
                             </div>
                             {product.images && product.images.length > 0 && (
-                            <div className="mt-2">
-                              <img 
-                                src={product.images && product.images.length > 0
-              ? `http://localhost:3000/${product.images[0].replace(/\\/g, '/')}`
-              : '/dummy.jpg'} 
-                                alt={product.name}
-                                className="w-14 h-14 object-cover rounded border"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          )}
+                              <div className="mt-2">
+                                <img
+                                  src={product.images && product.images.length > 0
+                                    ? `http://localhost:3000/${product.images[0].replace(/\\/g, '/')}`
+                                    : '/dummy.jpg'}
+                                  alt={product.name}
+                                  className="w-14 h-14 object-cover rounded border"
+                                  onError={(e) => {
+                                    e.target.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
-                          
+
                         </div>
                       ))}
-                      
+
                     </>
                   ) : (
                     <div className="p-4 text-center text-gray-500">
@@ -278,7 +294,7 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-            
+
             <button
               type="submit"
               className="bg-blue-600 rounded-2xl hover:bg-blue-700 text-white px-4 py-4 flex items-center justify-center transition-colors"
@@ -310,18 +326,43 @@ export default function Navbar() {
           <Link to="/cart" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Cart</Link>
           {User ? (
             <>
-              <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">My Orders</Link>
-              <button 
+              <Link
+                to="/orders"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                My Orders
+              </Link>
+
+              <button
                 onClick={onLogout}
                 className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
               >
                 Logout
               </button>
+
+              {User?.isAdmin === true && (
+                <Link
+                  to='/admin'
+                  className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  Admin Portal
+                </Link>
+              )}
             </>
           ) : (
             <>
-              <Link to="/login" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Sign In</Link>
-              <Link to="/signup" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Sign Up</Link>
+              <Link
+                to="/login"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/signup"
+                className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                Sign Up
+              </Link>
             </>
           )}
         </div>

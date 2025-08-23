@@ -5,9 +5,11 @@ const axios = require('axios');
 const { parseUnits } = require('ethers'); // for ETH precision
 const transporter = require('../config/nodemailer')
 
-// -----------------------
-// BTC Conversion: string → satoshis
-// -----------------------
+
+
+
+
+
 const convertBTCToSatoshis = (btcAmount) => {
   const [whole = '0', decimal = ''] = btcAmount.toString().split('.');
   const paddedDecimal = (decimal + '00000000').slice(0, 8); // pad to 8 decimals
@@ -51,9 +53,14 @@ async function sendOrderEmail(order, email) {
 }
 
 
-// -----------------------
-// BTC Verification using BlockCypher
-// -----------------------
+
+
+
+
+
+
+
+
 const verifyBTC_BlockCypher = async (txId, receiveAddress, expectedAmount) => {
   try {
     const res = await axios.get(`https://api.blockcypher.com/v1/btc/main/txs/${txId}`);
