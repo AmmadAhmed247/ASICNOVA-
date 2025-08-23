@@ -74,7 +74,8 @@ const orderSchema = new mongoose.Schema(
         "DELIVERED", 
         "FAILED", 
         "EXPIRED", 
-        "CANCELLED"
+        "CANCELLED",
+        "PENDING_PRICE"
       ], 
       default: "PENDING" 
     },
