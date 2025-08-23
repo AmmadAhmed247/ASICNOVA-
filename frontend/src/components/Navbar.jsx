@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { FaCartPlus } from "react-icons/fa";
+import api from '../lib/config/axios'
 
 
 export default function Navbar() {
@@ -35,14 +36,14 @@ export default function Navbar() {
 
     try {
       // Fetch all products and filter on frontend (or modify backend to accept search query)
-      const response = await fetch('http://localhost:3000/product/get-products');
+      const response = await api.get('/product/get-products');
+
+      const products = response.data.products || response.data;
 
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
 
-      const data = await response.json();
-      const products = data.products || data; // Handle different response structures
 
       // Filter products based on search query
       const filtered = products.filter(product =>
