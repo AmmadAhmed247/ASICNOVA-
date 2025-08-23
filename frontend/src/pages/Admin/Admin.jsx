@@ -81,6 +81,22 @@ export default function Admin() {
     const editProductMutation = useEditProduct()
     const deleteProductMutation = useDeleteProduct()
     const [SelectedFile, setSelectedFile] = useState([])
+    useEffect(() => {
+        const fetchOrders = async () => {
+          try {
+            const res = await axios.get("http://localhost:3000/api/admin/orders");
+            setOrders(res.data.orders); // Ensure your backend returns orders array
+          } catch (err) {
+            console.error("Failed to fetch orders:", err);
+          }
+        };
+        fetchOrders();
+      }, []);
+      const openModal = (order) => {
+        setSelectedOrder(order);
+        setShowOrderModal(true);
+      };
+      
 
     const {
         register,
@@ -871,97 +887,101 @@ export default function Admin() {
 
     const renderDashboard = () => (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Products</p>
-                            <p className="text-2xl font-semibold">{products?.length}</p>
-                        </div>
-                        <Package className="text-blue-500" size={32} />
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Products</p>
+                  <p className="text-2xl font-semibold">{products?.length || 0}</p>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Orders</p>
-                            <p className="text-2xl font-semibold">{orders.length}</p>
-                        </div>
-                        <ShoppingCart className="text-green-500" size={32} />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Pending Orders</p>
-                            <p className="text-2xl font-semibold">
-                                {orders.filter(o => o.status === 'pending').length}
-                            </p>
-                        </div>
-                        <Calendar className="text-yellow-500" size={32} />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total Revenue</p>
-                            <p className="text-2xl font-semibold">
-                                ${orders.reduce((sum, order) => sum + order.totalPrice, 0).toLocaleString()}
-                            </p>
-                        </div>
-                        <DollarSign className="text-purple-500" size={32} />
-                    </div>
-                </div>
+                <Package className="text-blue-500" size={32} />
+              </div>
             </div>
-
-            {/* Recent Orders */}
-            <div className="bg-white rounded-lg shadow-sm">
-                <div className="p-6 border-b">
-                    <h2 className="text-xl font-semibold">Recent Orders</h2>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Orders</p>
+                  <p className="text-2xl font-semibold">{orders?.length || 0}</p>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {orders.slice(0, 5).map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                        {order.id}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {order.customerName}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {order.productName}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 text-xs rounded-full ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
-                                                order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                                    'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {order.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        ${order.totalPrice}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <ShoppingCart className="text-green-500" size={32} />
+              </div>
             </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Pending Orders</p>
+                  <p className="text-2xl font-semibold">
+                    {orders?.filter(o => o.status === 'pending').length || 0}
+                  </p>
+                </div>
+                <Calendar className="text-yellow-500" size={32} />
+              </div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Revenue</p>
+                  <p className="text-2xl font-semibold">
+                    ${orders?.reduce((sum, order) => sum + (order.totalPrice || 0), 0).toLocaleString()}
+                  </p>
+                </div>
+                <DollarSign className="text-purple-500" size={32} />
+              </div>
+            </div>
+          </div>
+      
+          {/* Recent Orders */}
+          <div className="bg-white rounded-lg shadow-sm">
+            <div className="p-6 border-b">
+              <h2 className="text-xl font-semibold">Recent Orders</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {orders?.slice(0, 5).map((order) => (
+                    <tr key={order.id || order._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {order.id || order._id || "N/A"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {order.customerName || "Guest"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {order.productName || "N/A"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                            order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {order.status || "Unknown"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${order.totalPrice?.toLocaleString() || 0}
+                      </td>
+                    </tr>
+                  )) || <tr><td colSpan={5} className="text-center p-4">No orders found</td></tr>}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-    );
+      );
+      
 
     const renderProducts = () => (
         <div className="space-y-6">
