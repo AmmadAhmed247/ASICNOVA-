@@ -31,7 +31,6 @@ const Login = () => {
       window.location.reload()
     }
 
-    console.log("Submitted Data:", data);
   } catch (error) {
     console.error("Login failed:", error);
   }
