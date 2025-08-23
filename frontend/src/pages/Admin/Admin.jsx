@@ -17,7 +17,8 @@ import {
     MapPin,
     Phone,
     Mail,
-    Settings
+    Settings,
+    MessageSquare
 } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
 import { useContext } from 'react';
@@ -30,6 +31,7 @@ import { useProducts } from '../../lib/hooks/useProduct';
 import AdminOrderManagement from '../../components/AdminOrderManagement';
 import toast from 'react-hot-toast';
 import { useAllOrders } from '../../lib/hooks/useOrder';
+import { useInquiry } from '../../lib/hooks/useContact';
 
 
 
@@ -39,11 +41,19 @@ export default function Admin() {
 
     const orders = orderData?.orders ?? [];
 
+    const { data: contactInfo } = useInquiry()
+
+    const inquiries = contactInfo?.inquiries ?? [];     
+
+    console.log("Contact Information", inquiries)
+
     const [activeTab, setActiveTab] = useState('dashboard');
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedInquiry, setSelectedInquiry] = useState(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [showOrderModal, setShowOrderModal] = useState(false);
+    const [showInquiryModal, setShowInquiryModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
     const { User: admin } = useContext(AuthContext)
@@ -133,6 +143,7 @@ export default function Admin() {
         { id: 'dashboard', label: 'Dashboard', icon: Settings },
         { id: 'products', label: 'Products', icon: Package },
         { id: 'orders', label: 'Orders', icon: ShoppingCart },
+        { id: 'inquiries', label: 'Contact Inquiries', icon: MessageSquare },
     ];
 
     const filteredProducts = (products ?? []).filter(product => {
@@ -207,7 +218,7 @@ export default function Admin() {
             const expectedAmounts = {
                 BTC: Number(data.expectedAmounts?.BTC) || 0,
                 ETH: Number(data.expectedAmounts?.ETH) || 0
-            }; 5
+            };
 
 
             console.log("Crypto addresses to send:", cryptoAddresses);
@@ -861,6 +872,71 @@ export default function Admin() {
         );
     };
 
+    const InquiryModal = () => {
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    {/* Header */}
+                    <div className="p-6 border-b flex justify-between items-center">
+                        <h2 className="text-xl font-semibold">
+                            Contact Inquiry Details
+                        </h2>
+                        <button
+                            type="button"
+                            onClick={() => setShowInquiryModal(false)}
+                        >
+                            <X size={24} />
+                        </button>
+                    </div>
+
+                    <div className="p-6 space-y-6">
+                        {/* Contact Info */}
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <h3 className="font-semibold mb-3 flex items-center gap-2">
+                                <User size={20} />
+                                Contact Information
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-gray-600">Full Name</label>
+                                    <p className="font-medium">{selectedInquiry?.fullName}</p>
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-600">Email</label>
+                                    <p className="font-medium flex items-center gap-1">
+                                        <Mail size={16} />
+                                        {selectedInquiry?.email}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Inquiry */}
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <h3 className="font-semibold mb-3 flex items-center gap-2">
+                                <MessageSquare size={20} />
+                                Inquiry Message
+                            </h3>
+                            <div className="bg-white p-4 rounded border">
+                                <p className="text-gray-900 whitespace-pre-wrap">{selectedInquiry?.inquiry}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="p-6 border-t flex justify-end">
+                        <button
+                            type="button"
+                            onClick={() => setShowInquiryModal(false)}
+                            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const renderDashboard = () => (
         <div className="space-y-6">
@@ -1092,6 +1168,103 @@ export default function Admin() {
         <AdminOrderManagement />
     );
 
+    const renderInquiries = () => {
+       
+
+        const filteredInquiries = inquiries.filter(inquiry => {
+            const matchesSearch =
+                !searchTerm ||
+                inquiry.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                inquiry.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                inquiry.inquiry?.toLowerCase().includes(searchTerm.toLowerCase());
+
+            return matchesSearch;
+        });
+
+        return (
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h1 className="text-2xl font-semibold">Contact Inquiries</h1>
+                </div>
+
+                {/* Search */}
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex-1">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <input
+                                    type="text"
+                                    placeholder="Search inquiries..."
+                                    className="w-full pl-10 pr-4 py-2 border rounded-lg"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Inquiries Table */}
+                <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inquiry Preview</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {filteredInquiries.map((inquiry) => (
+                                    <tr key={inquiry._id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">{inquiry.fullName}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 flex items-center gap-1">
+                                                <Mail size={16} className="text-gray-400" />
+                                                {inquiry.email}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 max-w-xs">
+                                            <div className="text-sm text-gray-900 truncate">
+                                                {inquiry.inquiry?.substring(0, 100)}
+                                                {inquiry.inquiry?.length > 100 && '...'}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedInquiry(inquiry);
+                                                    setShowInquiryModal(true);
+                                                }}
+                                                className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                                            >
+                                                <Eye size={16} />
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {filteredInquiries.length === 0 && (
+                            <div className="text-center py-8">
+                                <MessageSquare className="mx-auto text-gray-400 mb-2" size={48} />
+                                <p className="text-gray-500">No contact inquiries found</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     const renderContent = () => {
         switch (activeTab) {
             case 'dashboard':
@@ -1100,6 +1273,10 @@ export default function Admin() {
                 return renderProducts();
             case 'orders':
                 return renderOrders();
+            case 'inquiries':
+                return renderInquiries();
+            case 'inquiries':
+                return renderInquiries();
             default:
                 return renderDashboard();
         }
@@ -1159,6 +1336,7 @@ export default function Admin() {
             {/* Modals */}
             {showProductModal && <ProductModal />}
             {showOrderModal && <OrderModal />}
+            {showInquiryModal && <InquiryModal />}
         </div>
     );
 }
