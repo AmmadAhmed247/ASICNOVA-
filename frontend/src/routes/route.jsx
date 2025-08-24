@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       { path: '/resetpassword', element: <ResetPassword /> },
       { path: '/checkout', element: <Checkout /> },
       { path: '/about', element: <AboutUs /> },
-      { path: '/cart', element: <Cart /> },
+      { path: '/mycart', element: <Cart /> },
       { path: '/contact', element: <ContactSalesPage /> },
       {
         path: '/admin',

@@ -124,7 +124,7 @@ export default function Navbar() {
           <Link to="/contact" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Contact Us</Link>
           <Link to="/howtobuy" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Payment Guide</Link>
           {User && (
-            <Link to="/cart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
+            <Link to="/mycart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
               <FaCartPlus size={27} />
             </Link>
           )}
@@ -321,7 +321,7 @@ export default function Navbar() {
           <Link to="/products" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Shop</Link>
           <Link to="/about" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">About Us</Link>
           <Link to="/contact" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Contact Us</Link>
-          <Link to="/cart" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Cart</Link>
+          <Link to="/mycart" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">Cart</Link>
           {User ? (
             <>
               <Link
