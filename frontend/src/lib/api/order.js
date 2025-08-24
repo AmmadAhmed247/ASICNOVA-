@@ -43,7 +43,7 @@ export const updateOrderStatus = async (orderId, statusData) => {
 // Update tracking information (Admin)
 export const updateTrackingInfo = async (orderId, trackingData) => {
   try {
-    const response = await api.put(`/admin/orders/${orderId}/tracking`, trackingData);
+    const response = await api.put(`/orders/admin/orders/${orderId}/tracking`, trackingData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
