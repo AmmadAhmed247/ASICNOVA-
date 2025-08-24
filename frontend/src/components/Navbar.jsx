@@ -173,7 +173,7 @@ export default function Navbar() {
                 ) : (
                   <>
                     <Link
-                      to="/orders"
+                      to="/myorders"
                       className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors"
                       onClick={() => setProfileOpen(false)}
                     >
@@ -325,7 +325,7 @@ export default function Navbar() {
           {User ? (
             <>
               <Link
-                to="/orders"
+                to="/myorders"
                 className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
               >
                 My Orders
