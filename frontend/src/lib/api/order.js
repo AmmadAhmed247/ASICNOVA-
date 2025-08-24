@@ -3,7 +3,7 @@ import api from '../config/axios'
 // Get all orders (Admin)
 export const getAllOrders = async (params = {}) => {
   try {
-    const response = await api.get('/admin/orders', { params });
+    const response = await api.get('/orders/admin', { params });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -13,7 +13,7 @@ export const getAllOrders = async (params = {}) => {
 // Get user orders
 export const getUserOrders = async (userId, params = {}) => {
   try {
-    const response = await api.get(`/user/${userId}/orders`, { params });
+    const response = await api.get(`/orders/user/${userId}/orders`, { params });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -33,7 +33,7 @@ export const getOrderById = async (orderId) => {
 // Update order status (Admin)
 export const updateOrderStatus = async (orderId, statusData) => {
   try {
-    const response = await api.put(`/admin/orders/${orderId}/status`, statusData);
+    const response = await api.put(`/orders/admin/${orderId}/status`, statusData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

@@ -17,16 +17,16 @@ const {
 router.get('/test-models', testModels);
 
 // Debug route to check orders
+router.get('/admin', getAllOrders);
 router.get('/debug-orders/:userId', debugOrders);
 
 // Public routes
 router.post('/create', createOrder);
-router.get('/payment-info/:orderId/:coinType', getPaymentInfo);
 router.get('/:orderId', getOrderById);
 
 // Admin routes (add authentication middleware as needed)
-router.get('/admin/orders', getAllOrders);
-router.put('/admin/orders/:orderId/status', updateOrderStatus);
+router.get('/payment-info/:orderId/:coinType', getPaymentInfo);
+router.put('/admin/:orderId/status', updateOrderStatus);
 router.put('/admin/orders/:orderId/tracking', updateTrackingInfo);
 
 // User routes (add authentication middleware as needed)
