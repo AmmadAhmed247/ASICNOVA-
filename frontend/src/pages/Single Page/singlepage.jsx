@@ -301,6 +301,11 @@ export default function SinglePage() {
 
                 <button
                   onClick={async () => {
+                    if(!currentUser){
+                      navigate('/login')
+                      return;
+                    }
+
                     await useAddToCartMutation.mutateAsync({
                       productId: id,
                       quantity
@@ -376,6 +381,7 @@ export default function SinglePage() {
             <p className="text-gray-400">© All Rights Reserved</p>
           </div>
         </div>
-      </footer>    </div>
+      </footer>   
+      </div>
   );
 }

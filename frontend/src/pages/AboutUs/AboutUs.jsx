@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Footer from '../../components/footer';
+import { Zap } from 'lucide-react'
 
 
 export default function AboutUs() {
- 
-  
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -115,9 +116,22 @@ export default function AboutUs() {
           </div>
         </div>
 
+
+        <div className='mb-10'>
+          <div className="text-center pt-8">
+            <div className="flex items-center justify-center space-x-2 text-blue-400 font-bold text-xl mb-2">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <Zap className="w-4 h-4 text-white" />
+              </div>
+              <span>ASICNOVA</span>
+            </div>
+            <p className="text-gray-400">© All Rights Reserved</p>
+          </div>
+        </div>
+
         {/* Contact Form Section */}
-        <Footer className={"bg-white rounded-md  flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10"} />
-       
+        {/* <Footer className={"bg-white rounded-md  flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10"} /> */}
+
       </div>
     </div>
   );
