@@ -15,6 +15,7 @@ import ProtectedRoute from "./protected-route.jsx";
 import ResetPassword from "../pages/Auth/ResetPassword.jsx";
 import Checkout from "../pages/CheckoutPage/Checkout.jsx";
 import Cart from "../pages/Cart/Cart.jsx";
+import CryptoPaymentGuide from "../pages/HowToBuy/CryptoPaymentGuide.jsx";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {path: '/unauthorized', element: <Unauthorized/>},
       {path: '*', element: <NotFound/>}
     ]
+  },
+  {
+    path: '/howtobuy',
+    element: <CryptoPaymentGuide/>
   }
 ])
 

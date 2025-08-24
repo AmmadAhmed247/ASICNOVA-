@@ -37,7 +37,6 @@ export default function Navbar() {
     try {
       // Fetch all products and filter on frontend (or modify backend to accept search query)
       const response = await api.get('/product/get-products');
-      console.log(response.data)
 
       const products = response?.data?.products 
 
@@ -123,6 +122,7 @@ export default function Navbar() {
           <Link to="/products" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Shop</Link>
           <Link to="/about" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">About Us</Link>
           <Link to="/contact" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Contact Us</Link>
+          <Link to="/howtobuy" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Payment Guide</Link>
           {User && (
             <Link to="/cart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
               <FaCartPlus size={27} />

@@ -233,27 +233,27 @@ const MiningWebsite = () => {
                   <p className="text-2xl font-bold"><strong>Price:</strong> ${products[currentSlide]?.price?.perUnit ?? products[currentSlide]?.price}</p>
                 </div>
                 <div className="flex gap-4 mt-8">
-                <button
-  onClick={async () => {
-    const product = products[currentSlide];
-    if (!product) return;
+                  <button
+                    onClick={async () => {
+                      const product = products[currentSlide];
+                      if (!product) return;
 
-    try {
-      await useAddToCartMutation.mutateAsync({
-        productId: product._id,
-        quantity: 1
-      });
-      console.log("Added to cart:", product._id);
-      navigate('/cart'); // now works
-    } catch (err) {
-      console.error("Add to cart failed:", err);
-    }
-  }}
-  className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
->
-  Buy Now
-</button>
-                  
+                      try {
+                        await useAddToCartMutation.mutateAsync({
+                          productId: product._id,
+                          quantity: 1
+                        });
+                        console.log("Added to cart:", product._id);
+                        navigate('/cart'); // now works
+                      } catch (err) {
+                        console.error("Add to cart failed:", err);
+                      }
+                    }}
+                    className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
+                  >
+                    Buy Now
+                  </button>
+
                 </div>
               </div>
 
@@ -292,7 +292,18 @@ const MiningWebsite = () => {
           </div>
         </div>
       </div>
-      <Footer className={'bg-blue-50 border-t border-blue-100 rounded-md flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10'} />
+      <div className='mb-10'>
+        <div className="text-center pt-8">
+          <div className="flex items-center justify-center space-x-2 text-blue-400 font-bold text-xl mb-2">
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
+            </div>
+            <span>ASICNOVA</span>
+          </div>
+          <p className="text-gray-400">© All Rights Reserved</p>
+        </div>
+      </div>
+      {/* <Footer className={'bg-blue-50 border-t border-blue-100 rounded-md flex flex-col md:flex-row items-center justify-center py-16 md:gap-80 gap-10 px-4 md:px-10'} /> */}
     </div>
   );
 };
