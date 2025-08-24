@@ -20,9 +20,9 @@ router.get('/test-models', testModels);
 router.get('/debug-orders/:userId', debugOrders);
 
 // Public routes
-router.post('/orders/create', createOrder);
-router.get('/orders/payment-info/:orderId/:coinType', getPaymentInfo);
-router.get('/orders/:orderId', getOrderById);
+router.post('/create', createOrder);
+router.get('/payment-info/:orderId/:coinType', getPaymentInfo);
+router.get('/:orderId', getOrderById);
 
 // Admin routes (add authentication middleware as needed)
 router.get('/admin/orders', getAllOrders);
@@ -31,6 +31,6 @@ router.put('/admin/orders/:orderId/tracking', updateTrackingInfo);
 
 // User routes (add authentication middleware as needed)
 router.get('/user/:userId/orders', getUserOrders);
-router.put('/orders/:orderId/shipping', updateShippingAddress);
+router.put('/:orderId/shipping', updateShippingAddress);
 
 module.exports = router;

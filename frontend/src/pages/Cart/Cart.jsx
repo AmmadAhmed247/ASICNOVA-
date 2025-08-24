@@ -243,7 +243,7 @@ const Cart = () => {
           <div key={item._id} className="flex items-center border p-4 rounded mb-3 hover:bg-gray-50 transition">
             <input type="checkbox" checked={selectedItems[item._id] || false} onChange={() => handleItemSelection(item._id)} className="mr-4" />
             <img src={item.product?.images && item.product.images.length > 0
-              ? `http://localhost:3000/${item.product.images[0].replace(/\\/g, '/')}`
+              ? `/${item.product.images[0].replace(/\\/g, '/')}`
               : '/dummy.jpg'} alt={item.product.name} className="w-20 h-20 object-cover rounded mr-4" />
             <div className="flex-1">
               <h3 className="font-medium">{item.product.name}</h3>

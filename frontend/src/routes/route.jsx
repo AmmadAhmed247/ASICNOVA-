@@ -39,10 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/orders',
-        element: <ProtectedRoute/>,
-        children: [
-          {path: '', element: <UserOrders/>}
-        ]
+        element: <UserOrders/>
       },
       { path: '/products/:id', element: <Singlepage /> },
       {path: '/unauthorized', element: <Unauthorized/>},
