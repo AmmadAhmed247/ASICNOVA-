@@ -312,7 +312,7 @@ export default function SinglePage() {
                     })
                     console.log("Sending to backend:", { productId: id, quantity });
 
-                    navigate('/cart')
+                    navigate('/mycart')
                   }}
                   className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
                 >
