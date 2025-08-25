@@ -16,6 +16,9 @@ import ResetPassword from "../pages/Auth/ResetPassword.jsx";
 import Checkout from "../pages/CheckoutPage/Checkout.jsx";
 import Cart from "../pages/Cart/Cart.jsx";
 import CryptoPaymentGuide from "../pages/HowToBuy/CryptoPaymentGuide.jsx";
+import RefundPolicy from "../pages/Refund Policy/RefundPolicy.jsx";
+import TermsAndConditions from "../pages/Terms And Conditions/TermsAndConditions.jsx";
+import PrivacyPolicy from "../pages/Privacy Policy/PrivacyPolicy.jsx";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +44,18 @@ const router = createBrowserRouter([
       {
         path: '/myorders',
         element: <UserOrders/>
+      },
+      {
+        path: '/refundpolicy',
+        element: <RefundPolicy/>
+      },
+      {
+        path: '/termsandconditions',
+        element: <TermsAndConditions/>
+      },
+      {
+        path: '/privacypolicy',
+        element: <PrivacyPolicy/>
       },
       { path: '/products/:id', element: <Singlepage /> },
       {path: '/unauthorized', element: <Unauthorized/>},

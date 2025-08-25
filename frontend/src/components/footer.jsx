@@ -30,9 +30,9 @@ const Footer = ({className}) => {
         <div className="flex flex-col gap-6 font-semibold text-center md:text-left">
           <Link to={"/"} className="hover:text-blue-400 cursor-pointer transition-colors">Home</Link>
           <Link to={"/contact"} className="hover:text-blue-400 cursor-pointer transition-colors">Contact Us</Link>
-          <p className="hover:text-blue-400 cursor-pointer transition-colors">Terms & Conditions</p>
-          <p className="hover:text-blue-400 cursor-pointer transition-colors">Privacy Policy</p>
-          <p className="hover:text-blue-400 cursor-pointer transition-colors">Refund Policy</p>
+          <Link to='/termsandconditions'><p className="hover:text-blue-400 cursor-pointer transition-colors">Terms & Conditions</p></Link>
+          <Link to='/privacypolicy'><p className="hover:text-blue-400 cursor-pointer transition-colors">Privacy Policy</p></Link>
+          <Link to='/refundpolicy'><p className="hover:text-blue-400 cursor-pointer transition-colors">Refund Policy</p></Link>
         </div>
 
 
