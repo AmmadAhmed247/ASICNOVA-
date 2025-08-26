@@ -9,7 +9,7 @@ const UnderConstruction = () => {
         <div className='flex flex-col gap-2 items-center justify-center'>
             <img className='h-[300px]' src={ComingSoonSvg}/>
             <p className='text-5xl text-blue-400 font-bold mt-5'>Coming Soon</p>
-            <Link to='/'><Button className='bg-blue-400 hover:bg-blue-400 hover:opacity-90 cursor-pointer mt-5'>Back To Home Page</Button></Link>
+            <Link to='/home'><Button className='bg-blue-400 hover:bg-blue-400 hover:opacity-90 cursor-pointer mt-5'>Back To Home Page</Button></Link>
         </div>
     </div>
   )
