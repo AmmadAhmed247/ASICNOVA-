@@ -96,19 +96,19 @@ const AdminOrderManagement = () => {
   };
 
   // FIXED: Handle shipping address update
-  const handleShippingUpdate = async (orderId, shippingData) => {
-    try {
-      console.log('Updating shipping for order:', orderId, 'with data:', shippingData);
-      await updateShippingMutation.mutateAsync({
-        orderId,
-        shippingData // This will be wrapped in shippingDetails by the API function
-      });
-      setShowShippingModal(false);
-      setSelectedOrder(null);
-    } catch (error) {
-      console.error('Failed to update shipping address:', error);
-    }
-  };
+  // const handleShippingUpdate = async (orderId, shippingData) => {
+  //   try {
+  //     console.log('Updating shipping for order:', orderId, 'with data:', shippingData);
+  //     await updateShippingMutation.mutateAsync({
+  //       orderId,
+  //       shippingData // This will be wrapped in shippingDetails by the API function
+  //     });
+  //     setShowShippingModal(false);
+  //     setSelectedOrder(null);
+  //   } catch (error) {
+  //     console.error('Failed to update shipping address:', error);
+  //   }
+  // };
 
   // Get status color and icon
   const getStatusInfo = (status) => {
@@ -139,134 +139,134 @@ const AdminOrderManagement = () => {
   };
 
   // FIXED: Shipping Address Modal Component
-  const ShippingModal = () => {
-    const [shippingData, setShippingData] = useState({
-      fullName: selectedOrder?.shippingDetails?.fullName || selectedOrder?.billingDetails?.fullName || '',
-      email: selectedOrder?.shippingDetails?.email || selectedOrder?.billingDetails?.email || '',
-      phone: selectedOrder?.shippingDetails?.phone || selectedOrder?.billingDetails?.phone || '',
-      address: selectedOrder?.shippingDetails?.address || selectedOrder?.billingDetails?.address || '',
-      city: selectedOrder?.shippingDetails?.city || selectedOrder?.billingDetails?.city || '',
-      country: selectedOrder?.shippingDetails?.country || selectedOrder?.billingDetails?.country || '',
-      postalCode: selectedOrder?.shippingDetails?.postalCode || selectedOrder?.billingDetails?.postalCode || ''
-    });
+  // const ShippingModal = () => {
+  //   const [shippingData, setShippingData] = useState({
+  //     fullName: selectedOrder?.shippingDetails?.fullName || selectedOrder?.billingDetails?.fullName || '',
+  //     email: selectedOrder?.shippingDetails?.email || selectedOrder?.billingDetails?.email || '',
+  //     phone: selectedOrder?.shippingDetails?.phone || selectedOrder?.billingDetails?.phone || '',
+  //     address: selectedOrder?.shippingDetails?.address || selectedOrder?.billingDetails?.address || '',
+  //     city: selectedOrder?.shippingDetails?.city || selectedOrder?.billingDetails?.city || '',
+  //     country: selectedOrder?.shippingDetails?.country || selectedOrder?.billingDetails?.country || '',
+  //     postalCode: selectedOrder?.shippingDetails?.postalCode || selectedOrder?.billingDetails?.postalCode || ''
+  //   });
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log('ShippingModal: Submitting shipping data:', shippingData);
-      handleShippingUpdate(selectedOrder._id, shippingData);
-    };
+  //   const handleSubmit = (e) => {
+  //     e.preventDefault();
+  //     console.log('ShippingModal: Submitting shipping data:', shippingData);
+  //     handleShippingUpdate(selectedOrder._id, shippingData);
+  //   };
 
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-6 border-b flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Update Shipping Address</h2>
-            <button
-              type="button"
-              onClick={() => setShowShippingModal(false)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <XCircle size={24} />
-            </button>
-          </div>
+  //   return (
+  //     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  //       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+  //         <div className="p-6 border-b flex justify-between items-center">
+  //           <h2 className="text-xl font-semibold">Update Shipping Address</h2>
+  //           <button
+  //             type="button"
+  //             onClick={() => setShowShippingModal(false)}
+  //             className="text-gray-400 hover:text-gray-600"
+  //           >
+  //             <XCircle size={24} />
+  //           </button>
+  //         </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Full Name</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border rounded-lg"
-                  value={shippingData.fullName}
-                  onChange={(e) => setShippingData({...shippingData, fullName: e.target.value})}
-                />
-              </div>
+  //         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+  //           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  //             <div>
+  //               <label className="block text-sm font-medium mb-2">Full Name</label>
+  //               <input
+  //                 type="text"
+  //                 className="w-full p-3 border rounded-lg"
+  //                 value={shippingData.fullName}
+  //                 onChange={(e) => setShippingData({...shippingData, fullName: e.target.value})}
+  //               />
+  //             </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <input
-                  type="email"
-                  className="w-full p-3 border rounded-lg"
-                  value={shippingData.email}
-                  onChange={(e) => setShippingData({...shippingData, email: e.target.value})}
-                />
-              </div>
+  //             <div>
+  //               <label className="block text-sm font-medium mb-2">Email</label>
+  //               <input
+  //                 type="email"
+  //                 className="w-full p-3 border rounded-lg"
+  //                 value={shippingData.email}
+  //                 onChange={(e) => setShippingData({...shippingData, email: e.target.value})}
+  //               />
+  //             </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Phone</label>
-                <input
-                  type="tel"
-                  className="w-full p-3 border rounded-lg"
-                  value={shippingData.phone}
-                  onChange={(e) => setShippingData({...shippingData, phone: e.target.value})}
-                />
-              </div>
+  //             <div>
+  //               <label className="block text-sm font-medium mb-2">Phone</label>
+  //               <input
+  //                 type="tel"
+  //                 className="w-full p-3 border rounded-lg"
+  //                 value={shippingData.phone}
+  //                 onChange={(e) => setShippingData({...shippingData, phone: e.target.value})}
+  //               />
+  //             </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Postal Code</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border rounded-lg"
-                  value={shippingData.postalCode}
-                  onChange={(e) => setShippingData({...shippingData, postalCode: e.target.value})}
-                />
-              </div>
-            </div>
+  //             <div>
+  //               <label className="block text-sm font-medium mb-2">Postal Code</label>
+  //               <input
+  //                 type="text"
+  //                 className="w-full p-3 border rounded-lg"
+  //                 value={shippingData.postalCode}
+  //                 onChange={(e) => setShippingData({...shippingData, postalCode: e.target.value})}
+  //               />
+  //             </div>
+  //           </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Address</label>
-              <textarea
-                className="w-full p-3 border rounded-lg"
-                rows="3"
-                value={shippingData.address}
-                onChange={(e) => setShippingData({...shippingData, address: e.target.value})}
-              />
-            </div>
+  //           <div>
+  //             <label className="block text-sm font-medium mb-2">Address</label>
+  //             <textarea
+  //               className="w-full p-3 border rounded-lg"
+  //               rows="3"
+  //               value={shippingData.address}
+  //               onChange={(e) => setShippingData({...shippingData, address: e.target.value})}
+  //             />
+  //           </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">City</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border rounded-lg"
-                  value={shippingData.city}
-                  onChange={(e) => setShippingData({...shippingData, city: e.target.value})}
-                />
-              </div>
+  //           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  //             <div>
+  //               <label className="block text-sm font-medium mb-2">City</label>
+  //               <input
+  //                 type="text"
+  //                 className="w-full p-3 border rounded-lg"
+  //                 value={shippingData.city}
+  //                 onChange={(e) => setShippingData({...shippingData, city: e.target.value})}
+  //               />
+  //             </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Country</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border rounded-lg"
-                  value={shippingData.country}
-                  onChange={(e) => setShippingData({...shippingData, country: e.target.value})}
-                />
-              </div>
-            </div>
+  //             <div>
+  //               <label className="block text-sm font-medium mb-2">Country</label>
+  //               <input
+  //                 type="text"
+  //                 className="w-full p-3 border rounded-lg"
+  //                 value={shippingData.country}
+  //                 onChange={(e) => setShippingData({...shippingData, country: e.target.value})}
+  //               />
+  //             </div>
+  //           </div>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <button
-                type="button"
-                onClick={() => setShowShippingModal(false)}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
-                disabled={updateShippingMutation.isLoading}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                disabled={updateShippingMutation.isLoading}
-              >
-                {updateShippingMutation.isLoading ? 'Updating...' : 'Update Address'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  };
+  //           <div className="flex justify-end gap-3 pt-4">
+  //             <button
+  //               type="button"
+  //               onClick={() => setShowShippingModal(false)}
+  //               className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+  //               disabled={updateShippingMutation.isLoading}
+  //             >
+  //               Cancel
+  //             </button>
+  //             <button
+  //               type="submit"
+  //               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+  //               disabled={updateShippingMutation.isLoading}
+  //             >
+  //               {updateShippingMutation.isLoading ? 'Updating...' : 'Update Address'}
+  //             </button>
+  //           </div>
+  //         </form>
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   // Order Modal Component
   const OrderModal = () => {
@@ -476,7 +476,7 @@ const AdminOrderManagement = () => {
 
           {/* FIXED: Updated Modal Footer with Shipping Button */}
           <div className="p-6 border-t flex justify-end gap-3">
-            <button
+            {/* <button
               type="button"
               onClick={() => {
                 setShowShippingModal(true);
@@ -487,7 +487,7 @@ const AdminOrderManagement = () => {
             >
               <Edit size={16} />
               Update Shipping
-            </button>
+            </button> */}
             <button
               type="button"
               onClick={() => {

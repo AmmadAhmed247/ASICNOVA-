@@ -44,7 +44,7 @@ const UserOrderTracking = () => {
   const totalPages = ordersData?.totalPages || 1;
 
   // Mutation for updating shipping address
-  const updateAddressMutation = useUpdateShippingAddress();
+  // const updateAddressMutation = useUpdateShippingAddress();
 
   // Filter orders based on search term
   const filteredOrders = orders.filter(order => {
@@ -56,18 +56,18 @@ const UserOrderTracking = () => {
   });
 
   // Handle shipping address update
-  const handleAddressUpdate = async (orderId, shippingData) => {
-    try {
-      await updateAddressMutation.mutateAsync({
-        orderId,
-        shippingData
-      });
-      setShowAddressModal(false);
-      setSelectedOrder(null);
-    } catch (error) {
-      console.error('Failed to update address:', error);
-    }
-  };
+  // const handleAddressUpdate = async (orderId, shippingData) => {
+  //   try {
+  //     await updateAddressMutation.mutateAsync({
+  //       orderId,
+  //       shippingData
+  //     });
+  //     setShowAddressModal(false);
+  //     setSelectedOrder(null);
+  //   } catch (error) {
+  //     console.error('Failed to update address:', error);
+  //   }
+  // };
 
   // Get status color and icon
   const getStatusInfo = (status) => {
@@ -303,7 +303,7 @@ const UserOrderTracking = () => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full">
+        {/* <div className="bg-white rounded-lg max-w-2xl w-full">
           <div className="p-6 border-b">
             <h2 className="text-xl font-semibold">Update Shipping Address</h2>
           </div>
@@ -405,7 +405,7 @@ const UserOrderTracking = () => {
               </button>
             </div>
           </form>
-        </div>
+        </div> */}
       </div>
     );
   };
@@ -568,7 +568,7 @@ const UserOrderTracking = () => {
                       View Details
                     </button>
                     
-                    {!['SHIPPED', 'DELIVERED'].includes(order.status) && (
+                    {/* {!['SHIPPED', 'DELIVERED'].includes(order.status) && (
                       <button
                         type="button"
                         onClick={() => {
@@ -579,7 +579,7 @@ const UserOrderTracking = () => {
                       >
                         Edit Address
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
