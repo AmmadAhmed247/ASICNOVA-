@@ -118,13 +118,13 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden font-semibold md:flex space-x-6 text-xl whitespace-nowrap ">
-          <Link to="/" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Home</Link>
-          <Link to="/products" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Shop</Link>
-          <Link to="/about" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">About Us</Link>
-          <Link to="/contact" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Contact Us</Link>
-          <Link to="/howtobuy" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 rounded-4xl px-2 py-2 ">Payment Guide</Link>
+          <Link to="/" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-500 rounded-4xl px-2 py-2 ">Home</Link>
+          <Link to="/products" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-500 rounded-4xl px-2 py-2 ">Shop</Link>
+          <Link to="/about" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-500 rounded-4xl px-2 py-2 ">About Us</Link>
+          <Link to="/contact" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-500 rounded-4xl px-2 py-2 ">Contact Us</Link>
+          <Link to="/howtobuy" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-500 rounded-4xl px-2 py-2 ">Payment Guide</Link>
           {User && (
-            <Link to="/mycart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-600 items-center rounded-4xl px-2 py-2">
+            <Link to="/mycart" className="text-gray-700 hover:text-white hover:scale-105 transition-all hover:bg-blue-500 items-center rounded-4xl px-2 py-2">
               <FaCartPlus size={27} />
             </Link>
           )}

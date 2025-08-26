@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Homepage from '../pages/HomePage/homepage.jsx'
-import Singlepage from '../pages/Single Page/singlepage.jsx'
+import Singlepage from '../pages/SinglePage/singlepage.jsx'
 import Products from '../pages/Products/products.jsx'
 import Mainlayout from '../lib/Layouts/mainlayout.jsx'
 import Login from "../pages/Auth/Login.jsx";
@@ -16,9 +16,9 @@ import ResetPassword from "../pages/Auth/ResetPassword.jsx";
 import Checkout from "../pages/CheckoutPage/Checkout.jsx";
 import Cart from "../pages/Cart/Cart.jsx";
 import CryptoPaymentGuide from "../pages/HowToBuy/CryptoPaymentGuide.jsx";
-import RefundPolicy from "../pages/Refund Policy/RefundPolicy.jsx";
+import RefundPolicy from "../pages/RefundPolicy/RefundPolicy.jsx";
 import TermsAndConditions from "../pages/Terms And Conditions/TermsAndConditions.jsx";
-import PrivacyPolicy from "../pages/Privacy Policy/PrivacyPolicy.jsx";
+import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy.jsx";
 
 const router = createBrowserRouter([
   {
