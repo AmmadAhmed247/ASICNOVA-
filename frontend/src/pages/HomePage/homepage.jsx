@@ -22,22 +22,22 @@ const MiningWebsite = () => {
     {
       icon: <Clock className="w-12 h-12" />,
       title: "Always Here, Anytime You Need Us",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-400 to-blue-500"
     },
     {
       icon: <DollarSign className="w-12 h-12" />,
       title: "Powerful Mining. Unbeatable and reasonable Prices.",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-400 to-blue-500"
     },
     {
       icon: <ArrowDown className="w-12 h-12" />,
       title: "Pay with Crypto. Mine with Crypto.",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-400 to-blue-500"
     },
     {
       icon: <Shield className="w-12 h-12" />,
       title: "Verified & Transparent Operations",
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-400 to-blue-500"
     }
   ];
 
@@ -81,13 +81,14 @@ const MiningWebsite = () => {
       <div className="relative bg-gradient-to-b from-blue-50 to-white py-20 border-b border-blue-100 overflow-hidden">
         {/* Subtle decorative shapes */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-200 rounded-full opacity-20 blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-300 rounded-full opacity-15 blur-2xl animate-pulse"></div>
 
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-400 rounded-full opacity-15 blur-2xl animate-pulse"></div>
+        <div className="absolute   w-64 h-64 bg-blue-300 rounded-full opacity-15 blur-2xl animate-pulse"></div>
         <div className="container mx-auto px-6 text-center relative z-10">
           {/* Hero Heading */}
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gray-800 leading-tight">
             Mine Smarter.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 bg-blue-600">
               Earn Faster.
             </span>
           </h1>
@@ -102,7 +103,7 @@ const MiningWebsite = () => {
 
           {/* Call-to-action Buttons */}
           <div className="flex justify-center gap-6 mt-6">
-            <a href="/products" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition transform hover:scale-105">
+            <a href="/products" className="bg-blue-500 hover:bg-blue-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition transform hover:scale-105">
               Explore Products
             </a>
 
@@ -121,7 +122,7 @@ const MiningWebsite = () => {
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 h-64 relative flex items-center justify-center p-4">
+              <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-blue-400 h-64 relative flex items-center justify-center p-4">
                 {/* White border wrapper */}
                 <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2 shadow-lg">
                   <Link to={`/products/${product._id}`} >
@@ -145,11 +146,11 @@ const MiningWebsite = () => {
               </div>
 
 
-              <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white p-6">
+              <div className="bg-gradient-to-br from-blue-500 mt-1 border-red-50 rounded-md via-blue-400 to-blue-500 text-white p-6">
                 <h3 className="text-xl font-bold mb-2">{product?.name}</h3>
                 <p className="text-sm opacity-90 mb-4">{product.hashrate}</p>
                 <div className="flex justify-between items-center">
-                  <Link to={`/products/${product._id}`} type='button' className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold text-sm hover:bg-blue-50 transition-colors shadow-md">
+                  <Link to={`/products/${product._id}`} type='button' className="bg-white text-zinc-600 px-6 py-2 rounded-full font-semibold text-sm hover:bg-blue-50 transition-colors shadow-md">
                     Click for details
                   </Link>
                   <span className="font-bold text-lg">
@@ -162,7 +163,7 @@ const MiningWebsite = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Link to="/products" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg hover:shadow-xl">
+          <Link to="/products" className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg hover:shadow-xl">
             View All
           </Link>
         </div>
@@ -200,14 +201,14 @@ const MiningWebsite = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Our Most Popular <span className="text-blue-600">Mining Solutions</span>
+              Our Most Popular <span className="text-blue-500">Mining Solutions</span>
             </h2>
             <p className="text-gray-600 max-w-4xl mx-auto">
               Explore our top-performing mining products handpicked by thousands of satisfied users. Whether you're new to mining or scaling up, these plans offer the best balance of performance, price, and profitability.
             </p>
           </div>
 
-          <div className="relative bg-gradient-to-r from-blue-500 to-blue-600 rounded-3xl overflow-hidden shadow-2xl max-w-6xl mx-auto border border-blue-200">
+          <div className="relative bg-gradient-to-r from-blue-400 to-blue-500 rounded-3xl overflow-hidden shadow-2xl max-w-6xl mx-auto border border-blue-200">
             <button
               type='button'
               onClick={prevSlide}
@@ -244,12 +245,12 @@ const MiningWebsite = () => {
                           quantity: 1
                         });
                         console.log("Added to cart:", product._id);
-                        navigate('/cart'); // now works
+                        navigate('/mycart'); // now works
                       } catch (err) {
                         console.error("Add to cart failed:", err);
                       }
                     }}
-                    className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-600 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
+                    className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-400 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
                   >
                     Buy Now
                   </button>
@@ -286,7 +287,7 @@ const MiningWebsite = () => {
 
 
           <div className="text-center mt-12">
-            <Link to="/products" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg hover:shadow-xl">
+            <Link to="/products" className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-3 rounded-full font-semibold transition-colors shadow-lg hover:shadow-xl">
               View All
             </Link>
           </div>

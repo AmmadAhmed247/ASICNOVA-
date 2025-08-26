@@ -259,7 +259,7 @@ export default function SinglePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Product Section */}
-      <section className="bg-gradient-to-br from-blue-400 to-blue-500 mx-4 my-8 rounded-3xl overflow-hidden">
+      <section className="bg-blue-300 mx-4 my-8 rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-8 py-15">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="bg- rounded-2xl flex items-center justify-center p-4  ">
@@ -277,8 +277,8 @@ export default function SinglePage() {
 
             <div className="text-white space-y-6">
               <h1 className="text-5xl font-bold leading-tight">{data?.name}</h1>
-              <p className="text-xl font-semibold opacity-90">
-                Functions: <span className="font-semibold">{data?.functionType}</span>
+              <p className="font-bold text-lg opacity-100">
+                Functions: <span className="font-bold bg-zinc-800 p-1 rounded-xl  ">{data?.functionType}</span>
               </p>
               <p className="text-xl font-semibold opacity-90">
                 Specification: <span className="font-semibold">
@@ -314,7 +314,7 @@ export default function SinglePage() {
 
                     navigate('/mycart')
                   }}
-                  className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-400 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
+                  className='bg-orange-400 w-fit mb-4 font-semibold hover:bg-orange-500 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
                 >
                   Buy Now
                 </button>

@@ -20,7 +20,7 @@ export default function ProductPage() {
           {products.slice(0, 3).map((product) => (
             <div
               key={product._id}
-              className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-6 text-white flex flex-col items-center shadow-xl hover:scale-105 transition-transform duration-300"
+              className="bg-gradient-to-br from-blue-400 to-blue-500 rounded-3xl p-6 text-white flex flex-col items-center shadow-xl hover:scale-105 transition-transform duration-300"
             >
               <Link to={`/products/${product._id}`} className="w-full mb-4">
                 <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-white shadow-lg">
@@ -47,7 +47,7 @@ export default function ProductPage() {
               <p className="font-semibold text-2xl mb-3">${product.price?.perUnit ?? 'N/A'}</p>
 
               <Link to={`/products/${product._id}`}>
-                <button className="bg-white text-blue-600 font-semibold px-6 py-2 rounded-full shadow-md hover:shadow-xl hover:bg-gray-100 transition">
+                <button className="bg-white text-zinc-700 font-semibold px-6 py-2 rounded-full shadow-md hover:shadow-xl hover:bg-gray-100 transition">
                   Buy Now
                 </button>
               </Link>
@@ -84,7 +84,7 @@ export default function ProductPage() {
               <p className="font-semibold text-xl mb-3">${product.price?.perUnit ?? 'N/A'}</p>
 
               <Link to={`/products/${product._id}`}>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-full mb-2 hover:bg-blue-600 transition">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded-full mb-2 hover:bg-blue-400 transition">
                   Buy Now
                 </button>
               </Link>

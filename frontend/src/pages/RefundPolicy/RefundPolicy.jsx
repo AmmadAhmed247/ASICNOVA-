@@ -5,8 +5,11 @@ const RefundPolicy = () => {
     <div className="min-h-screen bg-gray-50">
       
       {/* Hero Section */}
-      <div className="relative bg-blue-500 text-white py-16 md:py-24 px-4 md:px-8 overflow-hidden">
-        {/* Removed decorative circles for cleaner look */}
+      <div className="relative bg-gradient-to-br from-blue-600 to-blue-500 text-white py-16 md:py-24 px-4 md:px-8 overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute -top-1/2 -right-1/5 w-64 md:w-96 h-64 md:h-96 rounded-full bg-white bg-opacity-10"></div>
+        <div className="absolute -bottom-1/3 right-1/10 w-48 md:w-64 h-48 md:h-64 rounded-full bg-white bg-opacity-5"></div>
+        
         <div className="max-w-6xl mx-auto relative z-10">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">Refund Policy</h1>
           <p className="text-lg md:text-xl opacity-90 max-w-2xl">
@@ -22,7 +25,7 @@ const RefundPolicy = () => {
           {/* Main Policy Statement */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              No Refund Policy
+              ❗ No Refund Policy
             </h2>
             <div className="pl-4 md:pl-6">
               <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-4 md:mb-6">
@@ -37,7 +40,7 @@ const RefundPolicy = () => {
           {/* Eligible Situations Section */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              Eligible Situations for Refund (Case-by-Case Only)
+              🔁 Eligible Situations for Refund (Case-by-Case Only)
             </h2>
             <div className="pl-4 md:pl-6">
               <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg leading-relaxed">
@@ -57,7 +60,7 @@ const RefundPolicy = () => {
           {/* Crypto Price Volatility Section */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              Crypto Price Volatility
+              📉 Crypto Price Volatility
             </h2>
             <div className="pl-4 md:pl-6">
               <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg leading-relaxed">
@@ -73,7 +76,7 @@ const RefundPolicy = () => {
           {/* Refunds Not Allowed Section */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              Refunds Are Not Allowed If:
+              ⚠️ Refunds Are Not Allowed If:
             </h2>
             <div className="pl-4 md:pl-6">
               <ul className="list-disc pl-4 md:pl-6 text-gray-600 space-y-2 md:space-y-3 text-base md:text-lg">
@@ -89,7 +92,7 @@ const RefundPolicy = () => {
           {/* Return Policy Section */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              Return Policy
+              🛠️ Return Policy
             </h2>
             <div className="pl-4 md:pl-6">
               <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg leading-relaxed">
@@ -108,7 +111,7 @@ const RefundPolicy = () => {
           {/* Contact Section */}
           <div className="mb-12 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              Requesting Support or Refund Review
+              📩 Requesting Support or Refund Review
             </h2>
             <div className="pl-4 md:pl-6">
               <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg leading-relaxed">
@@ -131,7 +134,7 @@ const RefundPolicy = () => {
           {/* Final Note Section */}
           <div className="mb-6 md:mb-8">
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 pl-4 md:pl-6 border-l-4 border-blue-500">
-              Final Note
+              📝 Final Note
             </h2>
             <div className="pl-4 md:pl-6">
               <p className="text-gray-600 mb-4 md:mb-6 text-base md:text-lg leading-relaxed">
@@ -148,5 +151,7 @@ const RefundPolicy = () => {
     </div>
   );
 };
+
+
 
 export default RefundPolicy;
