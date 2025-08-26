@@ -19,13 +19,15 @@ import CryptoPaymentGuide from "../pages/HowToBuy/CryptoPaymentGuide.jsx";
 import RefundPolicy from "../pages/RefundPolicy/RefundPolicy.jsx";
 import TermsAndConditions from "../pages/Terms And Conditions/TermsAndConditions.jsx";
 import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy.jsx";
+import UnderConstruction from '../pages/UnderConstruction/UnderConstruction.jsx'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Mainlayout />,
     children: [
-      { path: '/', element: <Homepage /> },
+      { path: '/', element: <UnderConstruction /> },
+      { path: '/home', element: <Homepage /> },
       { path: '/products', element: <Products /> },
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <SignUp /> },
@@ -36,35 +38,35 @@ const router = createBrowserRouter([
       { path: '/contact', element: <ContactSalesPage /> },
       {
         path: '/admin',
-        element: <ProtectedRoute/>,
+        element: <ProtectedRoute />,
         children: [
-          {path: '', element: <Admin/>}
+          { path: '', element: <Admin /> }
         ]
       },
       {
         path: '/myorders',
-        element: <UserOrders/>
+        element: <UserOrders />
       },
       {
         path: '/refundpolicy',
-        element: <RefundPolicy/>
+        element: <RefundPolicy />
       },
       {
         path: '/termsandconditions',
-        element: <TermsAndConditions/>
+        element: <TermsAndConditions />
       },
       {
         path: '/privacypolicy',
-        element: <PrivacyPolicy/>
+        element: <PrivacyPolicy />
       },
       { path: '/products/:id', element: <Singlepage /> },
-      {path: '/unauthorized', element: <Unauthorized/>},
-      {path: '*', element: <NotFound/>}
+      { path: '/unauthorized', element: <Unauthorized /> },
+      { path: '*', element: <NotFound /> }
     ]
   },
   {
     path: '/howtobuy',
-    element: <CryptoPaymentGuide/>
+    element: <CryptoPaymentGuide />
   }
 ])
 
