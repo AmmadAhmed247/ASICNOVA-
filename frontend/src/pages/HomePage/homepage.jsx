@@ -14,7 +14,7 @@ const MiningWebsite = () => {
   const { data, isLoading, isError } = useProducts()
   const products = data?.products || [];
 
-  const {User: currentUser} = useContext(AuthContext)
+  const { User: currentUser } = useContext(AuthContext)
   console.log(currentUser)
 
   const useAddToCartMutation = useAddToCart()
@@ -128,15 +128,15 @@ const MiningWebsite = () => {
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className="aspect-square w-full flex items-center justify-center bg-white">
+              <div className="p-10 bg-white h-64 relative flex items-center justify-center ">
                 {/* White border wrapper */}
-                <div className="relative   w-full h-64 rounded-md overflow-hidden bg-white p-5  flex items-center justify-center">
+                <div className="aspect-square w-full flex items-center justify-center bg-white rounded-md overflow-hidden p-5">
                   <Link to={`/products/${product._id}`}>
                     <img
                       src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                       alt={product.name}
-                      className="max-h-full max-w-full object-cover"
-                      onError={(e) => { e.target.src = "/dummy.jpg"; }}
+                      className="w-full h-full object-contain"
+                      onError={(e) => { e.currentTarget.src = "/dummy.jpg"; }}
                     />
                   </Link>
                 </div>
