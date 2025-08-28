@@ -5,11 +5,17 @@ import { Link } from 'react-router-dom';
 import { useProducts } from '../../lib/hooks/useProduct';
 import { useNavigate } from 'react-router-dom';
 import { useAddToCart } from '../../lib/hooks/useCart';
+import { AuthContext } from '../../Context/AuthContext'
+import toast from 'react-hot-toast'
+
 const MiningWebsite = () => {
   const [animateCards, setAnimateCards] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const { data, isLoading, isError } = useProducts()
   const products = data?.products || [];
+
+  const {User: currentUser} = useContext(AuthContext)
+  console.log(currentUser)
 
   const useAddToCartMutation = useAddToCart()
   const navigate = useNavigate()
@@ -244,10 +250,10 @@ const MiningWebsite = () => {
                           quantity: 1
                         });
                         console.log("Added to cart:", product._id);
-                        navigate('/mycart'); // now works
                       } catch (err) {
                         console.error("Add to cart failed:", err);
                       }
+                      navigate(currentUser ? '/mycart' : '/login'); // now works
                     }}
                     className='bg-orange-500 w-fit mb-4 font-semibold hover:bg-orange-400 transition-all active:scale-105 cursor-pointer px-4 py-2 rounded-2xl'
                   >
