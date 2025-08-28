@@ -130,12 +130,12 @@ const MiningWebsite = () => {
 
               <div className="p-10 bg-white h-64 relative flex items-center justify-center ">
                 {/* White border wrapper */}
-                <div className="aspect-square w-full flex items-center justify-center bg-white rounded-md overflow-hidden p-5">
-                  <Link to={`/products/${product._id}`}>
+                <div className="w-full aspect-square bg-white rounded-md flex items-center justify-center overflow-hidden">
+                  <Link to={`/products/${product._id}`} className="w-full h-full flex items-center justify-center p-5">
                     <img
-                      src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
+                      src={product.images?.[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                       alt={product.name}
-                      className="w-full h-full object-contain"
+                      className="max-w-full max-h-full object-contain"
                       onError={(e) => { e.currentTarget.src = "/dummy.jpg"; }}
                     />
                   </Link>
