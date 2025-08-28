@@ -23,14 +23,23 @@ const createOrder = async (req, res) => {
     if (!items || items.length === 0)
       return res.status(400).json({ success: false, message: "No items selected" });
 
-    const coin = (selectedCoin || "").toUpperCase();
-    if (!["BTC", "ETH"].includes(coin))
+    // Handle both single coin and array of coins
+    let coinsToProcess;
+    if (Array.isArray(selectedCoin)) {
+      coinsToProcess = selectedCoin.map(coin => coin.toUpperCase());
+    } else {
+      coinsToProcess = [(selectedCoin || "").toUpperCase()];
+    }
+
+    // Validate all coins
+    const validCoins = coinsToProcess.filter(coin => ["BTC", "ETH"].includes(coin));
+    if (validCoins.length === 0)
       return res.status(400).json({ success: false, message: "Invalid cryptocurrency selected" });
 
     if (!billingDetails?.fullName || !billingDetails?.email || !billingDetails?.address)
       return res.status(400).json({ success: false, message: "Billing details are required" });
 
-    // Calculate total USD from frontend item prices (trusted server-side)
+    // Calculate total USD from frontend item prices
     let totalUSD = 0;
     items.forEach(item => {
       if (!item.priceUSD || !item.quantity)
@@ -38,25 +47,59 @@ const createOrder = async (req, res) => {
       totalUSD += item.priceUSD * item.quantity;
     });
 
-    // Use the first item's product to define which address to use (or customize your logic)
+    // Get the first product to check supported addresses
     const product = await Product.findById(items[0].productId);
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
 
-    const receiveAddress = product.cryptoAddresses?.[coin];
-    if (!receiveAddress)
-      return res.status(400).json({ success: false, message: `${coin} not supported for this product` });
+    // Create payment options for each coin
+    const paymentOptions = {};
+    let primaryCoin = null;
+    let primaryReceiveAddress = null;
+    let primaryCryptoAmount = null;
 
-    // Calculate dynamic crypto amount at time of order
-    const priceUSD = await getCryptoPriceUSD(coin);
-    const cryptoAmountLocked = (totalUSD / priceUSD).toFixed(8);
+    for (const coin of validCoins) {
+      const receiveAddress = product.cryptoAddresses?.[coin];
+      if (!receiveAddress) {
+        console.warn(`${coin} not supported for product ${product.name}`);
+        continue;
+      }
+
+      // Calculate crypto amount
+      const priceUSD = await getCryptoPriceUSD(coin);
+      const cryptoAmountLocked = (totalUSD / priceUSD).toFixed(8);
+
+      paymentOptions[coin] = {
+        receiveAddress,
+        cryptoAmountLocked,
+        priceUSD
+      };
+
+      // Set the first valid coin as primary for backward compatibility
+      if (!primaryCoin) {
+        primaryCoin = coin;
+        primaryReceiveAddress = receiveAddress;
+        primaryCryptoAmount = cryptoAmountLocked;
+      }
+    }
+
+    if (Object.keys(paymentOptions).length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "No supported cryptocurrencies available for this product" 
+      });
+    }
 
     const order = new Order({
       userId: userId || null,
       items,
       totalUSD,
-      selectedCoin: coin,
-      cryptoAmountLocked,
-      receiveAddress,
+      selectedCoin: validCoins, // Store array of coins
+      paymentOptions, // Store all payment options
+      
+      // Legacy fields for backward compatibility
+      receiveAddress: primaryReceiveAddress,
+      cryptoAmountLocked: primaryCryptoAmount,
+      
       billingDetails,
       shippingDetails: shippingDetails || billingDetails,
       status: "AWAITING_PAYMENT",

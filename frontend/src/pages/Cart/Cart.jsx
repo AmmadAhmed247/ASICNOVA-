@@ -38,7 +38,7 @@ const Cart = () => {
   const [selectedItems, setSelectedItems] = useState({});
   const [currentStep, setCurrentStep] = useState(0);
   const [orderId, setOrderId] = useState(null);
-  const [selectedCoin, setSelectedCoin] = useState('BTC');
+  const [selectedCoin, setSelectedCoin] = useState(null);
   const [receiveAddress, setReceiveAddress] = useState('');
   const [cryptoAmount, setCryptoAmount] = useState('');
   const [quoteExpiresAt, setQuoteExpiresAt] = useState(Date.now() + 10 * 60 * 1000);
@@ -168,7 +168,7 @@ const Cart = () => {
         userId: null,
         items: itemsForOrder,
         totalUSD,
-        selectedCoin,
+        selectedCoin: ['BTC', 'ETH'],
         billingDetails: {
           fullName: data.fullName.trim(),
           email: data.email.trim(),

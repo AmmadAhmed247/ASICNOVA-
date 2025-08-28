@@ -2,18 +2,18 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
-    userId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "User", 
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       default: null // Allow null for guest orders
     },
 
     items: [
       {
-        productId: { 
-          type: mongoose.Schema.Types.ObjectId, 
-          ref: "Product", 
-          required: true 
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true
         },
         name: { type: String, required: true },
         quantity: { type: Number, required: true, min: 1 },
@@ -24,16 +24,29 @@ const orderSchema = new mongoose.Schema(
 
     totalUSD: { type: Number, required: true, min: 0 },
 
-    // BTC + ETH only (USDT removed)
-    selectedCoin: { 
-      type: String, 
-      enum: ["BTC", "ETH"], 
-      required: true 
+    // Support both single coin and multiple coins
+    selectedCoin: {
+      type: mongoose.Schema.Types.Mixed, // Can be string or array
+      required: true
     },
 
-    // Payment-specific fields
+    // Payment options for multiple coins
+    paymentOptions: {
+      BTC: {
+        receiveAddress: String,
+        cryptoAmountLocked: String,
+        priceUSD: Number
+      },
+      ETH: {
+        receiveAddress: String,
+        cryptoAmountLocked: String,
+        priceUSD: Number
+      }
+    },
+
+    // Keep legacy fields for backward compatibility
     receiveAddress: { type: String }, // Where user must send funds
-    cryptoAmountLocked: { type: String }, // Exact crypto amount to receive (string to preserve decimals)
+    cryptoAmountLocked: { type: String }, // Exact crypto amount to receive
     quoteExpiresAt: { type: Date }, // When the locked quote expires
     paymentStartedAt: { type: Date }, // When user started payment process
 
@@ -57,27 +70,27 @@ const orderSchema = new mongoose.Schema(
       postalCode: String,
     },
 
-    // Transaction details
+    // Transaction details - track which coin was actually used
+    paidWithCoin: { type: String, enum: ["BTC", "ETH"] },
     txId: { type: String, default: null },
     verifiedAt: { type: Date },
-    
+
     // Enhanced order status with new options
-    status: { 
-      type: String, 
+    status: {
+      type: String,
       enum: [
-        "PENDING", 
-        "AWAITING_PAYMENT", 
-        "PAID", 
-        "CONFIRMED", 
-        "IN_WAREHOUSE", 
-        "SHIPPED", 
-        "DELIVERED", 
-        "FAILED", 
-        "EXPIRED", 
+        "PENDING",
+        "AWAITING_PAYMENT",
+        "PAID",
+        "CONFIRMED",
+        "IN_WAREHOUSE",
+        "SHIPPED",
+        "DELIVERED",
+        "FAILED",
+        "EXPIRED",
         "CANCELLED",
-        
-      ], 
-      default: "PENDING" 
+      ],
+      default: "PENDING"
     },
 
     // Tracking information
@@ -104,6 +117,7 @@ orderSchema.index({ selectedCoin: 1 });
 orderSchema.index({ receiveAddress: 1 });
 orderSchema.index({ txId: 1 });
 orderSchema.index({ trackingNumber: 1 });
+orderSchema.index({ paidWithCoin: 1 });
 
 // Auto-calc per-item total + order total
 orderSchema.pre('save', function(next) {
