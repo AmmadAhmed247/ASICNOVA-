@@ -147,41 +147,47 @@ const verifyPayment = async (req, res) => {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
-    // Expiration check
     if (order.quoteExpiresAt && new Date() > order.quoteExpiresAt) {
       order.status = 'EXPIRED';
       await order.save();
       return res.status(400).json({ success: false, message: 'Payment time expired' });
     }
 
-    // Already processed
     const existingTx = await ProcessedTransaction.findOne({ txid: txId });
     if (existingTx) return res.status(400).json({ success: false, message: 'Transaction already processed' });
 
-    const coin = order.selectedCoin.toUpperCase();
-    let txInfo = {};
+    let txInfo = null;
 
-    if (coin === 'BTC') {
-      const isPaid = await verifyBTC_BlockCypher(txId, order.receiveAddress, order.cryptoAmountLocked);
-      if (!isPaid) return res.status(400).json({ success: false, message: 'Transaction invalid or insufficient amount' });
-      txInfo = { amount: parseFloat(order.cryptoAmountLocked), blockNumber: null, sender: 'Unknown' };
-    } else if (coin === 'ETH') {
-      const txData = await axios.get(
-        `https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${txId}&apikey=${process.env.ETHERSCAN_API_KEY}`
-      );
-      const ethInfo = await verifyETH(txData.data.result, order.receiveAddress, order.cryptoAmountLocked);
-      if (!ethInfo) return res.status(400).json({ success: false, message: 'Transaction invalid or insufficient amount' });
-      txInfo = ethInfo;
-    } else {
-      return res.status(400).json({ success: false, message: 'Unsupported coin' });
+    // Loop through paymentOptions
+    for (const [coin, option] of Object.entries(order.paymentOptions)) {
+      if (!option.receiveAddress) continue;
+
+      if (coin === 'BTC') {
+        const isPaid = await verifyBTC_BlockCypher(txId, option.receiveAddress, option.cryptoAmountLocked);
+        if (isPaid) {
+          txInfo = { coin: 'BTC', amount: parseFloat(option.cryptoAmountLocked), sender: 'Unknown', blockNumber: null, receiveAddress: option.receiveAddress };
+          break;
+        }
+      } else if (coin === 'ETH') {
+        const txData = await axios.get(
+          `https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${txId}&apikey=${process.env.ETHERSCAN_API_KEY}`
+        );
+        const ethInfo = await verifyETH(txData.data.result, option.receiveAddress, option.cryptoAmountLocked);
+        if (ethInfo) {
+          txInfo = { coin: 'ETH', ...ethInfo, receiveAddress: option.receiveAddress };
+          break;
+        }
+      }
     }
+
+    if (!txInfo) return res.status(400).json({ success: false, message: 'Transaction invalid or insufficient amount' });
 
     // Save processed transaction
     const processedTx = new ProcessedTransaction({
       txid: txId,
-      coin,
+      coin: txInfo.coin,
       amount: txInfo.amount,
-      recipient: order.receiveAddress,
+      recipient: txInfo.receiveAddress,
       sender: txInfo.sender,
       blockNumber: txInfo.blockNumber,
       status: 'confirmed',
@@ -189,22 +195,24 @@ const verifyPayment = async (req, res) => {
     });
     await processedTx.save();
 
+    // Update order
     order.status = 'PAID';
     order.txId = txId;
+    order.paidWithCoin = txInfo.coin;
     order.verifiedAt = new Date();
     await order.save();
 
     const customerEmail = order.shippingDetails?.email || order.billingDetails.email;
+    await sendOrderEmail(order, customerEmail);
 
+    return res.json({ success: true, message: `${txInfo.coin} payment confirmed`, transactionDetails: processedTx });
 
-    await sendOrderEmail(order, customerEmail)
-
-    return res.json({ success: true, message: `${coin} payment confirmed`, transactionDetails: processedTx });
   } catch (err) {
     console.error('verifyPayment error:', err.message, err.stack);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
 
 // -----------------------
 // Check Payment Status
