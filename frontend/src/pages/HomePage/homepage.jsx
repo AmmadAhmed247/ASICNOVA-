@@ -128,9 +128,9 @@ const MiningWebsite = () => {
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className="p-10 bg-white h-64 relative flex items-center justify-center ">
+              <div className="p-10 bg-white h-72 relative flex items-center justify-center ">
                 {/* White border wrapper */}
-                <div className="relative w-full h-64 p-8 rounded-md overflow-hidden bg-white flex items-center justify-center">
+                <div className="relative w-full h-72 p-8 rounded-md overflow-hidden bg-white flex items-center justify-center">
                   <Link to={`/products/${product._id}`}>
                     <img
                       src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
