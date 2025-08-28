@@ -130,7 +130,7 @@ const MiningWebsite = () => {
 
               <div className="p-10 bg-white h-64 relative flex items-center justify-center ">
                 {/* White border wrapper */}
-                <div className="relative w-full h-64 rounded-md overflow-hidden bg-white flex items-center justify-center">
+                <div className="relative w-full h-48 rounded-md overflow-hidden bg-white flex items-center justify-center">
                   <Link to={`/products/${product._id}`}>
                     <img
                       src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
