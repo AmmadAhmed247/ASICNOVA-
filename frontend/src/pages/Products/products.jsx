@@ -21,17 +21,17 @@ export default function ProductPage() {
             <div
               key={product._id}
               className="bg-gradient-to-br from-blue-400 to-blue-500 rounded-3xl p-6 text-white flex flex-col items-center shadow-xl hover:scale-105 transition-transform duration-300"
-            >
-              <Link to={`/products/${product._id}`} className="w-full mb-4">
-                <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-white shadow-lg">
-                  <img
-                    src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { e.target.src = "/dummy.jpg"; }}
-                  />
-                </div>
-              </Link>
+            ><Link to={`/products/${product._id}`} className="w-full mb-4">
+            <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-white shadow-lg bg-white flex items-center justify-center">
+              <img
+                src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
+                alt={product.name}
+                className="w-full h-full object-contain p-2"
+                onError={(e) => { e.target.src = "/dummy.jpg"; }}
+              />
+            </div>
+          </Link>
+          
 
               {product.discount && (
                 <span className="text-sm bg-white text-blue-600 font-semibold px-3 py-1 rounded-full mb-3">
@@ -66,14 +66,16 @@ export default function ProductPage() {
               className="bg-white rounded-2xl p-4 flex flex-col items-center shadow-md hover:shadow-xl transition"
             >
               <Link to={`/products/${product._id}`} className="w-full mb-4">
-                <div className="relative w-full h-60 rounded-2xl overflow-hidden">
+                <div className="relative w-full h-60 rounded-2xl overflow-hidden bg-white flex items-center justify-center">
                   <img
                     src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-2"
                     onError={(e) => { e.target.src = "/dummy.jpg"; }}
                   />
                 </div>
+
+
               </Link>
 
               <h3 className="font-bold text-lg text-center mb-2">{product.name}</h3>
@@ -95,9 +97,9 @@ export default function ProductPage() {
 
       {/* Footer */}
       <footer className="text-white py-12">
-              <div className="container mx-auto px-6">
-                <div className="md:col-span-4">
-                  {/* <div className="flex justify-center items-center space-x-6">
+        <div className="container mx-auto px-6">
+          <div className="md:col-span-4">
+            {/* <div className="flex justify-center items-center space-x-6">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#1DA1F2">
       
                       <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.4.36a9.07 9.07 0 01-2.88 1.1A4.52 4.52 0 0016.88 0c-2.5 0-4.52 2.02-4.52 4.52 0 .35.04.7.11 1.03A12.83 12.83 0 013 1.16a4.49 4.49 0 001.4 6.03A4.5 4.5 0 012 6.9v.05c0 2.22 1.57 4.07 3.65 4.49a4.52 4.52 0 01-2.04.08 4.52 4.52 0 004.21 3.14A9.05 9.05 0 012 19.54 12.77 12.77 0 008.29 21c7.55 0 11.68-6.26 11.68-11.68 0-.18-.01-.36-.02-.54A8.36 8.36 0 0023 3z" />
@@ -116,18 +118,18 @@ export default function ProductPage() {
                       <path d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a3.999 3.999 0 110-7.998 3.999 3.999 0 010 7.998zM18.406 4.594a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z" />
                     </svg>
                   </div> */}
-                </div>
-                <div className="text-center pt-8">
-                  <div className="flex items-center justify-center space-x-2 text-blue-400 font-bold text-xl mb-2">
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-white" />
-                    </div>
-                    <span>ASICNOVA</span>
-                  </div>
-                  <p className="text-gray-400">© All Rights Reserved</p>
-                </div>
+          </div>
+          <div className="text-center pt-8">
+            <div className="flex items-center justify-center space-x-2 text-blue-400 font-bold text-xl mb-2">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <Zap className="w-4 h-4 text-white" />
               </div>
-            </footer>
+              <span>ASICNOVA</span>
+            </div>
+            <p className="text-gray-400">© All Rights Reserved</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

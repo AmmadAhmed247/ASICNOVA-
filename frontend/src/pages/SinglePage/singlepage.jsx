@@ -262,16 +262,18 @@ export default function SinglePage() {
       <section className="bg-gradient-to-br from-blue-400 to-blue-500 mx-4 my-8 rounded-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto px-8 py-15">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="bg- rounded-2xl flex items-center justify-center p-4  ">
-              <div className="relative w-full h-80 rounded-2xl overflow-hidden border-8 border-white  shadow-lg">
-                <img
-                  src={data?.images?.[0] ? `/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
-                  alt={data?.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.src = "/dummy.jpg"; }}
-                />
+            <div className="rounded-2xl flex items-center justify-center p-4  ">
+            <div className="relative w-full h-80 rounded-2xl overflow-hidden border-8 border-white bg-white shadow-lg">
 
-              </div>
+  <img
+    src={data?.images?.[0] ? `/${data.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
+    alt={data?.name}
+    className="w-full h-full object-cover"
+    onError={(e) => { e.target.src = "/dummy.jpg"; }}
+  />
+</div>
+
+
 
             </div>
 
@@ -301,7 +303,7 @@ export default function SinglePage() {
 
                 <button
                   onClick={async () => {
-                    if(!currentUser){
+                    if (!currentUser) {
                       navigate('/login')
                       return;
                     }
@@ -370,7 +372,7 @@ export default function SinglePage() {
       </section>
       <footer className="text-white mt-60 py-12">
         <div className="container mx-auto px-6">
-         
+
           <div className="text-center pt-8">
             <div className="flex items-center justify-center space-x-2 text-blue-400 font-bold text-xl mb-2">
               <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -381,7 +383,7 @@ export default function SinglePage() {
             <p className="text-gray-400">© All Rights Reserved</p>
           </div>
         </div>
-      </footer>   
-      </div>
+      </footer>
+    </div>
   );
 }

@@ -589,14 +589,14 @@ const Cart = () => {
 
   const CompleteStep = () => (
     <div className="bg-white p-6 rounded-lg shadow mb-6 text-center">
-      <div className="mx-auto w-16 h-16 bg-green-100 flex items-center justify-center rounded-full mb-4">
-        <CheckCircle className="w-8 h-8 text-green-600" />
+      <div className="mx-auto w-16 h-16 bg-blue-100 flex items-center justify-center rounded-full mb-4">
+        <CheckCircle className="w-8 h-8 text-blue-600" />
       </div>
-      <h2 className="text-2xl font-semibold text-green-600 mb-2">Order Completed!</h2>
+      <h2 className="text-2xl font-semibold text-blue-600 mb-2">Order Completed!</h2>
       <p className="text-gray-500 mb-2">Your order has been successfully placed and confirmed.</p>
       <p className="font-bold">Total: ${calculateTotal().toLocaleString()}</p>
-      <div className="mt-4 p-4 bg-green-50 rounded-lg">
-        <p className="text-green-800 text-sm">
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+        <p className="text-blue-800 text-sm">
           Congratulations! Your order is confirmed and will be processed within 24 hours.
         </p>
       </div>

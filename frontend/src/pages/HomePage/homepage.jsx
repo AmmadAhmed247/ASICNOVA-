@@ -117,25 +117,24 @@ const MiningWebsite = () => {
           {products.slice(0, 3).map((product, index) => (
             <div
               key={product.id}
-              className={`bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden transform transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:border-blue-200 ${animateCards ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+              className={`bg-white rounded-2xl shadow-xl border border-zinc-200 overflow-hidden transform transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:border-blue-200 ${animateCards ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
                 }`}
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-blue-400 h-64 relative flex items-center justify-center p-4">
+              <div className="p-10 bg-white h-64 relative flex items-center justify-center ">
                 {/* White border wrapper */}
-                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2 shadow-lg">
-                  <Link to={`/products/${product._id}`} >
-
+                <div className="relative   w-full h-64 rounded-md overflow-hidden bg-white p-5  flex items-center justify-center">
+                  <Link to={`/products/${product._id}`}>
                     <img
                       src={product.images[0] ? `/${product.images[0].replace(/\\/g, '/')}` : '/dummy.jpg'}
                       alt={product.name}
-                      className="w-full h-full rounded-3xl object-cover"
+                      className="max-h-full max-w-full object-contain"
                       onError={(e) => { e.target.src = "/dummy.jpg"; }}
                     />
-                    {/* Optional overlay */}
                   </Link>
                 </div>
+
 
                 {/* Hidden effect div (optional) */}
                 <div className="w-32 h-32 bg-white/20 rounded-xl mx-auto mb-4 items-center justify-center" style={{ display: 'none' }}>
@@ -146,7 +145,7 @@ const MiningWebsite = () => {
               </div>
 
 
-              <div className="bg-gradient-to-br from-blue-500 mt-1 border-red-50 rounded-md via-blue-400 to-blue-500 text-white p-6">
+              <div className="bg-gradient-to-br from-blue-500 mt-2 border-red-50 rounded-md via-blue-400 to-blue-500 text-white p-6">
                 <h3 className="text-xl font-bold mb-2">{product?.name}</h3>
                 <p className="text-sm opacity-90 mb-4">{product.hashrate}</p>
                 <div className="flex justify-between items-center">
@@ -259,17 +258,17 @@ const MiningWebsite = () => {
               </div>
 
               <div className="h-80 md:h-96 relative flex items-center justify-center p-8">
-                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2 shadow-xl">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white p-2 shadow-xl flex items-center justify-center">
                   <img
                     src={products[currentSlide]?.images?.[0]
                       ? `/${products[currentSlide].images[0].replace(/\\/g, '/')}`
                       : '/dummy.jpg'}
                     alt={products[currentSlide]?.name}
-                    className="w-full h-full object-cover rounded-2xl"
+                    className="max-h-full max-w-full object-contain rounded-2xl"
                     onError={(e) => { e.target.src = "/dummy.jpg"; }}
                   />
-
                 </div>
+
               </div>
             </div>
 
