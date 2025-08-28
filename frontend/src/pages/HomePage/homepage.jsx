@@ -128,7 +128,7 @@ const MiningWebsite = () => {
               style={{ transitionDelay: `${index * 200}ms` }}
             >
 
-              <div className="p-10 bg-white h-64 relative flex items-center justify-center ">
+              <div className="p-10 bg-white h-full relative flex items-center justify-center ">
                 {/* White border wrapper */}
                 <div className="relative w-full h-full rounded-md overflow-hidden bg-white flex items-center justify-center">
                   <Link to={`/products/${product._id}`}>
